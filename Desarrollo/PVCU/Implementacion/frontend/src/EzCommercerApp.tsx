@@ -1,7 +1,10 @@
-
+import routes from "./router/AppRouter"
+import { RouterProvider } from "react-router-dom";
 
 export const EzCommercerApp = () => {
   return (
-    <div>EzCommercerApp</div>
+    <>
+        <RouterProvider router={routes} />
+    </>
   )
 }
