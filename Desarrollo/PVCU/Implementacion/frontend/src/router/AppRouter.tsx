@@ -10,7 +10,7 @@ import { Layaout } from "../components/layouts/Layaout";
 
 const routes = createBrowserRouter([
   {
-    path: "/",
+    path: "/login",
     element: <LoginPage />,
     // loader:
   },

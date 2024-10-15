@@ -2,6 +2,8 @@
 
 export const MainPage = () => {
   return (
-    <div>MainPage</div>
+    <div className="h-[400px]">
+
+    </div>
   )
 }
