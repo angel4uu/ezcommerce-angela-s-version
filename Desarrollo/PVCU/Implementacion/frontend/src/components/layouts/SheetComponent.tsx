@@ -9,9 +9,9 @@ export const SheetComponent = () => {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button variant="outline" className="justify-between w-60">
+                <Button variant="link" className="justify-between w-60 border-r-2">
                     Categorías
-                    <Menu className="mr-2" size={20}/>
+                    <Menu size={20}/>
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[540px]">
