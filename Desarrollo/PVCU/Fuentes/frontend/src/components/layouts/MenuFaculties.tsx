@@ -13,7 +13,7 @@ export const MenuFaculties = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center">
+        <Button variant="outline" className="flex items-center text-base">
           <MapPin className="mr-2" size={16} />
           All
           <ChevronDown className="ml-2" size={16} />

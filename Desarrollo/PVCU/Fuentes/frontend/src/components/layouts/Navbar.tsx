@@ -14,7 +14,7 @@ const icons = [
 
 export const Navbar = () => {
   return (
-    <nav className="border-b">
+    <nav className="px-4 sm:px-6 md:px-16 lg:px-32">
       <div className="flex flex-wrap items-center py-4 px-4 justify-between">
         {/* Logo */}
         <div className="w-40 lg:mr-9">
@@ -43,7 +43,7 @@ export const Navbar = () => {
       </div>
               
         {/* Menú de navegación */}
-      <div className="flex items-center py-2">
+      <div className="flex items-center py-2 border-b">
         <NavigationComponent />
       </div>
     </nav>

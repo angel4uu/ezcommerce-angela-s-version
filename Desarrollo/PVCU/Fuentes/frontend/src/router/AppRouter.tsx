@@ -25,7 +25,7 @@ const routes = createBrowserRouter([
     children: [
       {
         // path: "/:userId/main",
-        path: "/main",
+        path: "/",
         element: <MainPage />,
         // loader:
       },
