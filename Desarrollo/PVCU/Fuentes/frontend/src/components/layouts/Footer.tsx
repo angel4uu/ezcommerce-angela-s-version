@@ -8,12 +8,14 @@ export const Footer = () => {
         {/* Logo - descripción e iconos */}
         <div className="flex flex-col mr-2 space-y-4 mb-4 sm:flex-row lg:w-[400px] lg:flex-col lg:mb-0">
           <div className="flex flex-col space-x-2">
-            <img
-              src="src/assets/Ezcommerce-Footer.png"
-              alt="logo"
-              width={180}
-              height={88}
-            />
+            <Link to='/'>
+              <img
+                src="src/assets/Ezcommerce-Footer.png"
+                alt="logo"
+                width={180}
+                height={88}
+              />
+            </Link>
             <p className="text-sm md:text-lg lg:text-sm">
               Una tienda virtual creada para conectar y apoyar a universitarios,
               donde cada compra y venta fortalece nuestra comunidad.

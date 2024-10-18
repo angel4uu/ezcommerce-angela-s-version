@@ -1,15 +1,15 @@
-import { Bell, Heart, Search, ShoppingCart, User } from "lucide-react";
+import { Bell, Heart, Search, ShoppingCart} from "lucide-react";
 import { NavLink, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MenuFaculties } from "./MenuFaculties";
+import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 
 const icons = [
   { component: <Bell size={28} className="text-cyan-800" />, link: "/notifications" },
   { component: <Heart size={28} className="text-cyan-800" />, link: "/favorites" },
   { component: <ShoppingCart size={28} className="text-cyan-800" />, link: "/shopping-cart" },
-  { component: <User size={28} className="text-cyan-800" />, link: "/profile-buyer" },
 ];
 
 export const Navbar = () => {
@@ -18,7 +18,7 @@ export const Navbar = () => {
       <div className="flex flex-wrap items-center py-4 px-4 justify-between">
         {/* Logo */}
         <div className="w-40 lg:mr-9">
-          <Link to="/main">
+          <Link to="/">
             <img src="/src/assets/Ezcommerce-Logo.png" alt="Logo" className="w-full" />
           </Link>
         </div>
@@ -39,6 +39,7 @@ export const Navbar = () => {
               <NavLink to={icon.link}>{icon.component}</NavLink>
             </Button>
           ))}
+            <MenuAccount />
         </div>
       </div>
               
