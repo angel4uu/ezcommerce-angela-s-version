@@ -1,13 +1,13 @@
 import { Helmet } from 'react-helmet';
 
-export const RegisterPage = () => {
+export const ProductPage = () => {
   return (
     <>
       <Helmet>
-        <title>Registrarse</title>
+        <title>Nombre producto</title>
       </Helmet>
 
-      <div>RegisterPage</div>
+      <div>ProductPage</div>
     </>
   )
 }

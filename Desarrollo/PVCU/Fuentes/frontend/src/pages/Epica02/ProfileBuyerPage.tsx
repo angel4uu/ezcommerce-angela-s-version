@@ -1,7 +1,13 @@
-
+import { Helmet } from 'react-helmet';
 
 export const ProfileBuyerPage = () => {
   return (
-    <div>ProfileBuyerPage</div>
+    <>
+      <Helmet>
+        <title>Mi información</title>
+      </Helmet>
+
+      <div>ProfileBuyerPage</div>
+    </>
   )
 }
