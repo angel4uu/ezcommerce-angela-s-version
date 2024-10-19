@@ -1,7 +1,14 @@
-
+import { Helmet } from 'react-helmet';
 
 export const LoginPage = () => {
   return (
-    <div>LoginPage</div>
+    <>
+      <Helmet>
+        <title>Login</title>
+      </Helmet>
+      
+      <div>LoginPage</div>
+    </>
+    
   )
 }

@@ -1,9 +1,15 @@
-
+import { Helmet } from 'react-helmet';
 
 export const MainPage = () => {
   return (
-    <div className="h-[400px]">
+    <>
+      <Helmet>
+        <title>Ezcommerce</title>
+      </Helmet>
+      
+      <div className="h-[400px]">
 
-    </div>
+      </div>
+    </>
   )
 }

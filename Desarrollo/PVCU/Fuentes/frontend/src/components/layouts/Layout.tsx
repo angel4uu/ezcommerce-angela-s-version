@@ -2,7 +2,7 @@ import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { Outlet } from "react-router-dom";
 
-export const Layaout = () => {
+export const Layout = () => {
   return (
     <div>
         <Navbar/>

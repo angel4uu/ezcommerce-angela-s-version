@@ -1,13 +1,13 @@
 import { Helmet } from 'react-helmet';
 
-export const RegisterPage = () => {
+export const FavouritesPage = () => {
   return (
     <>
       <Helmet>
-        <title>Registrarse</title>
+        <title>Favoritos</title>
       </Helmet>
 
-      <div>RegisterPage</div>
+      <div>FavouritesPage</div>
     </>
   )
 }

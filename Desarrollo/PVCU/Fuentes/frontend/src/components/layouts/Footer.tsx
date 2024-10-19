@@ -10,7 +10,7 @@ export const Footer = () => {
           <div className="flex flex-col space-x-2">
             <Link to='/'>
               <img
-                src="src/assets/Ezcommerce-Footer.png"
+                src="/Ezcommerce-logo-2.png"
                 alt="logo"
                 width={180}
                 height={88}
