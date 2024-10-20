@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#363636] text-gray-300 px-4 sm:px-6 md:px-16 lg:px-32 py-6">
+    <footer className="bg-terciaryLight text-terciaryDark sm:px-6 md:px-16 lg:px-32 py-6">
       <div className="flex flex-col lg:flex-row md:justify-between">
         {/* Logo - descripción e iconos */}
         <div className="flex flex-col mr-2 space-y-4 mb-4 sm:flex-row lg:w-[400px] lg:flex-col lg:mb-0">
@@ -43,7 +43,7 @@ export const Footer = () => {
 
         {/* Compañia */}
         <div className="flex flex-col mb-6 lg:mb-0 lg:mr-2">
-          <h3 className="text-lg font-semibold">Compañia</h3>
+          <h3 className="text-lg font-semibold text-primaryLight">Compañia</h3>
           <hr className="my-3" />
           <ul className="space-y-2 text-sm">
             <li>

@@ -34,7 +34,7 @@ export const MenuAccount = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='icon'>
-            <User size={28} className="text-cyan-800" />
+            <User size={28} className="text-secondaryLight" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="p-3">

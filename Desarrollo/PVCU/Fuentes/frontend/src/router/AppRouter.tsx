@@ -4,7 +4,15 @@ import { createBrowserRouter } from "react-router-dom";
 import { LoginPage, RegisterPage } from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
 import { MainPage, SearchPage } from "../pages/Epica03";
-import { ProductsManagementPage, MyPublishedProductsPage, PublishProductPage, EditProductPage, ShoppingCartPage, FavouritesPage, ProductPage } from "../pages/Epica04";
+import {
+  ProductsManagementPage,
+  MyPublishedProductsPage,
+  PublishProductPage,
+  EditProductPage,
+  ShoppingCartPage,
+  FavouritesPage,
+  ProductPage,
+} from "../pages/Epica04";
 
 import { Layout } from "../components/layouts/Layout";
 
@@ -82,7 +90,7 @@ const routes = createBrowserRouter([
         path: "/shopping-cart",
         element: <ShoppingCartPage />,
         // loader:
-      }
+      },
     ],
   },
 ]);

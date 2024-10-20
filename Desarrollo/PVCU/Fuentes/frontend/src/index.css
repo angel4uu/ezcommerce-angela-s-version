@@ -64,3 +64,9 @@
     @apply bg-background text-foreground;
   }
 }
+/*Base styles*/
+@layer base {
+  body {
+    @apply font-sans text-terciaryLight;
+  }
+}
