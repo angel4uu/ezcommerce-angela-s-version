@@ -13,6 +13,15 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+				//Modo claro
+				primaryLight:'rgb(255,255,255)',//blanco (fondo)
+				secondaryLight:'rgb(0,54,105)',//azul
+				terciaryLight:'rgb(54,54,54)',//gris oscuro (fuente)  
+				//Modo oscuro
+				primaryDark:'rgb(31,34,37)',//negro - gris oscuro (fondo)
+				secondaryDark:'rgb(242,226,210)',//crema
+				terciaryDark:'rgb(247,248,250)',//gris claro (fuente)
+				//
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -75,7 +84,10 @@ export default {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  		},
+			fontFamily: {
+        sans: ['DM Sans', 'system-ui', 'sans-serif'], 
+      }
   	}
   },
   plugins: [require("tailwindcss-animate")],

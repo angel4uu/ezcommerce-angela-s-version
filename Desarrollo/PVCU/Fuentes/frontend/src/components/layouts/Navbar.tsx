@@ -7,9 +7,9 @@ import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 
 const icons = [
-  { component: <Bell size={28} className="text-cyan-800" />, link: "/notifications" },
-  { component: <Heart size={28} className="text-cyan-800" />, link: "/favorites" },
-  { component: <ShoppingCart size={28} className="text-cyan-800" />, link: "/shopping-cart" },
+  { component: <Bell size={28} className="text-secondaryLight" />, link: "/" },
+  { component: <Heart size={28} className="text-secondaryLight" />, link: "/favourites" },
+  { component: <ShoppingCart size={28} className="text-secondaryLight" />, link: "/shopping-cart" },
 ];
 
 export const Navbar = () => {
@@ -28,7 +28,7 @@ export const Navbar = () => {
           <MenuFaculties />
           <div className="relative w-full">
             <Input className="pr-10" placeholder="Buscar productos" type="search" />
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-terciaryLight" size={20} />
           </div>
         </div>
 
