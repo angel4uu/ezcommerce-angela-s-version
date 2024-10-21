@@ -40,11 +40,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # Copy the application code.
 COPY . /app
 
-RUN echo "POSTGRES_DB=$DB_HOST"
-
-# Hacer las migraciones
-RUN python --version
-
 # Switch to the non-privileged user to run the application.
 USER appuser
 
