@@ -19,7 +19,7 @@ export const Navbar = () => {
         {/* Logo */}
         <div className="w-40 lg:mr-9">
           <Link to="/">
-            <img src="Ezcommerce-logo.png" alt="Logo" className="w-full" />
+            <img src="Ezcommerce-logo-light.png" alt="Logo" className="w-full" />
           </Link>
         </div>
 

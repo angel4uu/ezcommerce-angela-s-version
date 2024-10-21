@@ -67,6 +67,6 @@
 /*Base styles*/
 @layer base {
   body {
-    @apply font-sans text-terciaryLight;
+    @apply font-sans  font-medium text-terciaryLight;
   }
 }
