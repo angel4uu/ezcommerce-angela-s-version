@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, CirclePlus,  } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
+import { CardPublishedEdit } from "../../components/Epica04/CardPublishedEdit";
+
 export const MyPublishedProductsPage = () => {
   return (
     <>
@@ -22,6 +24,13 @@ export const MyPublishedProductsPage = () => {
             <CirclePlus className='h-4 w-4 inline-block mr-4 text-secondaryLight bg-white rounded-lg' />
             <Link to='/publish-product'>Publicar producto</Link>
           </Button>
+        </div>
+        <div className='flex flex-wrap items-center justify-center gap-11 p-3'>
+          {
+            Array.from({ length: 15 }).map((_, index) => (
+              <CardPublishedEdit key={index} />
+            ))
+          }
         </div>
       </div>
     </>
