@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router';
+import { SellersCard } from '../../components/carousels';
 
 export const MainPage = () => {
 
@@ -24,7 +25,12 @@ export const MainPage = () => {
 
         </div>
         <div>
-
+            <div>
+              <h2 className='text-2xl font-black mb-2 text-terciaryLight dark:text-terciaryDark '>Conoce a nuestro vendedores destacados</h2>
+            </div>
+            <div>
+              <SellersCard id='21' name='Pedro' imageAlt='da' imageSrc='../../assets/persona_computadora.png' description='este es un texto de prueba' />
+            </div>
         </div>
         <div className='flex flex-col my-8'>
           <div>
