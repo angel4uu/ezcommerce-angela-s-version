@@ -2,6 +2,8 @@ import { Star } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
+import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct";
+
 export const CardPublishedEdit = () => {
   return (
     <Card className="w-52 p-3 overflow-hidden">
@@ -24,7 +26,7 @@ export const CardPublishedEdit = () => {
       </CardContent>
       <CardFooter className="grid gap-3 p-0">
         <Button variant="edit" className="w-full rounded-full">Editar</Button>
-        <Button variant="delete" className="w-full rounded-full">Eliminar</Button>
+        <ModalDeleteProduct />
       </CardFooter>
     </Card>
   )
