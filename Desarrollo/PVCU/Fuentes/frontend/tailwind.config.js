@@ -16,6 +16,7 @@ export default {
 				//Modo claro
 				primaryLight:'rgb(255,255,255)',//blanco (fondo)
 				secondaryLight:'rgb(0,54,105)',//azul
+				secondaryLightHovered: '#033c70',//azul clarito
 				terciaryLight:'rgb(54,54,54)',//gris oscuro (fuente)  
 				//Modo oscuro
 				primaryDark:'rgb(31,34,37)',//negro - gris oscuro (fondo)
