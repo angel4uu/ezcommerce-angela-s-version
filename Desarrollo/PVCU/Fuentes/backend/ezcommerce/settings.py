@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'epica1'
+    'epica1',
+    'epica2',
 ]
 
 MIDDLEWARE = [
