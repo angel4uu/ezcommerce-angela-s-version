@@ -6,7 +6,7 @@ import json
 
 @receiver(post_migrate)
 def create_facultades(sender, **kwargs):
-    if sender.name == 'user':
+    if sender.name == 'epica1':
         facultades = [
             {'codigo': '01', 'nombre': 'Facultad de Medicina'},
             {'codigo': '02', 'nombre': 'Facultad de Derecho y Ciencias Políticas'},
