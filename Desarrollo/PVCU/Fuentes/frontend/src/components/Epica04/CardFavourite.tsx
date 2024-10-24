@@ -2,7 +2,7 @@ import { Star, Heart } from "lucide-react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-export const CardFavorite = () => {
+export const CardFavourite = () => {
   return (
     <Card className="w-52 p-3 overflow-hidden relative">
       <CardContent className="p-0">

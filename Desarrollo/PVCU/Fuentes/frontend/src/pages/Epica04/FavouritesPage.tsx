@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { CardFavorite } from "../../components/Epica04/CardFavorite";
+import { CardFavourite } from "../../components/Epica04/CardFavourite";
 import { ChevronLeft } from 'lucide-react';
 
 export const FavouritesPage = () => {
@@ -28,7 +28,7 @@ export const FavouritesPage = () => {
         <div className='flex flex-wrap items-center justify-center gap-11 p-3'>
           {
             Array.from({ length: 6 }).map((_, index) => (
-              <CardFavorite key={index} />
+              <CardFavourite key={index} />
             ))
           }
         </div>
