@@ -8,13 +8,13 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, attrs):
-        if not attrs.get('is_staff', False):
-            if not attrs.get('escuela'):
-                raise serializers.ValidationError({"escuela": "Escuela es obligatorio para usuarios no staff."})
+        if self.instance is None:
+            if not attrs.get('is_staff', False):
+                if not attrs.get('escuela'):
+                    raise serializers.ValidationError({"escuela": "Escuela es obligatorio para usuarios no staff."})
 
-
-        if attrs.get('code', None) is None:
-            raise serializers.ValidationError({"code": "Código es obligatorio."})
+            if attrs.get('code', None) is None:
+                raise serializers.ValidationError({"code": "Código es obligatorio."})
 
         return attrs
 
