@@ -16,7 +16,7 @@ export const ModalDeleteProduct = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="delete" className="w-full rounded-full">Eliminar</Button>
+        <Button variant="delete">Eliminar</Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-[400px]">
         <AlertDialogHeader>

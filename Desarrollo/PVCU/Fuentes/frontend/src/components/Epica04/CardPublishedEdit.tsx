@@ -20,12 +20,12 @@ export const CardPublishedEdit = () => {
                 <Star className="w-3 h-3 fill-white" />
                 <span className="text-xs font-sans ml-1">4.8</span>
             </div>
-            <h3 className="font-sans font-bold text-secondaryLight text-sm mb-1">Audifonos Sony</h3>
+            <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">Audifonos Sony</h3>
             <p className="text-sm font-bold text-terciaryLight">S/ 34.00</p>
         </div>
       </CardContent>
       <CardFooter className="grid gap-3 p-0">
-        <Button variant="edit" className="w-full rounded-full">Editar</Button>
+        <Button variant="edit">Editar</Button>
         <ModalDeleteProduct />
       </CardFooter>
     </Card>

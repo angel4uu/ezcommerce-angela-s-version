@@ -14,7 +14,7 @@ export const MyPublishedProductsPage = () => {
       </Helmet>
 
       <div className='my-3 py-2 px-12 space-y-4'>
-        <div className='text-4xl font-sans'>
+        <div className='text-4xl font-sans items-center'>
           <ChevronLeft className="h-6 w-6 mr-4 inline-block" />
           <Link to='/products-management'>Productos publicados</Link>
         </div>
