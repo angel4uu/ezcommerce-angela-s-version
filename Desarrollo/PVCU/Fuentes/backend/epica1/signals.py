@@ -2,7 +2,6 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.conf import settings
 from .models import EscuelaProfesional, Facultad, User
-import json
 
 @receiver(post_migrate)
 def create_facultades(sender, **kwargs):
@@ -40,7 +39,7 @@ def create_facultades(sender, **kwargs):
         if not User.objects.filter(username='admin').exists():
             User.objects.create_superuser(username='admin',
                                email='admin@example.com',
-                               password='adminpassword',
+                               password='admin151',
                                code='21200277',
                                birth_date='1990-01-01',
                                escuela=escuela  # Ajusta según sea necesario

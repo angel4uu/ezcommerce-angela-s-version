@@ -16,16 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from epica1.urls import urlpatterns as epica1_urls
 from rest_framework_simplejwt import views as jwt_views
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
-class Protected(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response({"content": "This view is protected"})
 
 
 urlpatterns = [
@@ -33,6 +26,6 @@ urlpatterns = [
     path('api/', include([
         path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
         path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-        path('protected/', Protected.as_view(), name='protected')
-    ]))
+    ])),
+    path('api/', include(epica1_urls))
 ]
