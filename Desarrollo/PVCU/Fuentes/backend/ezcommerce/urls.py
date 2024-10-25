@@ -27,5 +27,6 @@ urlpatterns = [
         path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     ])),
     path('api/', include('epica1.urls')),
-    path('api/', include('epica2.urls'))
+    path('api/', include('epica2.urls')),
+    path('api/', include('epica4.urls')),
 ]
