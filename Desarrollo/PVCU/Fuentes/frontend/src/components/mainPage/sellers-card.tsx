@@ -42,7 +42,7 @@ export const SellersCard = (
                             </p>
                         </div>
                         <div className='justify-items-center pt-3' >
-                            <button className='rounded-full bg-[#B7B7B7] opacity-45 p-2'
+                            <button className='rounded-full bg-[#B7B7B7] bg-opacity-45 p-2'
                                 onClick={() => goToProfile()}
                             >
                                 <img className='h-7 w-7' src={rightArrow} />

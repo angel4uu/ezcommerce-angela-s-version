@@ -7,8 +7,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { SellersCard } from '../../components/carousels';
-import { distinguishedSellers } from '../../mocks/mainPage-mocks';
+import { CategoriesCard, SellersCard } from '../../components/mainPage';
+import { categories, distinguishedSellers } from '../../mocks/mainPage-mocks';
 
 
 export const MainPage = () => {
@@ -23,15 +23,32 @@ export const MainPage = () => {
         <title>Ezcommerce</title>
       </Helmet>
       
-      <div className="container w-full mx-auto min-h-[400px]">
+      <div className="container  w-full mx-auto min-h-[400px]">
         <div>
 
         </div>
         <div>
 
         </div>
-        <div>
+        
+        <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>
+            <div className=' mb-5 '>
+              <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Elige tu categoría favorita</h2>
+            </div>
+            <div className='grid grid-cols-4 grid-rows-2 gap-4 grid-flow-col px-24'>
+            {categories.map((category, index) => (
+              <CategoriesCard
+                id={category.id}
+                key={index}
+                image={category.image}
+                title={category.title}
+                description={category.description}
+                colSpan={category.colSpan}
+                rowSpan={category.rowSpan}
+              />
+            ))}
 
+            </div>
         </div>
         <div className='mx-auto mb-10'>
             <div className='mt-8 mb-5'>
@@ -43,7 +60,7 @@ export const MainPage = () => {
                         {
                           distinguishedSellers.map((seller) => (
                             <>
-                            <CarouselItem className='basis-1/5'>
+                            <CarouselItem className='basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/5'>
                                 <SellersCard 
                                     id={seller.id}
                                     name={seller.name}

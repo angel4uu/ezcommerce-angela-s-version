@@ -1,4 +1,4 @@
-import { ISellersCardProps } from "../components/carousels/sellers-card";
+import { ISellersCardProps } from "../components/mainPage/sellers-card";
 import TestImage from '../assets/persona_computadora.png'
 
 export const distinguishedSellers: ISellersCardProps[] = [
@@ -59,3 +59,37 @@ export const distinguishedSellers: ISellersCardProps[] = [
         imageSrc: TestImage
     }
 ]
+
+export const categories = [
+    {   
+      id:'Electrónica 1',  
+      image: TestImage,
+      title: 'Electrónica 1',
+      description: 'Aquí va un texto de descripción para el producto 1.',
+      colSpan: 1,
+      rowSpan: 2,
+    },
+    { id: 'Electrónica 2',  
+      image: TestImage,
+      title: 'Electrónica 2',
+      description: 'Aquí va un texto de descripción para el producto 2.',
+      colSpan: 2,
+      rowSpan: 1,
+    },
+    { 
+      id:'elec3',    
+      image: TestImage,
+      title: 'Electrónica 3',
+      description: 'Aquí va un texto de descripción para el producto 3.',
+      colSpan: 2,
+      rowSpan: 1,
+    },
+    {
+      id:'dads',  
+      image: TestImage,
+      title: 'Electrónica 4',
+      description: 'Aquí va un texto de descripción para el producto 4.',
+      colSpan: 1,
+      rowSpan: 2,
+    },
+  ];
