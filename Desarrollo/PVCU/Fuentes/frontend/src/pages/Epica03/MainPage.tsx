@@ -33,13 +33,13 @@ export const MainPage = () => {
         <div>
 
         </div>
-        <div className='mx-auto mb-8'>
+        <div className='mx-auto mb-10'>
             <div className='mt-8 mb-5'>
               <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Conoce a nuestro vendedores destacados</h2>
             </div>
-            <div className='mt-3 '>
-                <Carousel>
-                    <CarouselContent>
+            <div className='mt-3 relative'>
+                <Carousel >
+                    <CarouselContent className='mb-24 mx-2'>
                         {
                           distinguishedSellers.map((seller) => (
                             <>
@@ -56,7 +56,12 @@ export const MainPage = () => {
                           ))
                         }
                     </CarouselContent>
+                    <div className="absolute bottom-8  left-1/2 transform -translate-x-1/3 flex space-x-10 ">
+                        <CarouselPrevious className="bg-[#B7B7B7]" />
+                        <CarouselNext className="bg-[#B7B7B7]  " />
+                    </div>
                 </Carousel>
+
             </div>
         </div>
         <div className='flex flex-col my-8'>

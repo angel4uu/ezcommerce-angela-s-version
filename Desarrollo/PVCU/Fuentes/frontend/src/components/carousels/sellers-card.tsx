@@ -22,7 +22,7 @@ export const SellersCard = (
 
         return(
             <>
-                <div className="flex flex-col bg-white shadow-xl rounded-lg max-w-[280px] h-[430px] p-4">
+                <div className="flex flex-col bg-white shadow-lg rounded-lg max-w-[280px] h-[430px] p-4">
                     <div className="rounded-lg overflow-hidden">
                         <img
                         src={imageSrc}
