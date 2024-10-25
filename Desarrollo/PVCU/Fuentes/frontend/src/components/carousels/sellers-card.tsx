@@ -22,24 +22,27 @@ export const SellersCard = (
 
         return(
             <>
-                <div className="flex flex-col bg-white shadow-xl rounded-lg max-w-[260px] min-h-[400px] p-4">
-                    <div className="">
+                <div className="flex flex-col bg-white shadow-xl rounded-lg max-w-[280px] h-[430px] p-4">
+                    <div className="rounded-lg overflow-hidden">
                         <img
                         src={imageSrc}
                         alt={imageAlt}
+                        className='w-full h-[200px] object-cover'
                         />
                     </div>
-                    <div className="">
-                        <h3 className='text-xl font-bold text-terciaryLight dark:text-terciaryDark'>
+                    <div className="mt-4">
+                        <h3 className='text-xl truncate font-bold text-terciaryLight dark:text-terciaryDark'>
                             {name}
                         </h3>
                     </div>
-                    <div className="flex">
-                        <div className="">
-                            <p>{description}</p>
+                    <div className="flex mt-1">
+                        <div className='w-4/5'>
+                            <p className='line-clamp-6'>
+                                {description}
+                            </p>
                         </div>
-                        <div className="">
-                            <button className='rounded-full bg-[#B7B7B7] opacity-45'
+                        <div className='justify-items-center pt-3' >
+                            <button className='rounded-full bg-[#B7B7B7] opacity-45 p-2'
                                 onClick={() => goToProfile()}
                             >
                                 <img className='h-7 w-7' src={rightArrow} />

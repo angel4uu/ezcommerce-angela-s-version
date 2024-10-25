@@ -1,6 +1,15 @@
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 import { SellersCard } from '../../components/carousels';
+import { distinguishedSellers } from '../../mocks/mainPage-mocks';
+
 
 export const MainPage = () => {
 
@@ -24,12 +33,30 @@ export const MainPage = () => {
         <div>
 
         </div>
-        <div>
-            <div>
-              <h2 className='text-2xl font-black mb-2 text-terciaryLight dark:text-terciaryDark '>Conoce a nuestro vendedores destacados</h2>
+        <div className='mx-auto mb-8'>
+            <div className='mt-8 mb-5'>
+              <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Conoce a nuestro vendedores destacados</h2>
             </div>
-            <div>
-              <SellersCard id='21' name='Pedro' imageAlt='da' imageSrc='../../assets/persona_computadora.png' description='este es un texto de prueba' />
+            <div className='mt-3 '>
+                <Carousel>
+                    <CarouselContent>
+                        {
+                          distinguishedSellers.map((seller) => (
+                            <>
+                            <CarouselItem className='basis-1/5'>
+                                <SellersCard 
+                                    id={seller.id}
+                                    name={seller.name}
+                                    description={seller.description}
+                                    imageAlt={seller.imageAlt}
+                                    imageSrc={seller.imageSrc}                                
+                                />
+                              </CarouselItem>
+                            </>
+                          ))
+                        }
+                    </CarouselContent>
+                </Carousel>
             </div>
         </div>
         <div className='flex flex-col my-8'>
