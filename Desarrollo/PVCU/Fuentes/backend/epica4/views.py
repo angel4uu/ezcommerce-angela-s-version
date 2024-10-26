@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
+from rest_framework.views import Response
 from .models import Catalogo, Articulo
 from .serializers import CatalogoSerializer, ArticuloSerializer
 
@@ -51,7 +52,8 @@ class ArticuloListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        catalogo_id = self.kwargs['catalogo']
+        catalogo_id = self.kwargs['pk']
+
         if not catalogo_id:
             raise ValueError('No se ha proporcionado un catálogo.')
         # Asegúrate de que el catálogo pertenece al usuario autenticado
@@ -68,7 +70,7 @@ class ArticuloDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return Articulo.objects.get(id=self.kwargs['pk'], usuario_id=self.request.user)
+        return Articulo.objects.get(id=self.kwargs['pk'])
 
     def perform_update(self, serializer):
         serializer.save(usuario_id=self.request.user)
