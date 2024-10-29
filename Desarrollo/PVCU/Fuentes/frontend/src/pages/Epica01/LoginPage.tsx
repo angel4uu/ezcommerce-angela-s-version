@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import personaComputadora from "../../assets/persona_computadora.png";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,13 +14,17 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/context/AuthProvider";
+import { useState } from "react";
+import { Toaster} from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const formSchema = z.object({
-  correo: z
+  username: z
     .string({ message: "Email inválido" })
     .email({ message: "Email inválido" })
     .max(50, { message: "Email debe tener como máximo 50 carácteres" }),
-  contrasena: z
+  password: z
     .string({ message: "Contraseña inválida" })
     .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
 });
@@ -31,14 +35,27 @@ export const LoginPage = () => {
   const form = useForm<FormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      correo: "",
-      contrasena: "",
+      username: "",
+      password: "",
     },
   });
 
-  function onSubmit(values: FormFields) {
-    console.log(values);
+  const {login} =useAuth();
+  const [redirect, setRedirect] = useState(false);
+
+  async function onSubmit(values: FormFields) {
+    try{
+      const { username, password } = values;
+      await login(username, password);
+      setRedirect(true);
+    }
+    catch(error){
+      toast.error("Credenciales equivocadas");
+    }
+    
   }
+  
+  if (redirect) return <Navigate to="/" />;
 
   return (
     <>
@@ -73,7 +90,7 @@ export const LoginPage = () => {
                     className="flex flex-col h-full justify-around"
                   >
                     <FormField
-                      name="correo"
+                      name="username"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -89,7 +106,7 @@ export const LoginPage = () => {
                       )}
                     />
                     <FormField
-                      name="contrasena"
+                      name="password"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -132,6 +149,7 @@ export const LoginPage = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </>
   );
 };

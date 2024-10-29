@@ -13,8 +13,8 @@ import {
   FavouritesPage,
   ProductPage,
 } from "../pages/Epica04";
-
 import { Layout } from "../components/layouts/Layout";
+import {PrivateRoute} from "../components/Epica1/PrivateRoute";
 
 const routes = createBrowserRouter([
   {
@@ -27,68 +27,59 @@ const routes = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    // path: "/:userId",
     element: <Layout />,
     // loader:
     children: [
       {
-        // path: "/:userId/main",
         path: "/",
         element: <MainPage />,
         // loader:
       },
       {
-        // path: "/:userId/search",
         path: "/search",
         element: <SearchPage />,
         // loader:
       },
       {
-        // path: "/:userId/profile-buyer",
         path: "/profile-buyer",
-        element: <ProfileBuyerPage />,
+        element: <PrivateRoute><ProfileBuyerPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/product/productId",
+        // path: "/product/productId",
         path: "/product",
         element: <ProductPage />,
         // loader:
       },
       {
-        // path: "/:userId/products-management",
         path: "/products-management",
-        element: <ProductsManagementPage />,
+        element: <PrivateRoute><ProductsManagementPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/my-published-products",
         path: "/my-published-products",
-        element: <MyPublishedProductsPage />,
+        element: <PrivateRoute><MyPublishedProductsPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/publish-product",
         path: "/publish-product",
-        element: <PublishProductPage />,
+        element: <PrivateRoute><PublishProductPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/edit-product/productId",
+        // path: "/edit-product/productId",
         path: "/edit-product",
-        element: <EditProductPage />,
+        element: <PrivateRoute><EditProductPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/favourites",
         path: "/favourites",
-        element: <FavouritesPage />,
+        element: <PrivateRoute><FavouritesPage /></PrivateRoute>,
         // loader:
       },
       {
-        // path: "/:userId/shopping-cart",
         path: "/shopping-cart",
-        element: <ShoppingCartPage />,
+        element: <PrivateRoute><ShoppingCartPage /></PrivateRoute>,
         // loader:
       },
     ],
