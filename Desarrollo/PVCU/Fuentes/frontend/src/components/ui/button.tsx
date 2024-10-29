@@ -21,6 +21,7 @@ const buttonVariants = cva(
         link: "text-base hover:text-blue-600 hover:bg-slate-200",
         edit: "border-2 w-full rounded-full border-secondaryLight text-secondaryLight hover:bg-blue-900 hover:text-white",
         delete: "border-2 w-full rounded-full border-destructive text-destructive hover:bg-destructive hover:text-white",
+        counter: "border-2 w-full border-secondaryLight text-secondaryLight hover:bg-blue-900 hover:text-white",
       },
       size: {
         default: "h-9 px-4 py-2",
