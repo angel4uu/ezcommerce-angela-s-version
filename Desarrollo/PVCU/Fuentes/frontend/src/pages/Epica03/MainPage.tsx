@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/AuthProvider';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router';
 import {
@@ -13,9 +14,14 @@ import { categories, distinguishedSellers } from '../../mocks/mainPage-mocks';
 
 export const MainPage = () => {
 
+
   const navigate = useNavigate();
   const goToLogin = () => navigate('/login')
 
+
+
+  const {authState}=useAuth();
+  console.log("User id:",authState.userId);
 
   return (
     <>

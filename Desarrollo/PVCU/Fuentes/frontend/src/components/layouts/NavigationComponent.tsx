@@ -11,7 +11,7 @@ import { SheetComponent } from "./SheetComponent";
 import { Button } from "../ui/button";
 
 const navigationItems = [
-    { item: 'Venta', link: '#' },
+    { item: 'Venta', link: '/products-management' },
     { item: 'Vendedores estudiantiles', link: '#' },
     { item: 'Chat', link: '#' },
 ];
