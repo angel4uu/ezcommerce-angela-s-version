@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { CategoriesCard, SellersCard } from '../../components/cards';
-import { categories, distinguishedSellers } from '../../mocks/mainPage-mocks';
+import { categories, distinguishedSellers, mockProducts, images } from '../../mocks/mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
 
 
@@ -29,16 +29,51 @@ export const MainPage = () => {
         <title>Ezcommerce</title>
       </Helmet>
       
-      <div className="container  w-full mx-auto min-h-[400px]">
-        <div>
-            <Carousel>
+      <div className="container w-full mx-auto">
+        <div className='my-8'>
+            <Carousel opts={{
+              loop:true
+            }}>
                 <CarouselContent>
-
+                  {
+                    images.map((i) => (
+                      <CarouselItem>
+                         <div className="overflow-hidden rounded-lg shadow-lg max-h-[500px]">
+                          <img
+                            src={i.src}
+                            alt={i.alt}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))
+                  }
                 </CarouselContent>
             </Carousel>
         </div>
-        <div>
-          <ProductCard id='cardSony' name='Audífonos Sony' price={35.00} qualification={4.5} isFavourite={false} img='image-card.jpg' brand='Marco Polo del año' />
+        <div className=' justify-center mx-auto max-w-[1350px] px-8 '>
+        <Carousel opts={{
+          align:'start',
+          loop:true,
+          dragFree:true
+        }} >
+                    <CarouselContent className='mb-12 mt-4 mx-auto px-20'>
+                        {
+                          mockProducts.map((p) => (
+                            <>
+                            <CarouselItem className='basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4'>
+                                <ProductCard id={p.id} name={p.name} brand={p.brand} isFavourite={p.isFavourite} price={p.price} qualification={p.qualification} img={p.img}  />
+                              </CarouselItem>
+                            </>
+                          ))
+                        }
+                    </CarouselContent>
+                    <div className='hidden md:block '>
+                        <CarouselPrevious className="bg-white w-10 h-10 border-0 shadow-md shadow-[#767676]" />
+                        <CarouselNext className="bg-white w-10 h-10 border-0 shadow-md shadow-[#767676]" />
+                    </div> 
+
+                </Carousel>
         </div>
         
         <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>
@@ -65,7 +100,10 @@ export const MainPage = () => {
               <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Conoce a nuestro vendedores destacados</h2>
             </div>
             <div className='mt-3 relative'>
-                <Carousel >
+                <Carousel opts={{
+                  loop:true,
+                  dragFree:true
+                }} >
                     <CarouselContent className='mb-24 mx-2'>
                         {
                           distinguishedSellers.map((seller) => (

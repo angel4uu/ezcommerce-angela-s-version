@@ -1,5 +1,8 @@
 import { ISellersCardProps } from "../components/cards/sellers-card";
 import TestImage from '../assets/persona_computadora.png'
+import TestProduct from '/image-card.jpg'
+import BannerPrueba from '../assets/banner_prueba.webp'
+import { IProductCardProps } from "../components/cards/product-card";
 
 export const distinguishedSellers: ISellersCardProps[] = [
     {
@@ -94,3 +97,96 @@ export const categories = [
     },
   ];
 
+  export const mockProducts: IProductCardProps[] = [
+    {
+        id: "1",
+        name: "Smartphone X",
+        price: 499.99,
+        isFavourite: true,
+        img: TestProduct,
+        brand: "BrandX",
+        qualification: 4.5
+    },
+    {
+        id: "2",
+        name: "Laptop Pro",
+        price: 1299.99,
+        isFavourite: false,
+        img: TestProduct,
+        brand: "TechMaster",
+        qualification: 4.7
+    },
+    {
+        id: "3",
+        name: "Wireless Earbuds",
+        price: 99.99,
+        isFavourite: true,
+        img: TestProduct,
+        brand: "SoundMax",
+        qualification: 4.3
+    },
+    {
+        id: "4",
+        name: "4K TV",
+        price: 799.99,
+        isFavourite: false,
+        img: TestProduct,
+        brand: "UltraVision",
+        qualification: 4.6
+    },
+    {
+        id: "5",
+        name: "Smartwatch Series 5",
+        price: 199.99,
+        isFavourite: true,
+        img: TestProduct,
+        brand: "WearableTech",
+        qualification: 4.2
+    },
+    {
+        id: "6",
+        name: "Gaming Console",
+        price: 499.99,
+        isFavourite: false,
+        img: TestProduct,
+        brand: "PlayMaster",
+        qualification: 4.8
+    },
+    {
+        id: "7",
+        name: "Bluetooth Speaker",
+        price: 49.99,
+        isFavourite: false,
+        img: TestProduct,
+        brand: "SoundWave",
+        qualification: 4.0
+    },
+    {
+        id: "8",
+        name: "Tablet Pro",
+        price: 349.99,
+        isFavourite: true,
+        img: TestProduct,
+        brand: "TabCo",
+        qualification: 4.4
+    }
+];
+
+export const images = [
+    {
+        src: BannerPrueba,
+        alt:'Imagen prueba banner'
+    },
+    {
+        src: BannerPrueba,
+        alt:'Imagen prueba banner'
+    },
+    {
+        src: BannerPrueba,
+        alt:'Imagen prueba banner'
+    },
+    {
+        src: BannerPrueba,
+        alt:'Imagen prueba banner'
+    }
+]
