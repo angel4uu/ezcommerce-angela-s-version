@@ -8,8 +8,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { CategoriesCard, SellersCard } from '../../components/mainPage';
+import { CategoriesCard, SellersCard } from '../../components/cards';
 import { categories, distinguishedSellers } from '../../mocks/mainPage-mocks';
+import { ProductCard } from '../../components/cards/product-card';
+
 
 
 export const MainPage = () => {
@@ -17,8 +19,6 @@ export const MainPage = () => {
 
   const navigate = useNavigate();
   const goToLogin = () => navigate('/login')
-
-
 
   const {authState}=useAuth();
   console.log("User id:",authState.userId);
@@ -31,10 +31,14 @@ export const MainPage = () => {
       
       <div className="container  w-full mx-auto min-h-[400px]">
         <div>
+            <Carousel>
+                <CarouselContent>
 
+                </CarouselContent>
+            </Carousel>
         </div>
         <div>
-
+          <ProductCard id='cardSony' name='Audífonos Sony' price={35.00} qualification={4.5} isFavourite={false} img='image-card.jpg' brand='Marco' />
         </div>
         
         <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>

@@ -1,4 +1,4 @@
-import { ISellersCardProps } from "../components/mainPage/sellers-card";
+import { ISellersCardProps } from "../components/cards/sellers-card";
 import TestImage from '../assets/persona_computadora.png'
 
 export const distinguishedSellers: ISellersCardProps[] = [
@@ -93,3 +93,4 @@ export const categories = [
       rowSpan: 2,
     },
   ];
+
