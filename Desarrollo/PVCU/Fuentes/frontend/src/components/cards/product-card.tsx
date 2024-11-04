@@ -59,12 +59,16 @@ export const ProductCard = ({
         </div>
         <div className="py-3 px-2">
             <div className="flex items-center mb-3">
-                <div className="flex items-center justify-center text-white bg-[#FBC116] rounded-3xl w-[68px] py-1 px-4">
+                <div className="flex items-center justify-center text-white bg-[#FBC116] rounded-3xl max-w-[68px] py-1 px-4">
                     <Star className="w-3 h-3 fill-white" />
                     <span className="text-xs font-sans ml-1">{qualification}</span>
                 </div>
                 {brand ? 
-                    <div className="flex items-center justify-center text-[#4E53EE] bg-[#4E53EE]/20 rounded-3xl w-[68px] text-xs font-sans py-1 px-4 ml-2">{brand}</div>
+                        <div className="flex items-center bg-[#4E53EE]/20 rounded-3xl max-w-[100px] ml-2 py-1 px-4">
+                        <p className="text-[#4E53EE] text-xs font-sans overflow-hidden whitespace-nowrap text-clip">
+                            {brand}
+                        </p>
+                    </div>
                     : null}
             </div>
             <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">{name}</h3>

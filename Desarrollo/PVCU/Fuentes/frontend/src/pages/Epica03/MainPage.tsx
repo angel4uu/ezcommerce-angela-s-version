@@ -38,7 +38,7 @@ export const MainPage = () => {
             </Carousel>
         </div>
         <div>
-          <ProductCard id='cardSony' name='Audífonos Sony' price={35.00} qualification={4.5} isFavourite={false} img='image-card.jpg' brand='Marco' />
+          <ProductCard id='cardSony' name='Audífonos Sony' price={35.00} qualification={4.5} isFavourite={false} img='image-card.jpg' brand='Marco Polo del año' />
         </div>
         
         <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>
