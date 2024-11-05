@@ -4,6 +4,12 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+//data de prueba
+const usuarioData={
+  marcaRegistrada:false,
+  marcaActiva:false,
+}
+
 export const PlansPage = () => {
   const planGratuito = {
     tipo: "gratuito",
@@ -16,6 +22,8 @@ export const PlansPage = () => {
       "Carrito de compras",
       "Favoritos",
     ],
+    marcaActiva:usuarioData.marcaActiva,
+    marcaRegistrada:usuarioData.marcaRegistrada
   };
   const planMarcasMensual = {
     tipo: "marcas",
@@ -33,6 +41,8 @@ export const PlansPage = () => {
       "Sección especial de Marcas",
       "Productos con check de verificación",
     ],
+    marcaActiva:usuarioData.marcaActiva,
+    marcaRegistrada:usuarioData.marcaRegistrada
   };
   const planMarcasSemestral = {
     tipo: "marcas",
@@ -50,6 +60,8 @@ export const PlansPage = () => {
       "Sección especial de Marcas",
       "Productos con check de verificación",
     ],
+    marcaActiva:usuarioData.marcaActiva,
+    marcaRegistrada:usuarioData.marcaRegistrada
   };
 
   const [isChecked, setIsChecked] = useState(false);
@@ -64,13 +76,13 @@ export const PlansPage = () => {
         <title>Planes</title>
       </Helmet>
 
-      <div className=" flex flex-col py-5">
+      <div className=" flex flex-col pt-5 pb-12">
         <h1 className="font-semibold text-4xl mb-5">Planes</h1>
         <p>
           Suscribete a uno de nuestros planes que te brinda acceso a
           funcionaliadaes exlusivas que tranformarán la manera de vender.
         </p>
-        <div className=" flex flex-col text-center pt-5">
+        <div className=" flex flex-col text-center pt-12">
           <h2 className="font-black text-2xl">
             <span>Aquí tienes todos</span>
             <br />

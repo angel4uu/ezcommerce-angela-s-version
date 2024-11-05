@@ -21,7 +21,7 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 
 import { AvatarComponent } from "./AvatarComponent";
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (

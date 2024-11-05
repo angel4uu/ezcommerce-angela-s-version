@@ -4,7 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { LoginPage, RegisterPage } from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
 import { MainPage, SearchPage } from "../pages/Epica03";
-import {PlansPage,PaymentConfirmation,RegisterTrademark} from "../pages/Epica05";
+import {PlansPage,PayPlanPage,PaymentConfirmation,RegisterTrademark} from "../pages/Epica05";
 import {
   ProductsManagementPage,
   MyPublishedProductsPage,
@@ -86,6 +86,10 @@ const routes = createBrowserRouter([
       {
         path: "/plans",
         element: <PrivateRoute><PlansPage /></PrivateRoute>,
+      },
+      {
+        path: "/pay-plan",
+        element: <PrivateRoute><PayPlanPage /></PrivateRoute>,
       },
       {
         path: "/register-trademark",

@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router';
 import {

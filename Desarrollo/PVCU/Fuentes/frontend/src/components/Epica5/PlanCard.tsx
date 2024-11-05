@@ -1,12 +1,15 @@
 import { Button } from "../ui/button";
 import { CircleCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PlanCardProps {
-  tipo: string;
-  duracion: string;
-  precio: number;
-  descripcion: string;
-  beneficios: string[];
+  tipo: string,
+  duracion: string,
+  precio: number,
+  descripcion: string,
+  beneficios: string[],
+  marcaActiva:boolean,
+  marcaRegistrada:boolean
 }
 
 export const PlanCard = ({
@@ -15,7 +18,24 @@ export const PlanCard = ({
   precio,
   descripcion,
   beneficios,
+  marcaActiva,
+  marcaRegistrada
 }: PlanCardProps) => {
+
+  const navigate = useNavigate();
+
+  function handleSeleccionarPlan(){
+    if(tipo=="marcas"&&marcaRegistrada){
+      navigate("/pay-plan");
+    }
+    else if(tipo=="marcas"&&!marcaRegistrada){
+      navigate("/register-trademark");
+    }
+    else{
+      //modal
+    }
+  }
+
   return (
     <div className=" border-secondaryLight border-2 bg-secondaryLightMoreOpacity rounded-2xl text-sm w-1/2 md:w-1/3 p-5 flex flex-col justify-start ">
       <h3 className="font-bold text-xl">Plan {tipo}</h3>
@@ -37,7 +57,10 @@ export const PlanCard = ({
           ))}
         </ul>
       </div>
-      <Button className="bg-secondaryLight hover:bg-secondaryLightHovered text-sm mt-auto rounded-xl">
+      <Button className="bg-secondaryLight hover:bg-secondaryLightHovered text-sm mt-auto rounded-xl"
+              disabled={(!marcaActiva && tipo === "gratuito") || (marcaActiva && tipo === "marcas")}
+              onClick={handleSeleccionarPlan}
+      >
         Seleccionar plan
       </Button>
     </div>

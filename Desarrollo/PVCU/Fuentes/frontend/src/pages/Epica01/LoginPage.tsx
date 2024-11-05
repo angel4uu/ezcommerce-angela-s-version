@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { Toaster} from "@/components/ui/sonner";
 import { toast } from "sonner";
