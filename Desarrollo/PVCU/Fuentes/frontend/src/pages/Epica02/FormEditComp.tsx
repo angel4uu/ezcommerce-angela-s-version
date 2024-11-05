@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface UserData {
   nameStudent: string;
+  lastname: string;
   profilePhoto: string;
   qrCode: string;
   institutionalCode: string;
@@ -35,7 +36,8 @@ export function FormEditComp() {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [userData, setUserData] = useState<UserData>({
-    nameStudent: "Juan Pérez",
+    nameStudent: "Juan Carlos",
+    lastname: "Pérez Morales",
     profilePhoto: "http://example.com/photo.jpg",
     qrCode: "http://example.com/qrcode.jpg",
     institutionalCode: "12345",
@@ -157,23 +159,34 @@ export function FormEditComp() {
         ) : (
           ""
         )}
-        <FormField
-          control={form.control}
-          name="nameStudent"
-          render={({ field }) => (
-            <FormItem className="self-stretch">
-              <FormLabel>Nombres y apellidos</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Nombres y apellidos"
-                  disabled={true}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
+          <FormField
+            control={form.control}
+            name="nameStudent"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Nombres</FormLabel>
+                <FormControl>
+                  <Input placeholder="Nombres" disabled={true} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastname"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Apellidos</FormLabel>
+                <FormControl>
+                  <Input placeholder="Apellidos" disabled={true} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
           <FormField
             control={form.control}
