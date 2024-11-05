@@ -1,4 +1,4 @@
 // Archivo barril para exportaciones
 
 export * from './LoginPage';
-export * from './RegisterPage';
+export * from './RegisterUserPage';

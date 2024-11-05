@@ -18,7 +18,7 @@ export const MainPage = () => {
 
 
   const navigate = useNavigate();
-  const goToLogin = () => navigate('/login')
+  const goToTrademark = () => navigate('/plans')
 
   const {authState}=useAuth();
   console.log("User id:",authState.userId);
@@ -137,7 +137,7 @@ export const MainPage = () => {
           </div>
           <div className='mt-8 py-4 mx-auto'>
             <button className='w-[200px] h-[45px] rounded-lg text-lg shadow-xl bg-secondaryLight hover:bg-secondaryLightHovered text-white'
-              onClick={() => goToLogin()}>
+              onClick={() => goToTrademark()}>
               Iniciar
             </button>
           </div>
