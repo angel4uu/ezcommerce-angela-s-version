@@ -4,12 +4,6 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
-//data de prueba
-const usuarioData={
-  marcaRegistrada:false,
-  marcaActiva:false,
-}
-
 export const PlansPage = () => {
   const planGratuito = {
     tipo: "gratuito",
@@ -22,8 +16,6 @@ export const PlansPage = () => {
       "Carrito de compras",
       "Favoritos",
     ],
-    marcaActiva:usuarioData.marcaActiva,
-    marcaRegistrada:usuarioData.marcaRegistrada
   };
   const planMarcasMensual = {
     tipo: "marcas",
@@ -41,8 +33,6 @@ export const PlansPage = () => {
       "Sección especial de Marcas",
       "Productos con check de verificación",
     ],
-    marcaActiva:usuarioData.marcaActiva,
-    marcaRegistrada:usuarioData.marcaRegistrada
   };
   const planMarcasSemestral = {
     tipo: "marcas",
@@ -60,8 +50,6 @@ export const PlansPage = () => {
       "Sección especial de Marcas",
       "Productos con check de verificación",
     ],
-    marcaActiva:usuarioData.marcaActiva,
-    marcaRegistrada:usuarioData.marcaRegistrada
   };
 
   const [isChecked, setIsChecked] = useState(false);

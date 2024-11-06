@@ -1,19 +1,9 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 import {jwtDecode} from "jwt-decode";  
 import axios from "axios";
 import { baseURL } from "../api/api";
+import {AuthState, Tokens, DecodedToken} from "@/types/types";
 
-interface DecodedToken {
-    user_id: number;
-}
-interface Tokens {
-    access: string;
-    refresh: string;
-}
-interface AuthState {
-    accessToken: string | null;
-    userId: number | null;
-}
 interface AuthContextType {
     authState: AuthState;
     login: (username: string, password: string) => Promise<void>;
