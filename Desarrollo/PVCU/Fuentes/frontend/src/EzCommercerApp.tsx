@@ -1,13 +1,16 @@
 import routes from "./router/AppRouter"
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import {AuthProvider} from "./context/AuthProvider";
+import {AuthProvider} from "./context/AuthContext";
+import { TrademarkProvider } from "./context/TrademarkContext";
 
 export const EzCommercerApp = () => {
   return (
     <HelmetProvider>
       <AuthProvider>
-        <RouterProvider router={routes} />
+        <TrademarkProvider>
+          <RouterProvider router={routes} />
+        </TrademarkProvider> 
       </AuthProvider>
     </HelmetProvider>
   )

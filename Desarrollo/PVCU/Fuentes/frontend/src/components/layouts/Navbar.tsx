@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { MenuFaculties } from "./MenuFaculties";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 const icons = [

@@ -1,5 +1,5 @@
 import {ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {storage} from "./firebase";
+import {storage} from "../services/firebase";
 import {v4} from "uuid";
 
 export async function getFileURL(elemFile:File, storageDirec:string) {

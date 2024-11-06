@@ -129,7 +129,7 @@ export const RegisterPage = () => {
           </div>
 
           <div className="flex-1 h-full">
-            <div className="bg-[rgba(118,165,222,0.51)] p-6 md:h-full flex flex-col justify-between">
+            <div className="bg-secondaryLightOpacity opacity-100 p-6 md:h-full flex flex-col justify-between">
               <div className="bg-white h-full py-2 px-12 flex flex-col">
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-center">
@@ -229,16 +229,13 @@ export const RegisterPage = () => {
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger >
                                 <SelectValue placeholder="Selecciona una escuela" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="1">
                                 Ingeniería de sistemas
-                              </SelectItem>
-                              <SelectItem value="2">
-                                Ingeniería de software
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -283,7 +280,7 @@ export const RegisterPage = () => {
                     />
                     <Button
                       type="submit"
-                      className="bg-secondaryLight hover:bg-secondaryLight hover:opacity-95 w-full"
+                      className="bg-secondaryLight hover:bg-secondaryLightHovered w-full"
                     >
                       Crear cuenta
                     </Button>

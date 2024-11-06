@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/context/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { Toaster} from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -70,7 +70,7 @@ export const LoginPage = () => {
           </div>
 
           <div className="flex-1 py-8 h-full">
-            <div className="bg-[rgba(118,165,222,0.51)] p-10 h-full flex flex-col justify-between">
+            <div className="bg-secondaryLightOpacity p-10 h-full flex flex-col justify-between">
               <div className="bg-white h-full py-6 px-12 flex flex-col">
                 <div className="flex flex-col">
                   <div className="flex justify-center">
@@ -126,7 +126,7 @@ export const LoginPage = () => {
                     />
                     <Button
                       type="submit"
-                      className="bg-secondaryLight hover:bg-secondaryLight hover:opacity-95 w-full"
+                      className="bg-secondaryLight hover:bg-secondaryLightHovered w-full"
                     >
                       Iniciar sesión
                     </Button>
