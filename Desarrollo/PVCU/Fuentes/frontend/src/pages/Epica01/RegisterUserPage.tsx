@@ -29,12 +29,15 @@ import { createUser } from "@/api/api";
 const formSchema = z.object({
   first_name: z
     .string({ message: "Nombres inválidos" })
+    .min(1,{message:"Nombres inválidos"})
     .max(50, { message: "Nombres deben tener como máximo 50 carácteres" }),
   last_name: z
     .string({ message: "Apellidos inválidos" })
+    .min(1,{message:"Apellidos inválidos"})
     .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
   code: z
     .string({ message: "Código inválido" })
+    .min(1,{message:"Código inválido"})
     .max(8, { message: "Código debe tener como máximo 8 carácteres" }),
   qr_yape: z
     .union([
