@@ -69,7 +69,7 @@ export const PaymentConfirmation = () => {
             <h2 className=" font-bold">Envía el comprobante de pago</h2>
             <p>
               Por favor, envíanos el comprobante de pago para proceder a la
-              activación de tu suscripción.
+              actualización de tu plan.
             </p>
             <div className="flex flex-col">
               <FormField
@@ -94,7 +94,7 @@ export const PaymentConfirmation = () => {
               />
             </div>
             <div className="text-secondaryLight font-semibold">
-              <p>Tu plan de Marca se haiblitará en aproximadamente 24 horas.</p>
+              <p>Tu nuevo plan de Marca se habilitará en aproximadamente 24 horas.</p>
               <p>Te notificaremos por correo una vez que esté activo.</p>
             </div>
             <p>
