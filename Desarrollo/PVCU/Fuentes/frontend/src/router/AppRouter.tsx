@@ -75,7 +75,7 @@ const routes = createBrowserRouter([
       },
       {
         // path: "/:userId/edit-product/productId",
-        path: "/edit-product",
+        path: "/edit-product/:productId",
         element: <EditProductPage />,
         // loader:
       },
