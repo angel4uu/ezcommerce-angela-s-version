@@ -2,12 +2,8 @@ import { useTrademark } from "@/hooks/useTrademark";
 import { Button } from "../ui/button";
 import { CircleCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Plan } from "@/types";
 
-interface PlanCardProps {
-  tipo: string,
-  duracion: string,
-  precio: number,
-}
   const infoPlans = [
     {
       descripcion: "Acceso a funcionalidades básicas.",
@@ -38,10 +34,10 @@ export const PlanCard = ({
   tipo,
   duracion,
   precio,
-}: PlanCardProps) => {
+}: Plan) => {
 
   const navigate = useNavigate();
-  const {marca,plan}=useTrademark();
+  const {marca,planActual}=useTrademark();
 
   function handleSeleccionarPlan(){
     if(tipo=="marcas"&&marca){
@@ -77,7 +73,7 @@ export const PlanCard = ({
         </ul>
       </div>
       <Button className="bg-secondaryLight hover:bg-secondaryLightHovered text-sm mt-auto rounded-xl"
-              disabled={plan?.tipo == tipo}
+              disabled={planActual?.tipo == "gratuito"&&tipo=="gratuito"}
               onClick={handleSeleccionarPlan}
       >
         Seleccionar plan

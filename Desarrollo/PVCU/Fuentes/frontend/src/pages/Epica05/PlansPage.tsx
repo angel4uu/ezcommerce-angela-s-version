@@ -2,23 +2,25 @@ import { Helmet } from "react-helmet-async";
 import { PlanCard } from "@/components/Epica5/PlanCard";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Plan } from "@/types";
+import { useEffect, useState } from "react";
 import { useTrademark } from "@/hooks/useTrademark";
+import { Plan } from "@/types";
 
-const planGratuito = 
-{
-  tipo: "gratuito",
-  duracion: "ilimitado",
-  precio: 0,
-};
-const planMarcas = [
+const planesData: Plan[] = [
   {
+    id: "1",
+    tipo: "gratuito",
+    duracion: "ilimitado",
+    precio: 0,
+  },
+  {
+    id: "1",
     tipo: "marcas",
     duracion: "mes",
     precio: 6,
   },
   {
+    id: "1",
     tipo: "marcas",
     duracion: "semestre",
     precio: 30,
@@ -27,20 +29,24 @@ const planMarcas = [
 
 export const PlansPage = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const {setPlanSeleccionado}=useTrademark();
+  const { setPlanSeleccionado } = useTrademark();
 
   const handleToggle = () => {
     setIsChecked((prev) => !prev);
   };
 
-  function  setPlanMarcasMensual(){
-    setPlanSeleccionado(planMarcas[0]);
-    return planMarcas[0];
-  }
-  function setPlanMarcasSemestral(){
-    setPlanSeleccionado(planMarcas[1]);
-    return planMarcas[1];
-  }
+  const selectedMarcaPlan =
+    planesData.find(
+      (plan) =>
+        plan.tipo === "marcas" &&
+        plan.duracion === (isChecked ? "semestre" : "mes")
+    ) || null;
+    
+  const gratisPlan = planesData.find((plan) => plan.tipo == "gratuito");
+
+  useEffect(() => {
+    setPlanSeleccionado(selectedMarcaPlan);
+  }, [selectedMarcaPlan]);
 
   return (
     <>
@@ -74,10 +80,8 @@ export const PlansPage = () => {
             </Label>
           </div>
           <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-20 ">
-            <PlanCard {...planGratuito} />
-            <PlanCard
-              {...(isChecked ? setPlanMarcasSemestral() : setPlanMarcasMensual())}
-            />
+            {gratisPlan ? <PlanCard {...gratisPlan} /> : <></>}
+            {selectedMarcaPlan ? <PlanCard {...selectedMarcaPlan} /> : <></>}
           </div>
         </div>
       </div>

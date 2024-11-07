@@ -43,6 +43,8 @@ const formSchema = z.object({
   tiktok: z.string({ message: "Instagram inválido" }).optional(),
   otra_red_social: z.string({ message: "Red social inválida" }).optional(),
   activado: z.boolean(),
+  fecha_activacion:z.string(),
+  fecha_vencimiento:z.string(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
@@ -59,6 +61,8 @@ export const RegisterTrademark = () => {
       tiktok: undefined,
       otra_red_social: undefined,
       activado: false,
+      fecha_activacion:"",
+      fecha_vencimiento:"",
     },
   });
 
