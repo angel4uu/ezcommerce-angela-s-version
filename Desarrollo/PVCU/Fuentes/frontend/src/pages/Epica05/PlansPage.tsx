@@ -3,60 +3,44 @@ import { PlanCard } from "@/components/Epica5/PlanCard";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { Plan } from "@/types";
+import { useTrademark } from "@/hooks/useTrademark";
 
-export const PlansPage = () => {
-  const planGratuito = {
-    tipo: "gratuito",
-    duracion: "ilimitado",
-    precio: 0,
-    descripcion: "Acesso a funcionalidades básicas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-    ],
-  };
-  const planMarcasMensual = {
+const planGratuito = 
+{
+  tipo: "gratuito",
+  duracion: "ilimitado",
+  precio: 0,
+};
+const planMarcas = [
+  {
     tipo: "marcas",
     duracion: "mes",
     precio: 6,
-    descripcion:
-      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-      "Publicar anuncios",
-      "Mayor publicidad de tus productos",
-      "Sección especial de Marcas",
-      "Productos con check de verificación",
-    ],
-  };
-  const planMarcasSemestral = {
+  },
+  {
     tipo: "marcas",
     duracion: "semestre",
     precio: 30,
-    descripcion:
-      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-      "Publicar anuncios",
-      "Mayor publicidad de tus productos",
-      "Sección especial de Marcas",
-      "Productos con check de verificación",
-    ],
-  };
+  },
+];
 
+export const PlansPage = () => {
   const [isChecked, setIsChecked] = useState(false);
+  const {setPlanSeleccionado}=useTrademark();
 
   const handleToggle = () => {
     setIsChecked((prev) => !prev);
   };
+
+  function  setPlanMarcasMensual(){
+    setPlanSeleccionado(planMarcas[0]);
+    return planMarcas[0];
+  }
+  function setPlanMarcasSemestral(){
+    setPlanSeleccionado(planMarcas[1]);
+    return planMarcas[1];
+  }
 
   return (
     <>
@@ -80,14 +64,20 @@ export const PlansPage = () => {
             <Label className="font-bold text-lg" htmlFor="periodo_plan_marcas">
               Mensual
             </Label>
-            <Switch id="periodo_plan_marcas"  checked={isChecked} onCheckedChange={handleToggle}/>
+            <Switch
+              id="periodo_plan_marcas"
+              checked={isChecked}
+              onCheckedChange={handleToggle}
+            />
             <Label className="font-bold text-lg" htmlFor="periodo_plan_marcas">
               Semestral
             </Label>
           </div>
           <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-20 ">
             <PlanCard {...planGratuito} />
-            <PlanCard {...(isChecked?planMarcasSemestral:planMarcasMensual)} />
+            <PlanCard
+              {...(isChecked ? setPlanMarcasSemestral() : setPlanMarcasMensual())}
+            />
           </div>
         </div>
       </div>

@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
-import qr from "/public/image-card.jpg";
+import qr from "@/assets/qr_yape_devsla.png";
 import { useNavigate } from "react-router";
+import { useTrademark } from "@/hooks/useTrademark";
 
 export const PayPlanPage = () => {
   const navigate = useNavigate();
+  const {planSeleccionado}=useTrademark();
 
   return (
     <>
@@ -23,7 +25,8 @@ export const PayPlanPage = () => {
             <img className="flex-1 justify-center" src={qr} width={500} />
           </div>
           <div className="self-center">
-            <p className="font-bold text-lg ">Escanea el QR</p>
+            <p className="font-bold text-3xl text-secondaryLight ">S/{planSeleccionado?.precio}.00</p>
+            <p className="font-bold text-lg pt-4">Escanea el QR</p>
             <p className="pt-4">
               Escanea el QR mediante la aplicación de Yape para realizar el
               pago.
