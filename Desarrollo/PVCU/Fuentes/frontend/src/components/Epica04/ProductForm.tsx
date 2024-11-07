@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -6,9 +7,14 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { ImageUpload } from "./formulario/ImageUpload"
 import { ImagePreviewModal } from "./formulario/ImagePreviewModal"
 import { useProductForm } from "../../pages/Epica04/hooks/useProductForm"
+import { Product } from "../../pages/Epica04/mocks/products"
+import { Link } from "react-router-dom"
 
+interface ProductFormProps {
+  product?: Product
+}
 
-export const ProductForm = () => {
+export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   const {
     form,
     images,
@@ -19,6 +25,21 @@ export const ProductForm = () => {
     closeModal,
     onSubmit,
   } = useProductForm()
+
+  // Cargar los datos del producto en el formulario si se está editando
+  React.useEffect(() => {
+    if (product) {
+      form.reset({
+        productName: product.name,
+        price: product.price,
+        stock: product.stock,
+        description: product.description,
+        category: product.category,
+        condition: product.condition,
+      })
+    }
+  }, [product, form])
+
   return (
     <Form {...form}>
       <form
@@ -26,7 +47,7 @@ export const ProductForm = () => {
         className="font-sans max-w-3xl py-9 space-y-8 mx-auto"
       >
         <h1 className="text-3xl font-semibold">
-          Formulario para agregar o actualizar un producto
+          {product ? "Editar Producto" : "Agregar Producto"}
         </h1>
 
         <ImageUpload
@@ -108,6 +129,7 @@ export const ProductForm = () => {
             )}
           />
 
+          {/* Campo para la categoría con valor seleccionado */}
           <FormField
             control={form.control}
             name="category"
@@ -115,7 +137,7 @@ export const ProductForm = () => {
               <FormItem>
                 <FormLabel className="text-base">Categoría</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Categoría del producto" />
                     </SelectTrigger>
@@ -124,6 +146,7 @@ export const ProductForm = () => {
                       <SelectItem value="clothing">Ropa</SelectItem>
                       <SelectItem value="home">Hogar</SelectItem>
                       <SelectItem value="books">Libros</SelectItem>
+                      <SelectItem value="other">Otro</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -132,6 +155,7 @@ export const ProductForm = () => {
             )}
           />
 
+          {/* Campo para la condición con valor seleccionado */}
           <FormField
             control={form.control}
             name="condition"
@@ -139,16 +163,14 @@ export const ProductForm = () => {
               <FormItem>
                 <FormLabel className="text-base">Condición</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger>
                       <SelectValue placeholder="Estado del producto" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="new">Nuevo</SelectItem>
                       <SelectItem value="used">Usado</SelectItem>
-                      <SelectItem value="refurbished">
-                        Reacondicionado
-                      </SelectItem>
+                      <SelectItem value="refurbished">Reacondicionado</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -166,11 +188,11 @@ export const ProductForm = () => {
           >
             Guardar
           </Button>
-          <Button type="button" variant="outline" className="w-full" size="lg">
-            Cancelar
+          <Button type="button" variant="outline" className="w-full px-0" size="lg">
+            <Link to="/my-published-products" className="w-full">Cancelar</Link>
           </Button>
         </div>
       </form>
     </Form>
-  );
+  )
 }

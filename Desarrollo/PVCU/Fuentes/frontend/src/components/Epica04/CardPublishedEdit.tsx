@@ -1,9 +1,9 @@
-import { Star } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct";
-import { Product } from "../../pages/Epica04/mocks/products"; // Asegúrate de que la ruta sea correcta
-import { Link } from "react-router-dom";
+import { Star } from "lucide-react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct"
+import { Product } from "../../pages/Epica04/mocks/products"
+import { Link } from "react-router-dom"
 
 interface CardPublishedEditProps {
   product: Product;
@@ -31,10 +31,11 @@ export const CardPublishedEdit: React.FC<CardPublishedEditProps> = ({ product })
       </CardContent>
       <CardFooter className="grid gap-3 p-0">
         <Button variant="edit" className="p-0">
-          <Link to='/edit-product' className="w-full">Editar</Link>
+          {/* Pasar el ID del producto en la URL */}
+          <Link to={`/edit-product/${product.id}`} className="w-full">Editar</Link>
         </Button>
         <ModalDeleteProduct />
       </CardFooter>
     </Card>
-  );
-};
+  )
+}

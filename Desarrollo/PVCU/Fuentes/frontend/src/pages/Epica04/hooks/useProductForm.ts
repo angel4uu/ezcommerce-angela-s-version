@@ -2,6 +2,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useNavigate } from "react-router"
 
 // Definición del esquema de validación con Zod
 const formSchema = z.object({
@@ -16,6 +17,8 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 export const useProductForm = () => {
+
+  const navigate = useNavigate();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +58,7 @@ export const useProductForm = () => {
 
   const onSubmit = (data: FormData) => {
     console.log("Datos del formulario:", data)
+    navigate("/my-published-products")
   }
 
   return {
