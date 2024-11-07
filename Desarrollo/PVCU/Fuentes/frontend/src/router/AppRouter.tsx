@@ -68,10 +68,10 @@ const routes = createBrowserRouter([
         // loader:
       },
       {
-        // path: "/edit-product/productId",
-        path: "/edit-product",
+
+        // path: "/:userId/edit-product/productId",
+        path: "/edit-product/:productId",
         element: <PrivateRoute><EditProductPage /></PrivateRoute>,
-        // loader:
       },
       {
         path: "/favourites",
