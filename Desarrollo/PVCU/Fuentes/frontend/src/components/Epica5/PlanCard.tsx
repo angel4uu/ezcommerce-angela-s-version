@@ -37,7 +37,7 @@ export const PlanCard = ({
 }: Plan) => {
 
   const navigate = useNavigate();
-  const {marca,planActual}=useTrademark();
+  const {marca,plan,setGratisModal}=useTrademark();
 
   function handleSeleccionarPlan(){
     if(tipo=="marcas"&&marca){
@@ -47,7 +47,7 @@ export const PlanCard = ({
       navigate("/register-trademark");
     }
     else{
-      //modal
+      setGratisModal(true);
     }
   }
 
@@ -73,7 +73,7 @@ export const PlanCard = ({
         </ul>
       </div>
       <Button className="bg-secondaryLight hover:bg-secondaryLightHovered text-sm mt-auto rounded-xl"
-              disabled={planActual?.tipo == "gratuito"&&tipo=="gratuito"}
+              disabled={plan?.tipo == "gratuito"&&tipo=="gratuito"}
               onClick={handleSeleccionarPlan}
       >
         Seleccionar plan

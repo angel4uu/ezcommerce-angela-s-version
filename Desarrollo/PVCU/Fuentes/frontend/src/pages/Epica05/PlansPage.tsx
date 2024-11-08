@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useTrademark } from "@/hooks/useTrademark";
 import { Plan } from "@/types";
+import { ModalMessage } from "@/components/Epica1/ModalMessage";
+import { Ban } from "lucide-react";
 
 const planesData: Plan[] = [
   {
@@ -29,7 +31,7 @@ const planesData: Plan[] = [
 
 export const PlansPage = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const { setPlanSeleccionado } = useTrademark();
+  const { setPlanSeleccionado, suscripcion, gratisModal, setGratisModal } = useTrademark();
 
   const handleToggle = () => {
     setIsChecked((prev) => !prev);
@@ -41,7 +43,7 @@ export const PlansPage = () => {
         plan.tipo === "marcas" &&
         plan.duracion === (isChecked ? "semestre" : "mes")
     ) || null;
-    
+
   const gratisPlan = planesData.find((plan) => plan.tipo == "gratuito");
 
   useEffect(() => {
@@ -85,6 +87,28 @@ export const PlansPage = () => {
           </div>
         </div>
       </div>
+      <ModalMessage icon={Ban} title="Cancelar suscripción" isOpen={gratisModal} setIsOpen={setGratisModal}>
+        <div className="text-center">
+          <p className="text-center font-bold">
+            ¿Estás seguro de que deseas cancelar tu sucripcion?
+          </p>
+          <p>
+            Esta acción es irreversible y perderás todos los beneficios de tu
+            plan una vez dada la fecha de vencimiento.
+          </p>
+        </div>
+
+        <div className="pt-5 px-12 flex flex-col gap-6">
+          <div className="flex justify-between">
+            <p>Tu plan actual</p>
+            <p>Marcas</p>
+          </div>
+          <div className="flex justify-between">
+            <p>Fecha de activación</p>
+            <p>{suscripcion.fecha_vencimiento}</p>
+          </div>
+        </div>
+      </ModalMessage>
     </>
   );
 };

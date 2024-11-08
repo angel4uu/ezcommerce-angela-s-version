@@ -14,9 +14,9 @@ const marcaData:Marca={
 }
 const planData:Plan={
   id: "1",
-  tipo: "gratuito",
-  duracion: "ilimitado",
-  precio: 0,
+  tipo: "marcas",
+  duracion: "mes",
+  precio: 6,
 }
 const suscripcionData:Suscripcion={
   id:"1",
@@ -29,9 +29,11 @@ interface TrademarkContextType {
   marca: Marca|null;
   setMarca: React.Dispatch<React.SetStateAction<Marca|null>>;
   suscripcion: Suscripcion;
-  planActual: Plan;
+  plan: Plan;
   planSeleccionado: Plan|null;
   setPlanSeleccionado: React.Dispatch<React.SetStateAction<Plan|null>>;
+  gratisModal: boolean;
+  setGratisModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TrademarkContext = createContext<TrademarkContextType | null>(null);
@@ -40,8 +42,10 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
   
   const [marca, setMarca] = useState<Marca|null>(marcaData);
   const [suscripcion, setSuscripcion] = useState<Suscripcion>(suscripcionData);
-  const [planActual, setPlanActual] = useState<Plan>(planData);
+  const [plan, setPlan] = useState<Plan>(planData);
+
   const [planSeleccionado, setPlanSeleccionado] = useState<Plan|null>(null);
+  const [gratisModal, setGratisModal] = useState<boolean>(false);
 
   useEffect(() => {
     //setMarca(get api from marca)
@@ -49,7 +53,7 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <TrademarkContext.Provider value={{ marca, setMarca, suscripcion,planActual,  planSeleccionado, setPlanSeleccionado}}>
+    <TrademarkContext.Provider value={{ marca, setMarca, suscripcion,plan,  planSeleccionado, setPlanSeleccionado,gratisModal, setGratisModal}}>
       {children}
     </TrademarkContext.Provider>
   );
