@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { ProductForm } from '@/components/layouts/ProductForm';
+import { ProductForm } from "../../components/Epica04/ProductForm";
 
 export const PublishProductPage = () => {
   return (
@@ -7,7 +7,6 @@ export const PublishProductPage = () => {
       <Helmet>
         <title>Publicar Producto</title>
       </Helmet>
-
       <ProductForm />
     </>
   )

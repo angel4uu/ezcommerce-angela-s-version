@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { LoginPage, RegisterPage } from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
 import { MainPage, SearchPage } from "../pages/Epica03";
+import {PlansPage,PayPlanPage,PaymentConfirmation,RegisterTrademark} from "../pages/Epica05";
 import {
   ProductsManagementPage,
   MyPublishedProductsPage,
@@ -67,10 +68,10 @@ const routes = createBrowserRouter([
         // loader:
       },
       {
-        // path: "/edit-product/productId",
-        path: "/edit-product",
+
+        // path: "/:userId/edit-product/productId",
+        path: "/edit-product/:productId",
         element: <PrivateRoute><EditProductPage /></PrivateRoute>,
-        // loader:
       },
       {
         path: "/favourites",
@@ -82,6 +83,22 @@ const routes = createBrowserRouter([
         element: <PrivateRoute><ShoppingCartPage /></PrivateRoute>,
         // loader:
       },
+      {
+        path: "/plans",
+        element: <PrivateRoute><PlansPage /></PrivateRoute>,
+      },
+      {
+        path: "/pay-plan",
+        element: <PrivateRoute><PayPlanPage /></PrivateRoute>,
+      },
+      {
+        path: "/register-trademark",
+        element: <PrivateRoute><RegisterTrademark /></PrivateRoute>,
+      },
+      {
+        path: "/payment-confirmation",
+        element: <PrivateRoute><PaymentConfirmation /></PrivateRoute>,
+      }
     ],
   },
 ]);
