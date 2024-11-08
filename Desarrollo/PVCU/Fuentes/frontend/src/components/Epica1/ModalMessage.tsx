@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode} from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,13 +37,13 @@ export const ModalMessage = ({
             {Icon && <Icon height={23} width={23} strokeWidth={4} className="text-secondaryLight" />}
             <DialogTitle className="font-black self-end text-2xl">{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-terciaryLight text-base p-5">
-            {children}
-          </DialogDescription>
         </DialogHeader>
+        <div className="text-terciaryLight text-base">
+          {children}
+        </div>
         <DialogFooter className="flex">
           <Button
-            className="bg-secondaryLight hover:bg-secondaryLightHovered px-14"
+            className="bg-secondaryLight hover:bg-secondaryLightHovered px-20 mt-3"
             onClick={() => setIsOpen(false)}
           >
             Aceptar

@@ -14,19 +14,51 @@ const planesData: Plan[] = [
     tipo: "gratuito",
     duracion: "ilimitado",
     precio: 0,
+    descripcion: "Acceso a funcionalidades básicas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+    ],
   },
   {
     id: "1",
     tipo: "marcas",
     duracion: "mes",
     precio: 6,
+    descripcion:
+      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+      "Publicar anuncios",
+      "Mayor publicidad de tus productos",
+      "Sección especial de Marcas",
+      "Productos con check de verificación",
+    ],
   },
   {
     id: "1",
     tipo: "marcas",
     duracion: "semestre",
     precio: 30,
+    descripcion:
+      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+      "Publicar anuncios",
+      "Mayor publicidad de tus productos",
+      "Sección especial de Marcas",
+      "Productos con check de verificación",
+    ],
   },
+  
 ];
 
 export const PlansPage = () => {
@@ -88,26 +120,29 @@ export const PlansPage = () => {
         </div>
       </div>
       <ModalMessage icon={Ban} title="Cancelar suscripción" isOpen={gratisModal} setIsOpen={setGratisModal}>
-        <div className="text-center">
-          <p className="text-center font-bold">
-            ¿Estás seguro de que deseas cancelar tu sucripcion?
-          </p>
-          <p>
-            Esta acción es irreversible y perderás todos los beneficios de tu
-            plan una vez dada la fecha de vencimiento.
-          </p>
+        <div className="p-5">
+          <div className="text-center">
+            <p className="text-center font-bold">
+              ¿Estás seguro de que deseas cancelar tu sucripcion?
+            </p>
+            <p>
+              Esta acción es irreversible y perderás todos los beneficios de tu
+              plan una vez dada la fecha de vencimiento.
+            </p>
+          </div>
+
+          <div className="pt-5 px-12 flex flex-col gap-6">
+            <div className="flex justify-between">
+              <p>Tu plan actual</p>
+              <p>Marcas</p>
+            </div>
+            <div className="flex justify-between">
+              <p>Fecha de activación</p>
+              <p>{suscripcion.fecha_vencimiento}</p>
+            </div>
+          </div>
         </div>
 
-        <div className="pt-5 px-12 flex flex-col gap-6">
-          <div className="flex justify-between">
-            <p>Tu plan actual</p>
-            <p>Marcas</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Fecha de activación</p>
-            <p>{suscripcion.fecha_vencimiento}</p>
-          </div>
-        </div>
       </ModalMessage>
     </>
   );

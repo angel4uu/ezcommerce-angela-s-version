@@ -17,6 +17,18 @@ const planData:Plan={
   tipo: "marcas",
   duracion: "mes",
   precio: 6,
+  descripcion:
+    "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+  beneficios: [
+    "Publicar productos",
+    "Comprar productos",
+    "Carrito de compras",
+    "Favoritos",
+    "Publicar anuncios",
+    "Mayor publicidad de tus productos",
+    "Sección especial de Marcas",
+    "Productos con check de verificación",
+  ],
 }
 const suscripcionData:Suscripcion={
   id:"1",

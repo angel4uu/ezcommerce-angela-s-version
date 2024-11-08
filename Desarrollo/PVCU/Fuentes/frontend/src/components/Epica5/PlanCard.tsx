@@ -4,36 +4,12 @@ import { CircleCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Plan } from "@/types";
 
-  const infoPlans = [
-    {
-      descripcion: "Acceso a funcionalidades básicas.",
-      beneficios: [
-        "Publicar productos",
-        "Comprar productos",
-        "Carrito de compras",
-        "Favoritos",
-      ],
-    },
-    {
-      descripcion:
-        "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-      beneficios: [
-        "Publicar productos",
-        "Comprar productos",
-        "Carrito de compras",
-        "Favoritos",
-        "Publicar anuncios",
-        "Mayor publicidad de tus productos",
-        "Sección especial de Marcas",
-        "Productos con check de verificación",
-      ],
-    },
-  ];
-
 export const PlanCard = ({
   tipo,
   duracion,
   precio,
+  descripcion,
+  beneficios
 }: Plan) => {
 
   const navigate = useNavigate();
@@ -60,11 +36,11 @@ export const PlanCard = ({
         </span>
         {duracion!="ilimitado"?<span className="text-xs ml-1">por {duracion}</span>:""}
       </p>
-      <p className="pt-5 md:px-5">{tipo=="gratuito"?infoPlans[0]["descripcion"]:infoPlans[1]["descripcion"]}</p>
+      <p className="pt-5 md:px-5">{descripcion}</p>
       <div className="text-start pt-5 pb-5">
         <p className="font-semibold text-base">Beneficios:</p>
         <ul>
-          {(tipo=="gratuito"?infoPlans[0]["beneficios"]:infoPlans[1]["beneficios"]).map((beneficio, index) => (
+          {beneficios.map((beneficio, index) => (
             <li key={index} className="pt-3 flex items-center gap-2">
               <CircleCheck size={13} color="green" />
               <div>{beneficio}</div>

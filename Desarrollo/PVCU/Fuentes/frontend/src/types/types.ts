@@ -14,6 +14,8 @@ export type Plan={
   tipo: string,
   duracion: string,
   precio: number,
+  descripcion:string,
+  beneficios:string[]
 }
 export type Suscripcion={
   id:string,
