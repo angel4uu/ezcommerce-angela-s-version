@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useTrademark } from "@/hooks/useTrademark";
 import { Plan } from "@/types";
+import { GratisModal } from "./GratisModal";
 
 const planesData: Plan[] = [
   {
@@ -12,24 +13,56 @@ const planesData: Plan[] = [
     tipo: "gratuito",
     duracion: "ilimitado",
     precio: 0,
+    descripcion: "Acceso a funcionalidades básicas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+    ],
   },
   {
     id: "1",
     tipo: "marcas",
     duracion: "mes",
     precio: 6,
+    descripcion:
+      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+      "Publicar anuncios",
+      "Mayor publicidad de tus productos",
+      "Sección especial de Marcas",
+      "Productos con check de verificación",
+    ],
   },
   {
     id: "1",
     tipo: "marcas",
     duracion: "semestre",
     precio: 30,
+    descripcion:
+      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+    beneficios: [
+      "Publicar productos",
+      "Comprar productos",
+      "Carrito de compras",
+      "Favoritos",
+      "Publicar anuncios",
+      "Mayor publicidad de tus productos",
+      "Sección especial de Marcas",
+      "Productos con check de verificación",
+    ],
   },
+  
 ];
 
 export const PlansPage = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const { setPlanSeleccionado } = useTrademark();
+  const { setPlanSeleccionado} = useTrademark();
 
   const handleToggle = () => {
     setIsChecked((prev) => !prev);
@@ -41,7 +74,7 @@ export const PlansPage = () => {
         plan.tipo === "marcas" &&
         plan.duracion === (isChecked ? "semestre" : "mes")
     ) || null;
-    
+
   const gratisPlan = planesData.find((plan) => plan.tipo == "gratuito");
 
   useEffect(() => {
@@ -85,6 +118,7 @@ export const PlansPage = () => {
           </div>
         </div>
       </div>
+      <GratisModal/>
     </>
   );
 };
