@@ -14,20 +14,15 @@ const marcaData:Marca={
 }
 const planData:Plan={
   id: "1",
-  tipo: "marcas",
-  duracion: "mes",
-  precio: 6,
-  descripcion:
-    "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+  tipo: "gratuito",
+  duracion: "ilimitado",
+  precio: 0,
+  descripcion: "Acceso a funcionalidades básicas.",
   beneficios: [
     "Publicar productos",
     "Comprar productos",
     "Carrito de compras",
     "Favoritos",
-    "Publicar anuncios",
-    "Mayor publicidad de tus productos",
-    "Sección especial de Marcas",
-    "Productos con check de verificación",
   ],
 }
 const suscripcionData:Suscripcion={

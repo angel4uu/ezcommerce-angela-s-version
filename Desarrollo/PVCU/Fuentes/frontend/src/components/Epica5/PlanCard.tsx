@@ -29,7 +29,7 @@ export const PlanCard = ({
 
   return (
     <div className=" border-secondaryLight border-2 bg-secondaryLightMoreOpacity rounded-2xl text-sm w-1/2 md:w-1/3 p-5 flex flex-col justify-start ">
-      <h3 className="font-bold text-xl">Plan {tipo}</h3>
+      <h3 className="font-bold text-xl capitalize">Plan {tipo}</h3>
       <p className="pt-5">
         <span className="text-secondaryLight text-2xl font-black ">
           S/{precio}.00
