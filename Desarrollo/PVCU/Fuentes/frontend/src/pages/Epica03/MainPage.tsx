@@ -76,11 +76,11 @@ export const MainPage = () => {
                 </Carousel>
         </div>
         
-        <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>
+        <div className='mx-auto w-full p-4'>
             <div className=' mb-5 '>
               <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Elige tu categoría favorita</h2>
             </div>
-            <div className='grid grid-cols-4 grid-rows-2 gap-4 grid-flow-col px-24'>
+            <div className='grid grid-cols-4 grid-rows-2 gap-4 px-24'>
             {categories.map((category, index) => (
               <CategoriesCard
                 id={category.id}
@@ -88,8 +88,8 @@ export const MainPage = () => {
                 image={category.image}
                 title={category.title}
                 description={category.description}
-                colSpan={category.colSpan}
-                rowSpan={category.rowSpan}
+                horiz={category.horiz}
+                index={index}
               />
             ))}
 

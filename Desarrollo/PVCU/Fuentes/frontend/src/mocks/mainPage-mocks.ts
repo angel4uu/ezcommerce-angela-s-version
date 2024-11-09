@@ -69,31 +69,27 @@ export const categories = [
       image: TestImage,
       title: 'Electrónica 1',
       description: 'Aquí va un texto de descripción para el producto 1.',
-      colSpan: 1,
-      rowSpan: 2,
+      horiz:false  
     },
     { id: 'Electrónica 2',  
       image: TestImage,
       title: 'Electrónica 2',
       description: 'Aquí va un texto de descripción para el producto 2.',
-      colSpan: 2,
-      rowSpan: 1,
+      horiz:true
     },
     { 
       id:'elec3',    
       image: TestImage,
       title: 'Electrónica 3',
       description: 'Aquí va un texto de descripción para el producto 3.',
-      colSpan: 2,
-      rowSpan: 1,
+      horiz:true
     },
     {
       id:'dads',  
       image: TestImage,
       title: 'Electrónica 4',
       description: 'Aquí va un texto de descripción para el producto 4.',
-      colSpan: 1,
-      rowSpan: 2,
+      horiz:false
     },
   ];
 
