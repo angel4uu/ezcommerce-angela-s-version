@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'epica1',
     'epica2',
+    'epica3',
     'epica4',
     'epica5',
     'epica8',

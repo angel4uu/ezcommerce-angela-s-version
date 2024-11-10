@@ -30,6 +30,7 @@ urlpatterns = [
     ])),
     path('api/', include('epica1.urls')),
     path('api/', include('epica2.urls')),
+    path('api/', include('epica3.urls')),
     path('api/', include('epica4.urls')),
     path('api/', include('epica5.urls')),
     path('api/', include('epica8.urls')),
