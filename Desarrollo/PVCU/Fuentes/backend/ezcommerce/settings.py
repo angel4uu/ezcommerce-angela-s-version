@@ -45,8 +45,22 @@ INSTALLED_APPS = [
     'epica2',
     'epica4',
     'epica5',
-    'corsheaders'
+    'epica8',
+    'corsheaders',
+    'drf_yasg',
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+}
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
