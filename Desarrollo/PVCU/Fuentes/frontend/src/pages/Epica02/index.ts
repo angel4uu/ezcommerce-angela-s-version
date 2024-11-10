@@ -1,3 +1,3 @@
 // Archivo barril para exportaciones
 
-export * from './ProfileBuyerPage';
+export * from "./ProfileBuyerPage";

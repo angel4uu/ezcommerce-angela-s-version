@@ -6,10 +6,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export function CarruselProducts() {
+export function SoldProducts() {
   return (
-    <div className="px-12">
+    <div className="flex flex-col w-full gap-6 self-stretch my-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-2xl font-semibold text-terciaryLight">
+          Productos vendidos
+        </h3>
+        <Link
+          to="/purchasing-management"
+          className="bg-[rgba(183,183,183,0.30)] p-2 rounded-full"
+        >
+          <ArrowUpRight className="text-2xl text-terciaryLight" />
+        </Link>
+      </div>
       <Carousel className="w-full">
         <CarouselContent className="-ml-1">
           {Array.from({ length: 12 }).map((_, index) => (
