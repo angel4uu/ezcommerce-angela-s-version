@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'epica1',
     'epica2',
     'epica4',
+    'epica5',
     'corsheaders'
 ]
 
