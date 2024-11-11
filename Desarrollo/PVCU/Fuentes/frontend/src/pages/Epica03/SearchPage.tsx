@@ -29,7 +29,7 @@ export const SearchPage = () => {
     facultades: [] as string[],
     condicion: [] as string[],
     min: 0,
-    max: 300,
+    max: 500,
     brandFilter: false,
   });
 
@@ -174,19 +174,21 @@ export const SearchPage = () => {
                 onValueChange={([value]) => setTempFilters((prev) => ({ ...prev, max: Math.max(value, prev.min) }))}
               />
             </div>
+            <div className='flex flex-row gap-4 justify-center'>
             <button
-              onClick={handleFilterApply}
-              className='mt-6 px-4 py-2 bg-blue-500 text-white rounded-lg'
+              onClick={handleClearFilters}
+              className='mt-4 px-1 py-2 w-2/5 bg-red-500 text-sm text-white rounded-lg'
             >
-              Filtrar
+              Limpiar filtro
             </button>
-          </div>
-          <button
-            onClick={handleClearFilters}
-            className='mt-4 px-4 py-2 bg-red-500 text-white rounded-lg'
-          >
-            Borrar filtros
-          </button>
+              <button
+                onClick={handleFilterApply}
+                className='mt-4 px-4 py-2 w-2/5 bg-secondaryLight text-white rounded-lg'
+              >
+                Aplicar
+              </button>
+            </div>
+            </div>
           
         </div>
 
