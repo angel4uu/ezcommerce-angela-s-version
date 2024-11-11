@@ -153,7 +153,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "/purchase-mangament",
+        path: "/purchase-management",
         element: <PurchaseManagementPage />,
         children: [
           {
