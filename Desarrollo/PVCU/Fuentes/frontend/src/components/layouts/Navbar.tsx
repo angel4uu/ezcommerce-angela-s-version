@@ -1,12 +1,11 @@
 import { Bell, Heart, Search, ShoppingCart } from "lucide-react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MenuFaculties } from "./MenuFaculties";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
 
 const icons = [
   { component: <Bell size={28} className="text-secondaryLight" />, link: "/" },
@@ -22,6 +21,7 @@ const icons = [
 
 export const Navbar = () => {
   const { authState } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav className="px-4 sm:px-6 md:px-16 lg:px-32">
@@ -55,22 +55,31 @@ export const Navbar = () => {
 
         {/* Íconos de navegación */}
         <div className="flex items-center space-x-4 ml-3">
-          {icons.map((icon, index) => (
-            <Button key={index} variant="ghost" size="icon">
-              {authState.userId ? (
-                <NavLink to={icon.link}>{icon.component}</NavLink>
-              ) : (
-                <span
-                  onClick={() =>
-                    toast.error("Inicie sesión para acceder a este módulo")
-                  }
-                >
-                  {icon.component}
-                </span>
-              )}
-            </Button>
-          ))}
-          <MenuAccount />
+          {authState.userId ? (
+            <>
+              {icons.map((icon, index) => (
+                <Button key={index} variant="ghost" size="icon">
+                  <NavLink to={icon.link}>{icon.component}</NavLink>
+                </Button>
+              ))}
+              <MenuAccount />
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                className="px-7 bg-transparent text-black hover:text-secondaryLight hover:bg-transparent"
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </Button>
+              <Button
+                className="px-7 bg-transparent text-black hover:text-secondaryLight hover:bg-transparent"
+                onClick={() => navigate("/register")}
+              >
+                Sign up
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

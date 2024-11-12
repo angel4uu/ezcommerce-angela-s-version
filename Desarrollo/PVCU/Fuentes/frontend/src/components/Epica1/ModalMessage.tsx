@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,6 +16,8 @@ interface ModalMessageProps {
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   title: string;
+  buttonName?:string;
+  buttonFunc?:()=>void;
   children:ReactNode
 }
 
@@ -25,9 +26,12 @@ export const ModalMessage = ({
   setIsOpen,
   icon: Icon,
   title,
+  buttonName="Aceptar",
+  buttonFunc,
   children,
 }: ModalMessageProps) => {
 
+  const handleButtonClick = buttonFunc ? buttonFunc : () => setIsOpen(false);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -44,9 +48,9 @@ export const ModalMessage = ({
         <DialogFooter className="flex">
           <Button
             className="bg-secondaryLight hover:bg-secondaryLightHovered px-20 mt-3"
-            onClick={() => setIsOpen(false)}
+            onClick={handleButtonClick}
           >
-            Aceptar
+            {buttonName}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { CircleCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Plan } from "@/types";
+import { toast } from "sonner";
 
 export const PlanCard = ({
   tipo,
@@ -18,6 +19,7 @@ export const PlanCard = ({
   function handleSeleccionarPlan(){
     if(tipo=="marcas"&&marca){
       navigate("/pay-plan");
+      toast.info("Usted cuenta con una marca previamente registrada");
     }
     else if(tipo=="marcas"&&!marca){
       navigate("/register-trademark");

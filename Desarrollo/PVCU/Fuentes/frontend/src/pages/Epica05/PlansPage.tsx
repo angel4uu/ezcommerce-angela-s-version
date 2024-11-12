@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useTrademark } from "@/hooks/useTrademark";
 import { Plan } from "@/types";
-import { GratisModal } from "./GratisModal";
+import { GratisModal } from "../../components/Epica5/GratisModal";
 
 const planesData: Plan[] = [
   {
