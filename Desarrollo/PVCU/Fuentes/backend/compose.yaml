@@ -10,8 +10,8 @@ services:
       - 8000:8000
     # Uncomment the next line to use a bind mount
     # I dont use because ignore el .dockerignore
-    # volumes:
-    #   - .:/app
+    volumes:
+      - .:/app
     env_file:
       - .env
     depends_on:
