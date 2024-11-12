@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
 import { ImageUpload } from "./formulario/ImageUpload"
-import { ImagePreviewModal } from "./formulario/ImagePreviewModal"
 import { useProductForm } from "../../pages/Epica04/hooks/useProductForm"
 import { Product } from "../../pages/Epica04/mocks/products"
 import { Link } from "react-router-dom"
@@ -17,12 +16,6 @@ interface ProductFormProps {
 export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
   const {
     form,
-    images,
-    selectedImage,
-    handleImageUpload,
-    removeImage,
-    openModal,
-    closeModal,
     onSubmit,
   } = useProductForm()
 
@@ -50,14 +43,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
           {product ? "Editar Producto" : "Agregar Producto"}
         </h1>
 
-        <ImageUpload
-          images={images}
-          onImageUpload={handleImageUpload}
-          onRemoveImage={removeImage}
-          onImageClick={openModal}
-        />
-
-        <ImagePreviewModal imageUrl={selectedImage} onClose={closeModal} />
+        <ImageUpload />
 
         <div className="space-y-6 font-sans">
           <div className="space-y-3">
