@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { ReactNode} from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -11,44 +10,47 @@ import {
 import { LucideProps } from "lucide-react";
 
 interface ModalMessageProps {
-  modalOpen: boolean;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
   title: string;
-  description: string;
+  buttonName?:string;
+  buttonFunc?:()=>void;
+  children:ReactNode
 }
 
 export const ModalMessage = ({
-  modalOpen,
+  isOpen,
+  setIsOpen,
   icon: Icon,
   title,
-  description,
+  buttonName="Aceptar",
+  buttonFunc,
+  children,
 }: ModalMessageProps) => {
-  const [isOpen, setIsOpen] = useState(modalOpen);
 
-  useEffect(() => {
-    setIsOpen(modalOpen);
-  }, [modalOpen]);
+  const handleButtonClick = buttonFunc ? buttonFunc : () => setIsOpen(false);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px] ">
+      <DialogContent className="sm:max-w-[625px] ">
         <DialogHeader>
-          <div className="flex gap-2 items-center">
-            {Icon && <Icon height={20} width={20} className="text-secondaryLight" />}
-            <DialogTitle className="font-black self-end">{title}</DialogTitle>
+          <div className="flex gap-4 items-center">
+            {Icon && <Icon height={23} width={23} strokeWidth={4} className="text-secondaryLight" />}
+            <DialogTitle className="font-black self-end text-2xl">{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-terciaryLight text-base">
-            {description}
-          </DialogDescription>
         </DialogHeader>
+        <div className="text-terciaryLight text-base">
+          {children}
+        </div>
         <DialogFooter className="flex">
           <Button
-            className="bg-secondaryLight hover:opacity-95 hover:bg-secondaryLight"
-            onClick={() => setIsOpen(false)}
+            className="bg-secondaryLight hover:bg-secondaryLightHovered px-20 mt-3"
+            onClick={handleButtonClick}
           >
-            Aceptar
+            {buttonName}
           </Button>
         </DialogFooter>
       </DialogContent>

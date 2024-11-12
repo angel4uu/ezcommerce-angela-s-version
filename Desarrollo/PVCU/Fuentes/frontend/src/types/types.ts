@@ -1,4 +1,5 @@
 export type Marca={
+  id:string,
   nombre:string,
   logo?:string|FileList|null,
   descripcion:string,
@@ -6,12 +7,21 @@ export type Marca={
   instagram?:string,
   tiktok?:string,
   otra_red_social?:string,
-  activado:boolean
+  activado:boolean,
 }
 export type Plan={
+  id:string,
   tipo: string,
   duracion: string,
   precio: number,
+  descripcion:string,
+  beneficios:string[]
+}
+export type Suscripcion={
+  id:string,
+  usuario:string,
+  plan:string,
+  fecha_vencimiento:string|null,
 }
 
 export type DecodedToken ={

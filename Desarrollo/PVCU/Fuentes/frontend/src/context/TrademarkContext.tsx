@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
-import { Marca, Plan } from "@/types";
+import { Marca, Plan, Suscripcion } from "@/types";
 
 const marcaData:Marca={
+  id:"1",
   nombre: "marca1",
   logo: "logo1",
   descripcion: "descripcion1",
@@ -12,35 +13,59 @@ const marcaData:Marca={
   activado:false,
 }
 const planData:Plan={
-  tipo: "gratuito",
-  duracion: "ilimitado",
-  precio: 0,
+  id: "1",
+  tipo: "marcas",
+  duracion: "mes",
+  precio: 6,
+  descripcion:
+    "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
+  beneficios: [
+    "Publicar productos",
+    "Comprar productos",
+    "Carrito de compras",
+    "Favoritos",
+    "Publicar anuncios",
+    "Mayor publicidad de tus productos",
+    "Sección especial de Marcas",
+    "Productos con check de verificación",
+  ],
+}
+const suscripcionData:Suscripcion={
+  id:"1",
+  usuario:"1",
+  plan:"1",
+  fecha_vencimiento:"22/12/2024",
 }
 
 interface TrademarkContextType {
   marca: Marca|null;
   setMarca: React.Dispatch<React.SetStateAction<Marca|null>>;
+  suscripcion: Suscripcion;
   plan: Plan;
-  setPlan: React.Dispatch<React.SetStateAction<Plan>>;
   planSeleccionado: Plan|null;
   setPlanSeleccionado: React.Dispatch<React.SetStateAction<Plan|null>>;
+  gratisModal: boolean;
+  setGratisModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TrademarkContext = createContext<TrademarkContextType | null>(null);
 
 export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
   
-  const [marca, setMarca] = useState<Marca|null>(null);
+  const [marca, setMarca] = useState<Marca|null>(marcaData);
+  const [suscripcion, setSuscripcion] = useState<Suscripcion>(suscripcionData);
   const [plan, setPlan] = useState<Plan>(planData);
+
   const [planSeleccionado, setPlanSeleccionado] = useState<Plan|null>(null);
+  const [gratisModal, setGratisModal] = useState<boolean>(false);
 
   useEffect(() => {
     //setMarca(get api from marca)
-    //setPlan(get api from plan)
+    //setPlanActual(get api from plan)
   }, []);
 
   return (
-    <TrademarkContext.Provider value={{ marca, setMarca, plan, setPlan, planSeleccionado, setPlanSeleccionado}}>
+    <TrademarkContext.Provider value={{ marca, setMarca, suscripcion,plan,  planSeleccionado, setPlanSeleccionado,gratisModal, setGratisModal}}>
       {children}
     </TrademarkContext.Provider>
   );

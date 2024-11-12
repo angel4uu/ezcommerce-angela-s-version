@@ -11,17 +11,23 @@ import {
 import { CategoriesCard, SellersCard } from '../../components/cards';
 import { categories, distinguishedSellers, mockProducts, images } from '../../mocks/mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
+import { LoginModal } from '@/components/Epica5/LoginModal';
 
 
 
 export const MainPage = () => {
-
-
   const navigate = useNavigate();
-  const goToTrademark = () => navigate('/plans')
-
-  const {authState}=useAuth();
+  const {authState, setLoginModal}=useAuth();
   console.log("User id:",authState.userId);
+
+  function handleTrademarkClick(){
+    if(authState.userId){
+      navigate('/plans')
+    }
+    else{
+      setLoginModal(true);
+    }
+  }
 
   return (
     <>
@@ -76,11 +82,11 @@ export const MainPage = () => {
                 </Carousel>
         </div>
         
-        <div className='bg-cover bg-[#F2E2D2] bg-opacity-70 w-full p-4'>
+        <div className='mx-auto w-full p-4'>
             <div className=' mb-5 '>
               <h2 className='text-left text-4xl font-bold mb-2 text-terciaryLight dark:text-terciaryDark '>Elige tu categoría favorita</h2>
             </div>
-            <div className='grid grid-cols-4 grid-rows-2 gap-4 grid-flow-col px-24'>
+            <div className='grid grid-cols-4 grid-rows-2 gap-4 px-24'>
             {categories.map((category, index) => (
               <CategoriesCard
                 id={category.id}
@@ -88,8 +94,8 @@ export const MainPage = () => {
                 image={category.image}
                 title={category.title}
                 description={category.description}
-                colSpan={category.colSpan}
-                rowSpan={category.rowSpan}
+                horiz={category.horiz}
+                index={index}
               />
             ))}
 
@@ -137,12 +143,13 @@ export const MainPage = () => {
           </div>
           <div className='mt-8 py-4 mx-auto'>
             <button className='w-[200px] h-[45px] rounded-lg text-lg shadow-xl bg-secondaryLight hover:bg-secondaryLightHovered text-white'
-              onClick={() => goToTrademark()}>
+              onClick={handleTrademarkClick}>
               Iniciar
             </button>
           </div>
         </div>
       </div>
+      <LoginModal/>
     </>
   )
 }

@@ -6,6 +6,8 @@ import {AuthState, Tokens, DecodedToken} from "@/types/types";
 
 interface AuthContextType {
     authState: AuthState;
+    loginModal:boolean;
+    setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
 }
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         return { accessToken: null, userId: null };
     });
+    const [loginModal, setLoginModal]=useState<boolean>(false);
 
     useEffect(() => {
         //Refreash access token if refresh token 
@@ -108,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ authState, login, logout }}>
+        <AuthContext.Provider value={{ authState,loginModal, setLoginModal,login, logout }}>
             {children}
         </AuthContext.Provider>
     );

@@ -17,6 +17,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router";
+import { GratisModal } from "../../components/Epica5/GratisModal";
+import { PlanSection } from "./PlanSection";
 
 export function ProfileBuyerPage() {
   const navigate = useNavigate();
@@ -52,6 +54,7 @@ export function ProfileBuyerPage() {
         </div>
         <PurchasedProducts></PurchasedProducts>
         <SoldProducts></SoldProducts>
+        <PlanSection/>
         <div className="mb-24 w-full">
           <h3 className="text-2xl font-semibold mb-6 text-terciaryLight">
             Eliminar cuenta
@@ -96,6 +99,7 @@ export function ProfileBuyerPage() {
           </div>
         </div>
       </div>
+      <GratisModal/>
     </>
   );
 }
