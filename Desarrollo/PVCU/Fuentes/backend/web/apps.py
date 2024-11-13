@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class Epica8Config(AppConfig):
+class WebConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'epica8'
+    name = 'web'
