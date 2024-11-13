@@ -9,6 +9,7 @@ import {
   PayPlanPage,
   PaymentConfirmation,
   RegisterTrademark,
+  loader as plansLoader
 } from "../pages/Epica05";
 import {
   ProductsManagementPage,
@@ -127,6 +128,7 @@ const routes = createBrowserRouter([
             <PlansPage />
           </PrivateRoute>
         ),
+        loader:plansLoader,
       },
       {
         path: "/pay-plan",

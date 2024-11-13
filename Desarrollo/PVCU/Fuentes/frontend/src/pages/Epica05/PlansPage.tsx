@@ -1,86 +1,66 @@
 import { Helmet } from "react-helmet-async";
 import { PlanCard } from "@/components/Epica5/PlanCard";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
-import { useTrademark } from "@/hooks/useTrademark";
 import { Plan } from "@/types";
 import { GratisModal } from "../../components/Epica5/GratisModal";
+import { useLoaderData } from "react-router";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
-const planesData: Plan[] = [
-  {
-    id: "1",
-    tipo: "gratuito",
-    duracion: "ilimitado",
-    precio: 0,
-    descripcion: "Acceso a funcionalidades básicas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-    ],
-  },
-  {
-    id: "1",
-    tipo: "marcas",
-    duracion: "mes",
-    precio: 6,
-    descripcion:
-      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-      "Publicar anuncios",
-      "Mayor publicidad de tus productos",
-      "Sección especial de Marcas",
-      "Productos con check de verificación",
-    ],
-  },
-  {
-    id: "1",
-    tipo: "marcas",
-    duracion: "semestre",
-    precio: 30,
-    descripcion:
-      "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-    beneficios: [
-      "Publicar productos",
-      "Comprar productos",
-      "Carrito de compras",
-      "Favoritos",
-      "Publicar anuncios",
-      "Mayor publicidad de tus productos",
-      "Sección especial de Marcas",
-      "Productos con check de verificación",
-    ],
-  },
-  
+const beneficios_basicos = [
+  "Publicar productos",
+  "Comprar productos",
+  "Carrito de compras",
+  "Favoritos",
 ];
+const beneficios_marcas = (productos_adicionales: number | null) => {
+  const nuevos_beneficios = [...beneficios_basicos];
+  nuevos_beneficios.push("Publicidad de tus productos en la página principal.");
+  nuevos_beneficios.push(
+    `${productos_adicionales} espacios adicionales para publicar productos en tu catálogo.`
+  );
+  return nuevos_beneficios;
+};
+const planGratuito: Plan = {
+  id: "0",
+  descripcion: "Acceso a funcionalidades básicas",
+  precio: 0,
+  duracion_meses: null,
+  productos_adicionales: null,
+  tipo: "gratuito",
+  beneficios: beneficios_basicos,
+};
+
+
+interface LoaderData {
+  planesData: Plan[];
+}
+export function loader():LoaderData {
+  const planesData: Plan[] = [
+    {
+      id: "1",
+      duracion_meses: 1,
+      productos_adicionales: 5,
+      precio: 6,
+      descripcion: "descripcion 1 y 5.",
+    },
+    {
+      id: "2",
+      duracion_meses: 2,
+      productos_adicionales: 10,
+      precio: 15,
+      descripcion: "descripcion 2 y 10.",
+    },
+  ];
+  
+  planesData.forEach((plan) => {
+    plan.beneficios = beneficios_marcas(plan.productos_adicionales);
+    plan.tipo = "marcas";
+  });
+  planesData.unshift(planGratuito);
+  return { planesData };
+}
 
 export const PlansPage = () => {
-  const [isChecked, setIsChecked] = useState(false);
-  const { setPlanSeleccionado} = useTrademark();
-
-  const handleToggle = () => {
-    setIsChecked((prev) => !prev);
-  };
-
-  const selectedMarcaPlan =
-    planesData.find(
-      (plan) =>
-        plan.tipo === "marcas" &&
-        plan.duracion === (isChecked ? "semestre" : "mes")
-    ) || null;
-
-  const gratisPlan = planesData.find((plan) => plan.tipo == "gratuito");
-
-  useEffect(() => {
-    setPlanSeleccionado(selectedMarcaPlan);
-  }, [selectedMarcaPlan]);
-
+  const {planesData}=useLoaderData() as LoaderData;
   return (
     <>
       <Helmet>
@@ -99,26 +79,24 @@ export const PlansPage = () => {
             <br />
             <span className="text-secondaryLight">nuestros planes</span>
           </h2>
-          <div className="flex justify-center gap-3 py-12">
-            <Label className="font-bold text-lg" htmlFor="periodo_plan_marcas">
-              Mensual
-            </Label>
-            <Switch
-              id="periodo_plan_marcas"
-              checked={isChecked}
-              onCheckedChange={handleToggle}
-            />
-            <Label className="font-bold text-lg" htmlFor="periodo_plan_marcas">
-              Semestral
-            </Label>
-          </div>
-          <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch gap-20 ">
-            {gratisPlan ? <PlanCard {...gratisPlan} /> : <></>}
-            {selectedMarcaPlan ? <PlanCard {...selectedMarcaPlan} /> : <></>}
-          </div>
+          <Carousel className="w-full mt-12">
+            <CarouselContent>
+            {planesData.map((plan,index) => (
+                <CarouselItem key={index} className="md:basis-1/2">
+                  <div className="p-4 flex justify-center h-full">
+                    
+                      <PlanCard key={plan.id} planObj={plan} />
+                    
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </div>
-      <GratisModal/>
+      <GratisModal />
     </>
   );
 };
