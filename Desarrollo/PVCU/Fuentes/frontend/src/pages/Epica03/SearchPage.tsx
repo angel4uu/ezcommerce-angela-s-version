@@ -5,80 +5,135 @@ import * as Switch from '@radix-ui/react-switch';
 import { Slider } from '../../components/ui/slider';
 import { useLocation, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
+import { PaginationComp } from '../../components/Epica03/paginationComponent';
+import axios from 'axios'
 
 const facultades = ['FIEE','FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
-const condicion = ['Nuevo', 'Usado'];
 
 export const SearchPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Estados de los filtros en tiempo real (temporal)
+  const [items, setItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
+
   const [tempFilters, setTempFilters] = useState({
+    name: '',
     categorias: [] as string[],
     facultades: [] as string[],
-    condicion: [] as string[],
     min: 0,
     max: 500,
     brandFilter: false,
   });
 
-  // Estado para los filtros aplicados
-  const [_appliedFilters, setAppliedFilters] = useState({
-    categorias: [] as string[],
-    facultades: [] as string[],
-    condicion: [] as string[],
-    min: 0,
-    max: 500,
-    brandFilter: false,
-  });
+  const [appliedFilters, setAppliedFilters] = useState(tempFilters);
+  const apiUrl = 'https://api.example.com/items';
 
-  const handleCheckboxChange = (value: string, key: string) => {
-    setTempFilters((prevFilters:any) => {
-      const updatedArray = prevFilters[key as keyof typeof prevFilters].includes(value)
-        ? prevFilters[key as keyof typeof prevFilters].filter((item:any) => item !== value)
-        : [...prevFilters[key as keyof typeof prevFilters], value];
-      return { ...prevFilters, [key]: updatedArray };
-    });
+  // Construir la URL de la API
+  const constructApiUrl = (page: number, filters: typeof appliedFilters) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', page.toString());
+    queryParams.append('limit', itemsPerPage.toString());
+
+    if (filters.name) queryParams.append('name', filters.name);
+    filters.categorias.forEach((cat) => queryParams.append('categorias', cat));
+    filters.facultades.forEach((fac) => queryParams.append('facultades', fac));
+    if (filters.min !== 0) queryParams.append('min', filters.min.toString());
+    if (filters.max !== 500) queryParams.append('max', filters.max.toString());
+    if (filters.brandFilter) queryParams.append('byBrand', 'true');
+
+    return `${apiUrl}?${queryParams.toString()}`;
   };
 
-  const handleFilterApply = () => {
-    setAppliedFilters(tempFilters);
+  // Obtener datos desde la API con Axios
+  const fetchData = async (page: number, filters: typeof appliedFilters) => {
+    try {
+      const url = constructApiUrl(page, filters);
+      const response = await axios.get(url);
+
+      setItems(response.data.items);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
+  };
+
+  // Cambiar de página
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchData(page, appliedFilters);
+    updateUrlWithPage(page);
+  };
+
+  // Actualizar la URL con la página actual
+  const updateUrlWithPage = (page: number) => {
     const searchParams = new URLSearchParams(location.search);
 
+    searchParams.set('page', page.toString());
+    searchParams.set('limit', itemsPerPage.toString());
+
+    if (tempFilters.name) searchParams.set('name', tempFilters.name);
     searchParams.delete('categorias');
     tempFilters.categorias.forEach((cat) => searchParams.append('categorias', cat));
-
     searchParams.delete('facultades');
     tempFilters.facultades.forEach((fac) => searchParams.append('facultades', fac));
-
-    searchParams.delete('condicion');
-    tempFilters.condicion.forEach((cond) => searchParams.append('condicion', cond));
-
-
-    tempFilters.min !== 0 ? searchParams.set('min', tempFilters.min.toString()) : null;
-    tempFilters.max !== 500 ? searchParams.set('max', tempFilters.max.toString()) : null
-    searchParams.set('byBrand', tempFilters.brandFilter ? 'true' : '') 
+    if (tempFilters.min !== 0) searchParams.set('min', tempFilters.min.toString());
+    if (tempFilters.max !== 500) searchParams.set('max', tempFilters.max.toString());
+    searchParams.set('byBrand', tempFilters.brandFilter ? 'true' : '');
 
     navigate(`?${searchParams.toString()}`);
   };
 
-  const handleClearFilters = () => {
-    navigate('')
+  // Aplicar filtros
+  const handleFilterApply = () => {
+    setAppliedFilters(tempFilters);
+    fetchData(1, tempFilters);
+    setCurrentPage(1);
   };
 
+  // Limpiar filtros
+  const handleClearFilters = () => {
+    setTempFilters({
+      name: '',
+      categorias: [],
+      facultades: [],
+      min: 0,
+      max: 500,
+      brandFilter: false,
+    });
+    setCurrentPage(1);
+  };
+
+  // Manejo del cambio de estado en los checkboxes de categorías y facultades
+  const handleCheckboxChange = (category: string, type: 'categorias' | 'facultades') => {
+    const updatedFilters = { ...tempFilters };
+    const filterList = updatedFilters[type];
+    updatedFilters[type] = filterList.includes(category) ? filterList.filter((item) => item !== category) : [...filterList, category];
+    setTempFilters(updatedFilters);
+  };
+
+  // Leer los filtros desde la URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-
-    setTempFilters({
+    const nameParam = searchParams.get('name') || '';
+    const newTempFilters = {
+      ...tempFilters,
+      name: nameParam,
       categorias: searchParams.getAll('categorias'),
       facultades: searchParams.getAll('facultades'),
-      condicion: searchParams.getAll('condicion'),
       min: Number(searchParams.get('min') || '0'),
       max: Number(searchParams.get('max') || '500'),
       brandFilter: searchParams.get('byBrand') === 'true',
-    });
+    };
+    setTempFilters(newTempFilters);
+    setAppliedFilters(newTempFilters);
+    setCurrentPage(Number(searchParams.get('page') || '1'));
+
+    fetchData(currentPage, newTempFilters);
   }, [location.search]);
+
 
   return (
     <>
@@ -119,23 +174,6 @@ export const SearchPage = () => {
                 />
                 <label htmlFor={fac.toLowerCase()} className="text-md font-medium leading-none">
                   {fac}
-                </label>
-              </div>
-            ))}
-          </div>
-
-          <div className="mb-4">
-            <h3 className="font-bold text-xl">Condición</h3>
-            {condicion.map((cond) => (
-              <div key={cond} className="flex items-center space-x-2 my-4">
-                <Checkbox
-                  id={cond.toLowerCase()}
-                  className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(cond, 'condicion')}
-                  checked={tempFilters.condicion.includes(cond)}
-                />
-                <label htmlFor={cond.toLowerCase()} className="text-md font-medium leading-none">
-                  {cond}
                 </label>
               </div>
             ))}
@@ -193,9 +231,35 @@ export const SearchPage = () => {
         </div>
 
         <div className="grow border rounded border-slate-300 p-4">
-          <div></div>
-          <div></div>
-          <div></div>
+          <div className='flex flex-row justify-between mb-4'>
+            <div>
+              { tempFilters.name && (<h3>{items.length} resultados para "{tempFilters.name}"</h3>) }
+            </div>
+            <div className='mr-8'>
+              <PaginationComp
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                maxVisiblePages={5}
+              />
+            </div>
+          </div>
+          <div>
+
+          </div>
+          <div className='flex flex-row justify-between mt-4'>
+            <div>
+              
+            </div>
+            <div className='mr-8'>
+                <PaginationComp
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  maxVisiblePages={5}
+                />
+              </div>
+            </div>
         </div>
       </div>
     </>

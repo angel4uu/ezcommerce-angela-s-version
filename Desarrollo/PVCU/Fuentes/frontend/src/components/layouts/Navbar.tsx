@@ -1,5 +1,5 @@
 import { Bell, Heart, Search, ShoppingCart } from "lucide-react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MenuFaculties } from "./MenuFaculties";
@@ -7,6 +7,7 @@ import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const icons = [
   { component: <Bell size={28} className="text-secondaryLight" />, link: "/" },
@@ -22,7 +23,17 @@ const icons = [
 
 export const Navbar = () => {
   const { authState } = useAuth();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const handleSearch = () => {
+    if (searchTerm) {
+      navigate(`/search?name=${encodeURIComponent(searchTerm)}`);
+    } else {
+      navigate("/search"); 
+    }
+  };
+  
   return (
     <nav className="px-4 sm:px-6 md:px-16 lg:px-32">
       <div className="flex flex-wrap items-center py-4 px-4 justify-between">
@@ -41,10 +52,13 @@ export const Navbar = () => {
         <div className="order-last mt-4 w-full flex flex-grow lg:order-none lg:mt-0 lg:w-auto">
           <MenuFaculties />
           <div className="relative w-full">
-            <Input
+          <Input
               className="pr-10"
               placeholder="Buscar productos"
               type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()} 
             />
             <Search
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-terciaryLight"
