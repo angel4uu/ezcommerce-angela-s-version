@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'epica1',
-    'epica2'
+    'epica2',
+    'epica4'
 ]
 
 MIDDLEWARE = [

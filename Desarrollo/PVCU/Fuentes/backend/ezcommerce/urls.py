@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 from rest_framework import routers
 
+from epica4 import views as views_epica4
 from epica2 import views as views_epica2
 from epica1 import views as views_epica1
 
@@ -29,6 +30,16 @@ router = routers.DefaultRouter()
 # epica1
 router.register(r'usuarios', views_epica1.UsuarioViewSet)
 router.register(r'roles', views_epica1.GroupViewSet)
+
+# epica2
+router.register(r'facultades', views_epica2.FacultadViewSet)
+router.register(r'escuelasprofesionales', views_epica2.EscuelaProfesionalViewSet)
+
+# epica4
+router.register(r'etiquetas', views_epica4.EtiquetaViewSet)
+router.register(r'catalogos', views_epica4.CatalogoViewSet)
+router.register(r'articulos', views_epica4.ArticuloViewSet)
+router.register(r'imagenes', views_epica4.ImagenViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
