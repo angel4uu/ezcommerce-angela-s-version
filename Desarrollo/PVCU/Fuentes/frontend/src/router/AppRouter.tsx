@@ -9,7 +9,7 @@ import {
   PayPlanPage,
   PaymentConfirmation,
   RegisterTrademark,
-  loader as plansLoader
+  loader as plansLoader,
 } from "../pages/Epica05";
 import {
   ProductsManagementPage,
@@ -27,6 +27,7 @@ import {
   PurchaseHistoryPage,
   PurchaseManagementPage,
 } from "@/pages/Epica06";
+import { Chat } from "@/pages/Epica06/Chat";
 
 const routes = createBrowserRouter([
   {
@@ -128,7 +129,7 @@ const routes = createBrowserRouter([
             <PlansPage />
           </PrivateRoute>
         ),
-        loader:plansLoader,
+        loader: plansLoader,
       },
       {
         path: "/pay-plan",
@@ -167,6 +168,10 @@ const routes = createBrowserRouter([
             element: <PendingPurchasesPage />,
           },
         ],
+      },
+      {
+        path: "/chat",
+        element: <Chat></Chat>,
       },
     ],
   },
