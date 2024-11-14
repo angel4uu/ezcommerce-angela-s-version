@@ -47,7 +47,6 @@ class Usuario(AbstractBaseUser):
     
     usuario_administrador = models.BooleanField(default=False)
     usuario_activo = models.BooleanField(default=True)
-    fecha_registro = models.DateTimeField(auto_now_add=True)
 
     objects = UsuarioManager()
 
