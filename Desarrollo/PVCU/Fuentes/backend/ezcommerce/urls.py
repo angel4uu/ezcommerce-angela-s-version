@@ -28,6 +28,12 @@ from epica4 import views as views_epica4
 from epica2 import views as views_epica2
 from epica1 import views as views_epica1
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from rest_framework_simplejwt.views import TokenVerifyView
+
 router = routers.DefaultRouter()
 
 # epica1
@@ -64,7 +70,12 @@ router.register(r'reporte', views_epica8.ReporteViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("admin", admin.site.urls)
-]
+    path("admin", admin.site.urls),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    #path('adminepica4/', include('epica4.urls')),
+
+] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -11,7 +11,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     """
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     #filterset_fields = ['username'] # Nuevo API filter
     #lookup_field = 'username'
 
