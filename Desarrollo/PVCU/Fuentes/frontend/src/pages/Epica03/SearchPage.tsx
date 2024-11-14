@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 import { PaginationComp } from '../../components/Epica03/paginationComponent';
 import axios from 'axios'
 
-const facultades = ['FIEE','FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
+
+const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
 export const SearchPage = () => {
   const location = useLocation();
@@ -17,7 +18,7 @@ export const SearchPage = () => {
   const [items, setItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [tempFilters, setTempFilters] = useState({
     name: '',
@@ -114,6 +115,13 @@ export const SearchPage = () => {
     setTempFilters(updatedFilters);
   };
 
+  const handleLimitChange = (newLimit: number) => {
+    setItemsPerPage(newLimit);
+    setCurrentPage(1); // Reiniciar a la primera página
+    updateUrlWithPage(1); // Actualizar URL con el nuevo límite
+    fetchData(1, appliedFilters); // Recargar datos con el nuevo límite
+  };
+
   // Leer los filtros desde la URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -141,7 +149,7 @@ export const SearchPage = () => {
         <title>Search - EzCommerce</title>
       </Helmet>
 
-      <div className="w-full gap-4 flex flex-row min-h-96 my-10">
+      <div className="w-full gap-4 flex flex-row min-h-96 my-10 ">
         <div className="w-[300px] border rounded border-slate-300 p-8">
           <h3 className="font-bold text-xl text-secondaryLight mb-4">Filtros</h3>
 
@@ -213,12 +221,12 @@ export const SearchPage = () => {
               />
             </div>
             <div className='flex flex-row gap-4 justify-center'>
-            <button
-              onClick={handleClearFilters}
-              className='mt-4 px-1 py-2 w-2/5 bg-red-500 text-sm text-white rounded-lg'
-            >
-              Limpiar filtro
-            </button>
+              <button
+                onClick={handleClearFilters}
+                className='mt-4 px-1 py-2 w-2/5 bg-red-500 text-sm text-white rounded-lg'
+              >
+                Limpiar filtro
+              </button>
               <button
                 onClick={handleFilterApply}
                 className='mt-4 px-4 py-2 w-2/5 bg-secondaryLight text-white rounded-lg'
@@ -226,14 +234,14 @@ export const SearchPage = () => {
                 Aplicar
               </button>
             </div>
-            </div>
-          
+          </div>
+
         </div>
 
-        <div className="grow border rounded border-slate-300 p-4">
+        <div className="flex flex-col grow border rounded border-slate-300 p-4">
           <div className='flex flex-row justify-between mb-4'>
             <div>
-              { tempFilters.name && (<h3>{items.length} resultados para "{tempFilters.name}"</h3>) }
+              {tempFilters.name && (<h3>{items.length} resultados para "{tempFilters.name}"</h3>)}
             </div>
             <div className='mr-8'>
               <PaginationComp
@@ -244,22 +252,43 @@ export const SearchPage = () => {
               />
             </div>
           </div>
-          <div>
+          <div className='grow'>
 
           </div>
-          <div className='flex flex-row justify-between mt-4'>
-            <div>
-              
-            </div>
-            <div className='mr-8'>
-                <PaginationComp
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                  maxVisiblePages={5}
-                />
+          <div className='flex flex-row justify-between mt-4 '>
+            <div className='flex'>
+              <div className='mr-3 pt-1'>
+                <h3 className="text-lg font-semibold mb-2">Items por página:</h3>
+              </div>
+              <div className="flex items-center gap-4 mr-8">
+                <div className="relative">
+                  <select
+                    onChange={(e) => handleLimitChange(Number(e.target.value))}
+                    defaultValue="10"
+                    className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                  >
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                    <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
+            <div className='mr-8 pt-1'>
+              <PaginationComp
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                maxVisiblePages={5}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>
