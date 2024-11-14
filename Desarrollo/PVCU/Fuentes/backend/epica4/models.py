@@ -19,7 +19,7 @@ class Catalogo(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name = "Dueño")
     id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True)
     capacidad_maxima = models.IntegerField("Límite", default=15)
-    espacio_ocupado = models.ImageField("Espacio ocupado", default=0)
+    espacio_ocupado = models.IntegerField("Espacio ocupado", default=0)
 
     def clean(self):
         super().clean()
@@ -34,7 +34,11 @@ class Catalogo(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'Catálogo de ' + self.id_usuario.nombres + ' ' + self.id_usuario.apellido_p + ' ' + self.id_usuario.apellido_m
+        if self.id_marca == None:
+            return 'Catálogo de ' + self.id_usuario.nombres + ' ' + self.id_usuario.apellido_p + ' ' + self.id_usuario.apellido_m
+        else: 
+            return 'Catálogo de ' + self.id_marca.nombre
+    
     class Meta:
         verbose_name = "Catalogo"
         verbose_name_plural = "Catalogos"
