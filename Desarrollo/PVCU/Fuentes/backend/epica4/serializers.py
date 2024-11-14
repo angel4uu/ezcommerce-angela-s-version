@@ -1,27 +1,22 @@
 from rest_framework import serializers
-from .models import Catalogo, Articulo
+from .models import Etiqueta, Catalogo, Articulo, Imagen
 
-class CatalogoSerializer(serializers.ModelSerializer):
+class EtiquetaSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Etiqueta
+        fields = '__all__'
 
+class CatalogoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Catalogo
         fields = '__all__'
-        # campo user_id solo se puede modificar cuando se crea, no cuando se actualiza
-        extra_kwargs = {'usuario_id': {'read_only': True}}
 
-    def validate(self, attrs):
-        if attrs['espacio_ocupado'] > attrs['capacidad_maxima']:
-            raise serializers.ValidationError('El espacio ocupado no puede ser mayor que la capacidad máxima.')
-        return attrs
-
-class ArticuloSerializer(serializers.ModelSerializer):
-
+class ArticuloSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Articulo
         fields = '__all__'
 
-    def validate(self, attrs):
-        if self.instance is None:
-            if attrs.get('catalogo') is None:
-                raise serializers.ValidationError({"catalogo": "Catalogo es obligatorio."})
-        return attrs
+class ImagenSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Imagen
+        fields = '__all__'

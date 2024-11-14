@@ -1,27 +1,80 @@
 from django.db import models
-from epica1.models import User
-from django.core.validators import MinValueValidator
+from epica1.models import *
+from epica5.models import Marca
 from django.core.exceptions import ValidationError
 
-# Create your models here.
+class Etiqueta(models.Model):
+    nombre = models.CharField("Nombre", max_length=50, unique=True)
+    descripcion = models.TextField("Descripción")
+    
+    def __str__(self):
+        return self.nombre
+    class Meta:
+        verbose_name = "Etiqueta"
+        verbose_name_plural = "Etiquetas"
+        db_table = "Etiqueta"
+
 
 class Catalogo(models.Model):
-    usuario_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False)
-    capacidad_maxima = models.IntegerField(validators=[MinValueValidator(15)],null=False, blank=False)
-    espacio_ocupado = models.IntegerField(validators=[MinValueValidator(0)],null=False, blank=False)
+    id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name = "Dueño")
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True)
+    capacidad_maxima = models.IntegerField("Límite", default=15)
+    espacio_ocupado = models.ImageField("Espacio ocupado", default=0)
 
     def clean(self):
+        super().clean()
         if self.espacio_ocupado > self.capacidad_maxima:
-            raise ValidationError('El espacio ocupado no puede ser mayor que la capacidad máxima.')
+            raise ValidationError("Parece que te quedaste sin espacio. ¡Es un buen momento para actualizar tu plan!")
+        
+        if self.espacio_ocupado < 0:
+            self.espacio_ocupado = 0
 
+    def save(self, *args, **kwargs):
+        self.full_clean()  
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return 'Catálogo de ' + self.id_usuario.nombres + ' ' + self.id_usuario.apellido_p + ' ' + self.id_usuario.apellido_m
+    class Meta:
+        verbose_name = "Catalogo"
+        verbose_name_plural = "Catalogos"
+        db_table = "Catalogo"
 
 
 
 class Articulo(models.Model):
-    catalogo = models.ForeignKey(Catalogo, on_delete=models.CASCADE, null=False, blank=False)
-    nombre = models.CharField(max_length=50, null=False, blank=False)
-    descripcion = models.CharField(max_length=100, null=True, blank=True)
-    stock = models.IntegerField(validators=[MinValueValidator(0)],null=False, blank=False)
-    disponible = models.BooleanField(default=True, null=False, blank=False)
-    precio = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    imagen = models.TextField(null=True, blank=True)
+    id_catalogo = models.ForeignKey(Catalogo, on_delete=models.CASCADE, verbose_name = "Vendedor")
+    nombre = models.CharField("Nombre", max_length=100, unique=True)
+    descripcion = models.TextField("Descripción")
+    stock = models.IntegerField("Stock disponible", default=1)
+    etiquetas = models.ManyToManyField(Etiqueta)
+    disponible = models.BooleanField("Disponible", default=True)
+
+    def save(self, *args, **kwargs):
+        if self.stock < 0:
+            self.stock = 0
+        
+        self.disponible = self.stock > 0
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nombre
+    class Meta:
+        verbose_name = "Articulo"
+        verbose_name_plural = "Articulos"
+        db_table = "Articulo"
+
+
+class Imagen(models.Model):
+    id_articulo = models.ForeignKey(Articulo, on_delete=models.CASCADE, verbose_name = "Artículo")
+    url = models.URLField("URL")
+
+    def __str__(self):
+        return self.id_articulo.nombre
+    class Meta:
+        verbose_name = "Imagen"
+        verbose_name_plural = "Imagenes"
+        db_table = "Imagen"
+
+

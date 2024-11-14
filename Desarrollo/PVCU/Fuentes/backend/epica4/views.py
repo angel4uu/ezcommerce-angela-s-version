@@ -1,79 +1,48 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
-from rest_framework.views import Response
-from .models import Catalogo, Articulo
-from .serializers import CatalogoSerializer, ArticuloSerializer
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import *
+from .models import *
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+class EtiquetaViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Etiqueta.
+    """
+    queryset = Etiqueta.objects.all()
+    serializer_class = EtiquetaSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 
-class CatalogoCreateView(generics.CreateAPIView):
+class CatalogoViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Catalogo.
+    """
     queryset = Catalogo.objects.all()
     serializer_class = CatalogoSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(usuario_id=self.request.user)
-
-class CatalogoListView(generics.ListAPIView):
-    queryset = Catalogo.objects.all()
-    serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Catalogo.objects.filter(usuario_id=self.request.user)
+    #filterset_fields = ['nombre'] # Nuevo API filter
+    filterset_fields = '__all__'
 
 
-class CatalogoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Catalogo.objects.all()
-    serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return Catalogo.objects.get(id=self.kwargs['pk'], usuario_id=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(usuario_id=self.request.user)
-
-    def perform_destroy(self, instance):
-        instance.delete()
-
-
-class ArticuloCreateView(generics.CreateAPIView):
+class ArticuloViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Articulo.
+    """
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
     permission_classes = [permissions.IsAuthenticated]
+    #filterset_fields = ['nombre'] # Nuevo API filter
+    filterset_fields = '__all__'
 
 
-
-class ArticuloListView(generics.ListAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
+class ImagenViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Imagen.
+    """
+    queryset = Imagen.objects.all()
+    serializer_class = ImagenSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        catalogo_id = self.kwargs['pk']
-
-        if not catalogo_id:
-            raise ValueError('No se ha proporcionado un catálogo.')
-        # Asegúrate de que el catálogo pertenece al usuario autenticado
-        catalogo = Catalogo.objects.filter(id=catalogo_id, usuario_id=self.request.user).first()
-        if catalogo:
-            return Articulo.objects.filter(catalogo=catalogo)
-        else:
-            return Articulo.objects.none()
-
-
-class ArticuloDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return Articulo.objects.get(id=self.kwargs['pk'])
-
-    def perform_update(self, serializer):
-        serializer.save(usuario_id=self.request.user)
-
-    def perform_destroy(self, instance):
-        instance.delete()
+    #filterset_fields = ['nombre'] # Nuevo API filter
+    filterset_fields = '__all__'

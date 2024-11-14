@@ -1,31 +1,24 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from epica1.models import User
-from epica1.serializers import UserSerializer
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import *
+from .models import *
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
-
-
-class UserUpdateView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class FacultadViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Facultad.
+    """
+    queryset = Facultad.objects.all()
+    serializer_class = FacultadSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
-    def get_object(self):
-        return self.request.user
-
-
-
-class UserDeleteView(generics.DestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class EscuelaProfesionalViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de EscuelaProfesional.
+    """
+    queryset = EscuelaProfesional.objects.all()
+    serializer_class = EscuelaProfesionalSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def delete(self, request, *args, **kwargs):
-        user = self.get_object()
-        self.perform_destroy(user)
-        return Response({"detail": "Cuenta eliminada exitosamente."}, status=status.HTTP_204_NO_CONTENT)
+    filterset_fields = '__all__'
