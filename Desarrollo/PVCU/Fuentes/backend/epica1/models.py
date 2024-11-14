@@ -46,7 +46,7 @@ class Usuario(AbstractBaseUser):
     apellido_m = models.CharField("Apellido materno", max_length = 200)   
     celular = models.CharField("Celular", max_length = 20)
     codigo = models.CharField("Código de estudiante", max_length = 100, unique = True)
-    fecha_nacimiento = models.DateField("Fecha de nacimiento")
+    fecha_nacimiento = models.DateField("Fecha de nacimiento", null=True, blank=True)
     codigoqr = models.URLField("Código QR", null=True, blank=True)
 
     fecha_registro = models.DateTimeField(auto_now_add=True)
