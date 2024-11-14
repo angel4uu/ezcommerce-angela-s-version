@@ -14,7 +14,7 @@ class EtiquetaViewSet(viewsets.ModelViewSet):
     """
     queryset = Etiqueta.objects.all()
     serializer_class = EtiquetaSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filterset_fields = '__all__'
 
 
@@ -24,7 +24,7 @@ class CatalogoViewSet(viewsets.ModelViewSet):
     """
     queryset = Catalogo.objects.all()
     serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     #filterset_fields = ['nombre'] # Nuevo API filter
     filterset_fields = '__all__'
 
@@ -35,7 +35,7 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     """
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     #filterset_fields = ['nombre'] # Nuevo API filter
     filterset_fields = '__all__'
 
@@ -46,7 +46,7 @@ class ImagenViewSet(viewsets.ModelViewSet):
     """
     queryset = Imagen.objects.all()
     serializer_class = ImagenSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     filterset_fields = '__all__'
 
 
