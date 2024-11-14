@@ -4,6 +4,7 @@ from rest_framework import permissions
 from .serializers import *
 from .models import *
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class MarcaViewSet(viewsets.ModelViewSet):
     """
@@ -11,7 +12,19 @@ class MarcaViewSet(viewsets.ModelViewSet):
     """
     queryset = Marca.objects.all()
     serializer_class = MarcaSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
+
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
+
+        return [permission() for permission in permission_classes]
+
 
 class PlanViewSet(viewsets.ModelViewSet):
     """
@@ -19,7 +32,19 @@ class PlanViewSet(viewsets.ModelViewSet):
     """
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
+    
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
+
+        return [permission() for permission in permission_classes]
+    
 
 class MembresiaViewSet(viewsets.ModelViewSet):
     """
@@ -27,4 +52,15 @@ class MembresiaViewSet(viewsets.ModelViewSet):
     """
     queryset = Membresia.objects.all()
     serializer_class = MembresiaSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
+    
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
+
+        return [permission() for permission in permission_classes]

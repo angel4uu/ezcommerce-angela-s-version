@@ -11,9 +11,17 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     """
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [permissions.AllowAny]
-    #filterset_fields = ['username'] # Nuevo API filter
-    #lookup_field = 'username'
+    
+    def get_permissions(self):
+        """
+        Asigna permisos diferentes dependiendo del método HTTP.
+        """
+        if self.action == 'create':  # Para POST (creación de usuarios)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera crear un usuario
+        else:  # Para otros métodos como GET, PUT, DELETE
+            permission_classes = [permissions.IsAuthenticated]  # Solo los usuarios autenticados pueden ver los datos
+
+        return [permission() for permission in permission_classes]
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
@@ -22,4 +30,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
-    #lookup_field = 'name'
