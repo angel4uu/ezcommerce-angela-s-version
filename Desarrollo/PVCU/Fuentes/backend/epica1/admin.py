@@ -11,4 +11,10 @@ class UsuarioAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Usuario._meta.fields]
     ordering = ('username',)
 
+class GroupAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Group._meta.fields]
+    ordering = ('name',)
+
+
 admin.site.register(Usuario, UsuarioAdmin)
+#admin.site.register(Group, GroupAdmin)
