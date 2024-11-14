@@ -81,9 +81,14 @@ class Usuario(AbstractBaseUser):
         return self.usuario_administrador
 
     def save(self, *args, **kwargs): # Hasheo de contraseñas
+        is_new = self._state.adding # Verifica si el objeto es nuevo (si es una creación)
         if self.password and not self.password.startswith(('pbkdf2_sha256$', 'bcrypt$', 'argon2')):
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
+
+        if is_new:
+            from epica4.models import Catalogo  # Importación diferida
+            Catalogo.objects.create(id_usuario=self)
 
     class Meta:
         verbose_name = "Usuario"

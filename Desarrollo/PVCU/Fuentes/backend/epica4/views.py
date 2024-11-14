@@ -8,6 +8,8 @@ from epica2.models import EscuelaProfesional, Facultad
 from rest_framework.permissions import AllowAny
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from .pagination import CustomArticuloPagination
 
 #------------------------------------------------------> Filtros <----------------------------------------------------------
 
@@ -27,7 +29,7 @@ class ArticuloFilter(filters.FilterSet):
             'id_catalogo__id_usuario',
             'id_catalogo__id_marca',
             'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
-            'id_catalogo__id_usuario__id_escuela__nombre',
+            'id_catalogo__id_usuario__id_escuela',
             'precio_min', 'precio_max', 
         ]
 
@@ -99,7 +101,33 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
     filterset_class = ArticuloFilter  
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+
+    ordering_fields = [
+        # Ordenar por nombre de la marca: ?ordering=id_marca__nombre
+        'id_marca__nombre',  
+
+        # Ordenar por nombre de la facultad: ?ordering=id_catalogo__id_usuario__id_escuela__id_facultad__nombre        
+        'id_catalogo__id_usuario__id_escuela__id_facultad__nombre', 
+        
+        # Ordenar por nombre de la escuela profesional: ?ordering=id_catalogo__id_usuario__id_escuela__nombre
+        'id_catalogo__id_usuario__id_escuela__nombre',
+
+        # Ordenar por nombre del artículo: ?ordering=nombre
+        'nombre', 
+        
+        # Ordenar por precio ascendente: ?ordering=precio
+        # Ordenar por precio descendente: ?ordering=-precio
+        'precio', 
+
+        # Ordenar por nombre de etiquetas: ?ordering=etiquetas__nombre
+        'etiquetas__nombre',   
+    ]
+    ordering = ['nombre']  # Orden predeterminado
+    
+    #paginación: ?page=1&limit=10
+    pagination_class = CustomArticuloPagination  #cambiar datos luego de 'page='y 'limit=' según necesite.
+
 
     def get_permissions(self):
         """

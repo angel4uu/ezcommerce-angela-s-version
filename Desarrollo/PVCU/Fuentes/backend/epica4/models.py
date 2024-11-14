@@ -17,7 +17,7 @@ class Etiqueta(models.Model):
 
 class Catalogo(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name = "Dueño")
-    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True, default=None)
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True, blank = True)
     capacidad_maxima = models.IntegerField("Límite", default=15)
     espacio_ocupado = models.IntegerField("Espacio ocupado", default=0)
 
@@ -48,14 +48,23 @@ class Catalogo(models.Model):
 
 class Articulo(models.Model):
     id_catalogo = models.ForeignKey(Catalogo, on_delete=models.CASCADE, verbose_name = "Vendedor")
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, null=True, blank=True)
     nombre = models.CharField("Nombre", max_length=100, unique=True)
     descripcion = models.TextField("Descripción")
     stock = models.IntegerField("Stock disponible", default=1)
     etiquetas = models.ManyToManyField(Etiqueta)
     disponible = models.BooleanField("Disponible", default=True)
     precio = models.FloatField("Precio")
+    bloqueado = models.BooleanField("Bloqueado", default=False)
 
     def save(self, *args, **kwargs):
+        # Incrementar el espacio ocupado solo al crear un nuevo artículo.
+        if not self.pk:  # Verifica si es un objeto nuevo
+            if self.id_catalogo.espacio_ocupado >= self.id_catalogo.capacidad_maxima:
+                raise ValidationError("El catálogo ha alcanzado su límite máximo de artículos.")                
+            self.id_catalogo.espacio_ocupado += 1
+            self.id_catalogo.save()
+
         if self.stock < 0:
             self.stock = 0
         
@@ -64,7 +73,21 @@ class Articulo(models.Model):
         if self.precio < 0:
             self.precio = 0
 
+        if self.id_catalogo.id_marca is not None:
+            self.id_marca = self.id_catalogo.id_marca
+        else:
+            self.id_marca = None
+        
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Reducir el espacio ocupado al eliminar un artículo.
+        if self.id_catalogo.espacio_ocupado > 0:
+            self.id_catalogo.espacio_ocupado -= 1
+            self.id_catalogo.save()
+
+        super().delete(*args, **kwargs)
+
 
     def __str__(self):
         return self.nombre
