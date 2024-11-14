@@ -28,6 +28,7 @@ import {
   PurchaseManagementPage,
 } from "@/pages/Epica06";
 import { Chat } from "@/pages/Epica06/Chat";
+import { PendingPurchasePay } from "@/pages/Epica06/PendingPurchasePay";
 
 const routes = createBrowserRouter([
   {
@@ -172,6 +173,10 @@ const routes = createBrowserRouter([
       {
         path: "/chat",
         element: <Chat></Chat>,
+      },
+      {
+        path: "/purchases-pay",
+        element: <PendingPurchasePay></PendingPurchasePay>,
       },
     ],
   },
