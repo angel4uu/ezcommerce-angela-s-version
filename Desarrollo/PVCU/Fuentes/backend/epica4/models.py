@@ -48,6 +48,7 @@ class Catalogo(models.Model):
 
 class Articulo(models.Model):
     id_catalogo = models.ForeignKey(Catalogo, on_delete=models.CASCADE, verbose_name = "Vendedor")
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, null=True, blank=True)
     nombre = models.CharField("Nombre", max_length=100, unique=True)
     descripcion = models.TextField("Descripción")
     stock = models.IntegerField("Stock disponible", default=1)
@@ -63,6 +64,11 @@ class Articulo(models.Model):
         
         if self.precio < 0:
             self.precio = 0
+
+        if self.id_catalogo.id_marca is not None:
+            self.id_marca = self.id_catalogo.id_marca
+        else:
+            self.id_marca = None
 
         super().save(*args, **kwargs)
 

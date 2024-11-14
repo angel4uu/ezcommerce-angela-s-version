@@ -27,7 +27,7 @@ class ArticuloFilter(filters.FilterSet):
             'id_catalogo__id_usuario',
             'id_catalogo__id_marca',
             'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
-            'id_catalogo__id_usuario__id_escuela__nombre',
+            'id_catalogo__id_usuario__id_escuela',
             'precio_min', 'precio_max', 
         ]
 
