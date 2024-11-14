@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'epica1',
     'epica2',
-    'epica4'
+    'epica4',
+    'epica5'
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,6 @@
 from django.db import models
 from epica1.models import *
+from epica5.models import Marca
 from django.core.exceptions import ValidationError
 
 class Etiqueta(models.Model):
@@ -16,6 +17,7 @@ class Etiqueta(models.Model):
 
 class Catalogo(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name = "Dueño")
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True)
     capacidad_maxima = models.IntegerField("Límite", default=15)
     espacio_ocupado = models.ImageField("Espacio ocupado", default=0)
 
