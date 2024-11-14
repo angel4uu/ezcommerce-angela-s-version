@@ -120,7 +120,7 @@ class ArticuloViewSet(viewsets.ModelViewSet):
         # Ordenar por precio descendente: ?ordering=-precio
         'precio', 
 
-        # Ordenar por nombre de etiquetas
+        # Ordenar por nombre de etiquetas: ?ordering=etiquetas__nombre
         'etiquetas__nombre',   
     ]
     ordering = ['nombre']  # Orden predeterminado
