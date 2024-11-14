@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import make_password
+from django.core.validators import RegexValidator
 from epica2.models import *
 
 class UsuarioManager(BaseUserManager):
@@ -32,6 +33,11 @@ class UsuarioManager(BaseUserManager):
         return user
 
 class Usuario(AbstractBaseUser):
+    username_validator = RegexValidator(
+        regex=r'^[\w.@+-_%]+$',
+        message='El username puede contener letras, números y los caracteres @/./+/-/_%',
+        code='invalid_username'
+    )
     id_escuela = models.ForeignKey(EscuelaProfesional, on_delete = models.CASCADE, verbose_name = "Escuela Profesional")
     username = models.CharField("Nombre de usuario", max_length = 100, unique = True)
     email = models.EmailField("Correo electrónico", max_length = 254, unique = True)

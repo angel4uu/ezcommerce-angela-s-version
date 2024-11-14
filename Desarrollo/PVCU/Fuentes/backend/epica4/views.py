@@ -3,10 +3,35 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import *
 from .models import *
+from epica1.models import Usuario
+from epica2.models import EscuelaProfesional, Facultad
 from rest_framework.permissions import AllowAny
-from django.db.models import Q
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
+
+#------------------------------------------------------> Filtros <----------------------------------------------------------
+
+class ArticuloFilter(filters.FilterSet):
+    nombre = filters.CharFilter(field_name='nombre', lookup_expr='icontains')
+    id_catalogo__id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
+        field_name='id_catalogo__id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')
+    id_catalogo__id_usuario__id_escuela__nombre = filters.CharFilter(
+        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')
+
+    
+    class Meta:
+        model = Articulo
+        fields = [
+            'nombre', 'etiquetas', 'disponible',
+            'id_catalogo__id_usuario',
+            'id_catalogo__id_marca',
+            'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
+            'id_catalogo__id_usuario__id_escuela__nombre',
+        ]
+
+
+
+#------------------------------------------------------> Vistas <----------------------------------------------------------
 
 class EtiquetaViewSet(viewsets.ModelViewSet):
     """
@@ -54,7 +79,15 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     """
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
-    filterset_fields = '__all__'
+    #filter_class = ArticuloFilter
+
+    filterset_fields = [ 
+        'nombre', 'etiquetas', 'disponible', 
+        'id_catalogo__id_usuario', # Filtrar por catálogo
+        'id_catalogo__id_marca', # Filtrar por marca
+        'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',  # Filtrar por facultad
+        'id_catalogo__id_usuario__id_escuela__nombre',  # Ejemplo para filtrar por nombre de escuela
+    ]
 
     def get_permissions(self):
         """
@@ -88,5 +121,4 @@ class ImagenViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 
-################################################  Intento de Filtro 
 
