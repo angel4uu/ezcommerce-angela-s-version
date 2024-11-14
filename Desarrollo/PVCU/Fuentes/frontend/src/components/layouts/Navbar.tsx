@@ -6,7 +6,6 @@ import { MenuFaculties } from "./MenuFaculties";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
 import { useState } from "react";
 
 const icons = [
