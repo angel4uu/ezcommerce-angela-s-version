@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -34,11 +34,12 @@ import { format } from "date-fns";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUser } from "@/api/api";
+import { createUser,escuelaProfesional  } from "@/api/api";
 import { Link } from "react-router-dom";
 
+
 const formSchema = z.object({
-  id_escuela: z.string().min(1, "Escuela Profesional es requerida"),
+  id_escuela: z.number(),
   username: z.string(),
   email: z.string().email("Correo electrónico inválido"),
   nombres: z.string().min(1, "Nombres son requeridos"),
@@ -46,20 +47,16 @@ const formSchema = z.object({
   apellido_m: z.string().min(1, "Apellido materno es requerido"),
   celular: z.string().min(9, "Celular debe tener al menos 9 dígitos"),
   codigo: z.string().min(1, "Código de estudiante es requerido"),
-  fecha_nacimiento: z.date({
-    required_error: "Fecha de nacimiento es requerida",
-  }),
+  
   codigoqr: z.string().url("URL inválida").optional().or(z.literal("")),
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
 export const RegisterPage = () => {
-  const [date, setDate] = useState<Date>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id_escuela: "",
       username: "",
       email: "",
       nombres: "",
@@ -69,38 +66,44 @@ export const RegisterPage = () => {
       codigo: "",
       codigoqr: "",
       password: "",
+      id_escuela: 1,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const fileInput = form.getValues("codigoqr");
     let updatedValues = { ...values };
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-      if (value instanceof File) {
-        formData.append(key, value);
-      } else if (value instanceof Date) {
-        formData.append(key, value.toISOString());
-      } else {
-        formData.append(key, String(value));
-      }
-    });
     
-    console.log('Form data:', Object.fromEntries(formData));
     // Aquí iría la lógica para enviar formData al servidor
     //Set username as email
     updatedValues = { ...updatedValues, username: updatedValues.email };
-
+    console.log("Datos del formulario:", updatedValues);
     try {
       const { codigoqr, ...rest } = updatedValues;
+      
       await createUser(rest as any);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
       toast.error("Se produjo un error al crear su cuenta");
+      console.error("Error creating user:", error);
     }
-    console.log("Datos del formulario:", updatedValues);
+    
   }
 
+  // const [escuelas, setEscuelas] = useState([]);
+  // const fetchEscuelas = async () => {
+  //   try {
+  //     const response = await escuelaProfesional ();
+  //     setEscuelas(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching escuelas:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchEscuelas();
+  // }, []);
+  // console.log(escuelas);
   return (
     <>
       <Helmet>
@@ -140,8 +143,8 @@ export const RegisterPage = () => {
                         <FormItem>
                           <FormLabel>Escuela Profesional</FormLabel>
                           <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={(value)=>field.onChange(Number(value))}
+                            defaultValue={field.value?.toString()}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -149,14 +152,8 @@ export const RegisterPage = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="escuela1">
-                                Escuela 1
-                              </SelectItem>
-                              <SelectItem value="escuela2">
-                                Escuela 2
-                              </SelectItem>
-                              <SelectItem value="escuela3">
-                                Escuela 3
+                            <SelectItem value="1">
+                                Ingeniería de sistemas
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -248,51 +245,7 @@ export const RegisterPage = () => {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="fecha_nacimiento"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Fecha de nacimiento</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Selecciona una fecha</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date > new Date() ||
-                                  date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    
                     <FormField
                       control={form.control}
                       name="codigoqr"

@@ -18,3 +18,9 @@ const registerApi = axios.create({
 export const createUser = (user:User) => {
   return registerApi.post('/', user);
 };
+
+
+
+export const escuelaProfesional = () => {
+  return axios.get(`${baseURL}/escuelasprofesionales`);
+}
