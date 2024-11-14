@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 // Epicas
 import { LoginPage, RegisterPage } from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
-import { MainPage, SearchPage } from "../pages/Epica03";
+import { MainPage, SearchPage, SearchSellers } from "../pages/Epica03";
 import {
   PlansPage,
   PayPlanPage,
@@ -52,6 +52,10 @@ const routes = createBrowserRouter([
         path: "/search",
         element: <SearchPage />,
         // loader:
+      },
+      {
+        path:"/sellers",
+        element:<SearchSellers />
       },
       {
         path: "/profile-buyer",
