@@ -1,6 +1,7 @@
 import { RecoverAccountModal } from "./RecoverAccountModal";
-
+import { HelpAndSupport } from "./HelpAndSoport";
 
 export{
-    RecoverAccountModal
+    RecoverAccountModal,
+    HelpAndSupport
 }
