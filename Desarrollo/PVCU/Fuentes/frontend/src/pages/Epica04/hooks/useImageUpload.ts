@@ -6,10 +6,8 @@ interface UploadedImage {
   url: string;
 }
 
-export const useImageUpload = (maxImages = 10) => {
+export const useImageUpload = (maxImages = 5) => {
   const [images, setImages] = useState<UploadedImage[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -33,20 +31,7 @@ export const useImageUpload = (maxImages = 10) => {
   const removeImage = useCallback((id: string) => {
     setImages((prev) => prev.filter((image) => image.id !== id));
     console.log("Imagen eliminada");
-  }, []);
-
-  const openModal = useCallback((imageUrl: string) => {
-    console.log(imageUrl);
-    setSelectedImage(imageUrl);
-    setIsModalOpen(true);
-    console.log("Modal abierto");
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    setSelectedImage(null);
-    console.log("Modal cerrado");
-  }, []);
+  }, []); 
 
   const onDragEnd = (event: any) => {
     const { active, over } = event;
@@ -61,12 +46,8 @@ export const useImageUpload = (maxImages = 10) => {
 
   return {
     images,
-    selectedImage,
-    isModalOpen,
     handleFileUpload,
     removeImage,
-    openModal,
-    closeModal,
     onDragEnd,
   };
 };

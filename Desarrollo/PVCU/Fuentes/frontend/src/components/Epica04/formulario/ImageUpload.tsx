@@ -1,19 +1,23 @@
 import * as React from "react";
-import { Plus, X } from "lucide-react";
-import { useImageUpload } from "../../../pages/Epica04/hooks/useImageUpload";
-import { ImagePreviewModal } from "./ImagePreviewModal";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, useSortable, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { Plus, X, Maximize2 } from "lucide-react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const DraggableImage: React.FC<{
+interface UploadedImage {
   id: string;
   url: string;
-  onRemove: () => void;
-  onClick: () => void;
-}> = React.memo(({ id, url, onRemove, onClick }) => {
+}
+
+interface SortableImageProps {
+  image: UploadedImage;
+  onRemove: (id: string) => void;
+  onPreview: (url: string) => void;
+}
+
+const SortableImage: React.FC<SortableImageProps> = ({ image, onRemove, onPreview }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
-    id,
+    id: image.id,
   });
 
   const style = {
@@ -25,75 +29,97 @@ const DraggableImage: React.FC<{
     <div
       ref={setNodeRef}
       style={style}
+      className="relative group aspect-square bg-muted rounded-lg overflow-hidden"
       {...attributes}
       {...listeners}
-      className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden"
     >
       <img
-        src={url}
-        alt="Uploaded image"
-        className="object-cover w-full h-full cursor-pointer"
-        onClick={onClick}
+        src={image.url}
+        alt="Uploaded product"
+        className="w-full h-full object-cover cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          onPreview(image.url); // Activa la previsualización al hacer clic
+        }}
       />
-      <button
-        onClick={onRemove}
-        className="absolute top-1 right-1 p-1 bg-black bg-opacity-50 text-white rounded-full opacity-0 hover:opacity-100 transition-opacity"
-      >
-        <X className="w-4 h-4" />
-      </button>
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onPreview(image.url);
+          }}
+          className="p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors"
+        >
+          <Maximize2 className="w-4 h-4 text-gray-900" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(image.id);
+          }}
+          className="p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors"
+        >
+          <X className="w-4 h-4 text-gray-900" />
+        </button>
+      </div>
     </div>
   );
-});
+};
 
-export const ImageUpload: React.FC = () => {
-  const {
-    images,
-    selectedImage,
-    isModalOpen,
-    handleFileUpload,
-    removeImage,
-    openModal,
-    closeModal,
-    onDragEnd,
-  } = useImageUpload(10);
+interface ImageUploadProps {
+  images: UploadedImage[];
+  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  removeImage: (id: string) => void;
+  onDragEnd: (event: any) => void;
+  onPreview: (url: string) => void; // Nueva prop para previsualizar
+}
+
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  images,
+  handleFileUpload,
+  removeImage,
+  onDragEnd,
+  onPreview,
+}) => {
+  const sensors = useSensors(useSensor(PointerSensor));
 
   return (
-    <div className="space-y-2">
-      <h2 className="text-xl font-semibold mb-2">Imágenes de tus productos</h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Fotos - {images.length}/10 - Puedes agregar un máximo de 10 fotos
-      </p>
+    <div className="w-full max-w-3xl mx-auto p-4">
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Imágenes de tus productos</h2>
+          <p className="text-sm text-muted-foreground">
+            Fotos - {images.length}/5 - Puedes agregar un máximo de 5 fotos
+          </p>
+        </div>
 
-      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-        <SortableContext items={images.map((img) => img.id)} strategy={horizontalListSortingStrategy}>
-          <div className="flex gap-4 items-start">
-            {images.map((image) => (
-              <DraggableImage
-                key={image.id}
-                id={image.id}
-                url={image.url}
-                onRemove={() => removeImage(image.id)}
-                onClick={() => openModal(image.url)}
-              />
-            ))}
-            {images.length < 10 && (
-              <label className="w-32 h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
-                <Plus className="w-6 h-6 mb-1" />
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileUpload}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={images.map((img) => img.id)} strategy={horizontalListSortingStrategy}>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {images.map((image) => (
+                <SortableImage
+                  key={image.id}
+                  image={image}
+                  onRemove={removeImage}
+                  onPreview={onPreview}
                 />
-              </label>
-            )}
-          </div>
-        </SortableContext>
-      </DndContext>
-
-      {/* Modal de vista previa de imagen */}
-      {isModalOpen && <ImagePreviewModal imageUrl={selectedImage} onClose={closeModal} />}
+              ))}
+              {images.length < 5 && (
+                <label className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/40 transition-colors cursor-pointer flex items-center justify-center">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <Plus className="w-6 h-6 text-muted-foreground" />
+                </label>
+              )}
+            </div>
+          </SortableContext>
+        </DndContext>
+      </div>
     </div>
   );
 };
