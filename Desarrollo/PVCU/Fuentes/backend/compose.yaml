@@ -19,7 +19,7 @@ services:
         condition: service_healthy
   db:
     image: postgres:16
-    restart: always
+    restart: on-failure
     user: postgres
     volumes:
       - db-data:/var/lib/postgresql/data

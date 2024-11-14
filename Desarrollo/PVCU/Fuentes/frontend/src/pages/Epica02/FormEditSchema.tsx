@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   nameStudent: z.string().min(2).max(50),
+  lastname: z.string().min(2).max(50),
   profilePhoto: z.string().min(2).max(100),
   qrCode: z.string().min(2).max(100),
   institutionalCode: z.string().min(2).max(8),

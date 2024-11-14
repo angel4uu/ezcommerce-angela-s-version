@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router";
-import { GratisModal } from "../Epica05/GratisModal";
+import { GratisModal } from "../../components/Epica5/GratisModal";
 import { PlanSection } from "./PlanSection";
 
 export function ProfileBuyerPage() {

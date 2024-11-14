@@ -11,17 +11,23 @@ import {
 import { CategoriesCard, SellersCard } from '../../components/cards';
 import { categories, distinguishedSellers, mockProducts, images } from '../../mocks/mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
+import { LoginModal } from '@/components/Epica5/LoginModal';
 
 
 
 export const MainPage = () => {
-
-
   const navigate = useNavigate();
-  const goToTrademark = () => navigate('/plans')
-
-  const {authState}=useAuth();
+  const {authState, setLoginModal}=useAuth();
   console.log("User id:",authState.userId);
+
+  function handleTrademarkClick(){
+    if(authState.userId){
+      navigate('/plans')
+    }
+    else{
+      setLoginModal(true);
+    }
+  }
 
   return (
     <>
@@ -137,12 +143,13 @@ export const MainPage = () => {
           </div>
           <div className='mt-8 py-4 mx-auto'>
             <button className='w-[200px] h-[45px] rounded-lg text-lg shadow-xl bg-secondaryLight hover:bg-secondaryLightHovered text-white'
-              onClick={() => goToTrademark()}>
+              onClick={handleTrademarkClick}>
               Iniciar
             </button>
           </div>
         </div>
       </div>
+      <LoginModal/>
     </>
   )
 }
