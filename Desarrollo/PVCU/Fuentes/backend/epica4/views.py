@@ -14,11 +14,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 class ArticuloFilter(filters.FilterSet):
     nombre = filters.CharFilter(field_name='nombre', lookup_expr='icontains')
     id_catalogo__id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
-        field_name='id_catalogo__id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')
+        field_name='id_catalogo__id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')    
     id_catalogo__id_usuario__id_escuela__nombre = filters.CharFilter(
-        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')
+        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')    
+    precio_min = filters.NumberFilter(field_name='precio', lookup_expr='gte') 
+    precio_max = filters.NumberFilter(field_name='precio', lookup_expr='lte')  
 
-    
     class Meta:
         model = Articulo
         fields = [
@@ -27,6 +28,23 @@ class ArticuloFilter(filters.FilterSet):
             'id_catalogo__id_marca',
             'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
             'id_catalogo__id_usuario__id_escuela__nombre',
+            'precio_min', 'precio_max', 
+        ]
+
+
+class CatalogoFilter(filters.FilterSet):
+    id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
+        field_name='id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')    
+    id_usuario__id_escuela__nombre = filters.CharFilter(
+        field_name='id_usuario__id_escuela__nombre', lookup_expr='icontains')   
+
+    class Meta:
+        model = Catalogo
+        fields = [            
+            'id_usuario',
+            'id_marca',
+            'id_usuario__id_escuela__id_facultad__siglas',
+            'id_usuario__id_escuela__nombre'
         ]
 
 
@@ -59,7 +77,8 @@ class CatalogoViewSet(viewsets.ModelViewSet):
     """
     queryset = Catalogo.objects.all()
     serializer_class = CatalogoSerializer
-    filterset_fields = '__all__'
+    filterset_class = CatalogoFilter  
+    filter_backends = [DjangoFilterBackend]
 
     def get_permissions(self):
         """
@@ -79,15 +98,8 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     """
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
-    #filter_class = ArticuloFilter
-
-    filterset_fields = [ 
-        'nombre', 'etiquetas', 'disponible', 
-        'id_catalogo__id_usuario', # Filtrar por catálogo
-        'id_catalogo__id_marca', # Filtrar por marca
-        'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',  # Filtrar por facultad
-        'id_catalogo__id_usuario__id_escuela__nombre',  # Ejemplo para filtrar por nombre de escuela
-    ]
+    filterset_class = ArticuloFilter  
+    filter_backends = [DjangoFilterBackend]
 
     def get_permissions(self):
         """

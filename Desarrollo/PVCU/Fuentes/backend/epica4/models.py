@@ -17,7 +17,7 @@ class Etiqueta(models.Model):
 
 class Catalogo(models.Model):
     id_usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name = "Dueño")
-    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True)
+    id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, verbose_name="Marca", null = True, default=None)
     capacidad_maxima = models.IntegerField("Límite", default=15)
     espacio_ocupado = models.IntegerField("Espacio ocupado", default=0)
 
@@ -40,8 +40,8 @@ class Catalogo(models.Model):
             return 'Catálogo de ' + self.id_marca.nombre
     
     class Meta:
-        verbose_name = "Catalogo"
-        verbose_name_plural = "Catalogos"
+        verbose_name = "Catálogo"
+        verbose_name_plural = "Catálogos"
         db_table = "Catalogo"
 
 
@@ -53,6 +53,7 @@ class Articulo(models.Model):
     stock = models.IntegerField("Stock disponible", default=1)
     etiquetas = models.ManyToManyField(Etiqueta)
     disponible = models.BooleanField("Disponible", default=True)
+    precio = models.FloatField("Precio")
 
     def save(self, *args, **kwargs):
         if self.stock < 0:
@@ -60,6 +61,9 @@ class Articulo(models.Model):
         
         self.disponible = self.stock > 0
         
+        if self.precio < 0:
+            self.precio = 0
+
         super().save(*args, **kwargs)
 
     def __str__(self):
