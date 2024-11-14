@@ -28,6 +28,7 @@ import {
   PurchaseManagementPage,
 } from "@/pages/Epica06";
 import { Chat } from "@/pages/Epica06/Chat";
+import { ContactPage } from "../pages/Epica08/ContactPage";
 
 const routes = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const routes = createBrowserRouter([
       {
         path:"/sellers",
         element:<SearchSellers />
+      },
+      { 
+        path:"/contact",
+        element:<ContactPage />
       },
       {
         path: "/profile-buyer",

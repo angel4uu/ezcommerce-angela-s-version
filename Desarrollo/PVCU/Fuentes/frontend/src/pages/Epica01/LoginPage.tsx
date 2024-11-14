@@ -17,7 +17,8 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { Toaster} from "@/components/ui/sonner";
-import { toast } from "sonner";
+import { toast } from "sonner"
+import { RecoverAccountModal } from "../../components/Epica08";
 
 const formSchema = z.object({
   username: z
@@ -143,7 +144,7 @@ export const LoginPage = () => {
                     </span>
                   </Link>{" "}
                 </p>
-                <p>¿Olvidaste tu contraseña?</p>
+                <RecoverAccountModal />
               </div>
             </div>
           </div>
