@@ -124,7 +124,9 @@ class ArticuloViewSet(viewsets.ModelViewSet):
         'etiquetas__nombre',   
     ]
     ordering = ['nombre']  # Orden predeterminado
-    pagination_class = CustomArticuloPagination  # Usa la clase de paginación personalizada
+    
+    #paginación: ?page=1&limit=10
+    pagination_class = CustomArticuloPagination  #cambiar datos luego de 'page='y 'limit=' según necesite.
 
 
     def get_permissions(self):

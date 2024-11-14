@@ -7,6 +7,15 @@ class Marca(models.Model):
     descripcion = models.CharField("Informacion", max_length = 300)
     logo = models.URLField("Logo")
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding  # Verifica si el objeto es nuevo (si es una creación)
+        super().save(*args, **kwargs)  # Guarda la marca primero
+
+        if is_new:
+            from epica4.models import Catalogo  # Importación diferida
+            Catalogo.objects.create(id_usuario=self.id_usuario, id_marca=self)
+
+
     def __str__(self):
         return self.nombre
     
