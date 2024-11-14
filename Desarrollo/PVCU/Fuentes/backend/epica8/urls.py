@@ -1,7 +1,7 @@
+from .views import ReporteCreate, ReporteList
 from django.urls import path
 
-from . import views
-
 urlpatterns = [
-    path("", views.index, name = "index")
+    path('reporte/', ReporteCreate.as_view(), name='reporte-create'),
+    path('reporte/list/', ReporteList.as_view(), name='reporte-list'),
 ]

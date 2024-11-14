@@ -1,17 +1,10 @@
 from rest_framework import serializers
-from .models import *
+
+from .models import Marca
 
 class MarcaSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Marca
         fields = '__all__'
-
-class PlanSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Plan
-        fields = '__all__'
-
-class MembresiaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Membresia
-        fields = '__all__'
+        read_only_fields = ['id', 'usuario']

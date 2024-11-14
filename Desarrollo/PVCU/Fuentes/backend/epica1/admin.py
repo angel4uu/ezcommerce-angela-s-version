@@ -1,14 +1,8 @@
 from django.contrib import admin
-from .models import *
 
-# Cambiar de ubicación el model Group en el admin Django
-from django.contrib.auth.models import Group
-Group._meta.app_label = 'epica1'
-Group._meta.verbose_name = "Rol"
-Group._meta.verbose_name_plural = "Roles"
+from .models import User
 
-class UsuarioAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Usuario._meta.fields]
-    ordering = ('username',)
+# Register your models here.
 
-admin.site.register(Usuario, UsuarioAdmin)
+
+admin.site.register(User)

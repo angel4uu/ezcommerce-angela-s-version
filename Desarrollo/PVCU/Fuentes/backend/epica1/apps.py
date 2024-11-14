@@ -1,7 +1,9 @@
 from django.apps import AppConfig
 
 
-class Epica1Config(AppConfig):
+class UserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'epica1'
-    verbose_name = "Gestión de Usuarios"
+
+    def ready(self):
+        import epica1.signals
