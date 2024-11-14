@@ -8,6 +8,8 @@ from epica2.models import EscuelaProfesional, Facultad
 from rest_framework.permissions import AllowAny
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from .pagination import CustomArticuloPagination
 
 #------------------------------------------------------> Filtros <----------------------------------------------------------
 
@@ -99,7 +101,31 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
     filterset_class = ArticuloFilter  
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+
+    ordering_fields = [
+        # Ordenar por nombre de la marca: ?ordering=id_marca__nombre
+        'id_marca__nombre',  
+
+        # Ordenar por nombre de la facultad: ?ordering=id_catalogo__id_usuario__id_escuela__id_facultad__nombre        
+        'id_catalogo__id_usuario__id_escuela__id_facultad__nombre', 
+        
+        # Ordenar por nombre de la escuela profesional: ?ordering=id_catalogo__id_usuario__id_escuela__nombre
+        'id_catalogo__id_usuario__id_escuela__nombre',
+
+        # Ordenar por nombre del artículo: ?ordering=nombre
+        'nombre', 
+        
+        # Ordenar por precio ascendente: ?ordering=precio
+        # Ordenar por precio descendente: ?ordering=-precio
+        'precio', 
+
+        # Ordenar por nombre de etiquetas
+        'etiquetas__nombre',   
+    ]
+    ordering = ['nombre']  # Orden predeterminado
+    pagination_class = CustomArticuloPagination  # Usa la clase de paginación personalizada
+
 
     def get_permissions(self):
         """
