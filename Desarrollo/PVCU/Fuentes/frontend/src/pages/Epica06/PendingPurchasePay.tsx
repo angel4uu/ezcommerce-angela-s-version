@@ -15,7 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
+import { baseURL } from "@/api/api";
 
 const datos = [
   {
@@ -144,7 +145,8 @@ const cantidadTotalProductos = (orders: Order[]) => {
 };
 
 export function PendingPurchasePay() {
-  const [visibleOrders, setVisibleOrders] = useState(datos);
+  const [visibleOrders, setVisibleOrders] = useState<Order[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleCancel = (orderId: number) => {
@@ -155,6 +157,25 @@ export function PendingPurchasePay() {
 
   const totalMonto = totalDeTodosLosProductos(visibleOrders);
   const totalProductos = cantidadTotalProductos(visibleOrders);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseURL}/consulta`);
+        if (!response.ok) {
+          throw new Error("Error en fetchData");
+        }
+        const data = await response.json();
+
+        setVisibleOrders(data);
+        setError(null);
+      } catch (e) {
+        console.error("Error al hacer la petición: ", e);
+        setError("Problemas al cargar los datos");
+      }
+      fetchData();
+    };
+  }, []);
 
   return (
     <div className="my-4 mb-12">
