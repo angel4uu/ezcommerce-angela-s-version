@@ -32,15 +32,15 @@ class UsuarioManager(BaseUserManager):
         return user
 
 class Usuario(AbstractBaseUser):
-    id_escuela = models.ForeignKey(EscuelaProfesional, on_delete = models.CASCADE, verbose_name = "Escuela Profesional", null = True, blank = True)
+    id_escuela = models.ForeignKey(EscuelaProfesional, on_delete = models.CASCADE, verbose_name = "Escuela Profesional")
     username = models.CharField("Nombre de usuario", max_length = 100, unique = True)
     email = models.EmailField("Correo electrónico", max_length = 254, unique = True)
     nombres = models.CharField("Nombres", max_length = 200)
-    apellido_p = models.CharField("Apellido paterno", max_length = 200, blank = True, null = True)
-    apellido_m = models.CharField("Apellido materno", max_length = 200, blank = True, null = True)   
-    celular = models.CharField("Celular", max_length = 20, blank = True, null = True)
+    apellido_p = models.CharField("Apellido paterno", max_length = 200)
+    apellido_m = models.CharField("Apellido materno", max_length = 200)   
+    celular = models.CharField("Celular", max_length = 20)
     codigo = models.CharField("Código de estudiante", max_length = 100, unique = True)
-    fecha_nacimiento = models.DateField("Fecha de nacimiento", null = True, blank= True)
+    fecha_nacimiento = models.DateField("Fecha de nacimiento")
     codigoqr = models.URLField("Código QR", null=True, blank=True)
 
     fecha_registro = models.DateTimeField(auto_now_add=True)

@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 
 from rest_framework import routers
 
+from epica6 import views as views_epica6
+from epica5 import views as views_epica5
 from epica4 import views as views_epica4
 from epica2 import views as views_epica2
 from epica1 import views as views_epica1
@@ -40,6 +42,21 @@ router.register(r'etiquetas', views_epica4.EtiquetaViewSet)
 router.register(r'catalogos', views_epica4.CatalogoViewSet)
 router.register(r'articulos', views_epica4.ArticuloViewSet)
 router.register(r'imagenes', views_epica4.ImagenViewSet)
+
+# epica5
+router.register(r'marcas', views_epica5.MarcaViewSet)
+router.register(r'planes', views_epica5.PlanViewSet)
+router.register(r'membresias', views_epica5.MembresiaViewSet)
+
+#epica6
+router.register(r'ordenCompra', views_epica6.OrdenCompraViewSet)
+router.register(r'detalle', views_epica6.DetalleViewSet)
+router.register(r'tipoMensaje', views_epica6.TipoMensajeViewSet)
+router.register(r'tipoSala', views_epica6.TipoSalaViewSet)
+router.register(r'salaChat', views_epica6.SalaChatViewSet)
+router.register(r'mensaje', views_epica6.MensajeViewSet)
+
+
 
 urlpatterns = [
     path('', include(router.urls)),

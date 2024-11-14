@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'epica1',
     'epica2',
     'epica4',
-    'epica5'
+    'epica5',
+    'epica6'
 ]
 
 MIDDLEWARE = [
