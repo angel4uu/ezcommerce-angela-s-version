@@ -1,75 +1,47 @@
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { useNavigate } from "react-router-dom";
+import { UploadedImage } from "./useImageUpload";
 
-// Definición del esquema de validación con Zod
+// Esquema de validación de Zod
+const categories = ["electronics", "clothing", "home", "books", "other"] as const;
 const formSchema = z.object({
-  productName: z.string().nonempty("El nombre del producto es obligatorio"),
-  price: z.number().positive("Debe ser un número positivo"),
-  stock: z.number().int().nonnegative("El stock debe ser un número no negativo"),
-  description: z.string().optional(),
-  category: z.string().nonempty("Selecciona una categoría"),
-  condition: z.string().nonempty("Selecciona una condición"),
-})
+  productName: z.string().min(1, { message: "Este campo es requerido" }), 
+  price: z.coerce.number().min(0, { message: "El precio debe ser un número no negativo" }),
+  stock: z.coerce.number().min(1, { message: "El stock debe ser un número no negativo" }),
+  description: z.string().min(10, { message: "Este campo es requerido con un minimo de 10 caracteres" }), 
+  category: z.enum(categories, {
+    errorMap: () => ({ message: "Selecciona una categoría" }),
+  }),
+});
 
-type FormData = z.infer<typeof formSchema>
 
-export const useProductForm = () => {
 
+interface UseProductFormProps {
+  images: UploadedImage[];
+  setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
+}
+
+export const useProductForm = ({ images, setImages }: UseProductFormProps) => {
   const navigate = useNavigate();
-  const form = useForm<FormData>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       productName: "",
-      price: 0,
-      stock: 0,
       description: "",
-      category: "",
-      condition: "",
+      price: 0,
+      stock: 1,
     },
-  })
+  });
 
-  const [images, setImages] = React.useState<File[]>([])
-  const [selectedImage, setSelectedImage] = React.useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+    console.log(images); 
+    form.reset(); 
+    setImages([]); 
+    navigate("/my-published-products"); 
+  };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files && files.length > 0) {
-      setImages((prev) => [...prev, ...Array.from(files)].slice(0, 10))
-    }
-  }
-
-  const removeImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
-  }
-
-  const openModal = (imageUrl: string) => {
-    setSelectedImage(imageUrl)
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedImage(null)
-  }
-
-  const onSubmit = (data: FormData) => {
-    console.log("Datos del formulario:", data)
-    navigate("/my-published-products")
-  }
-
-  return {
-    form,
-    images,
-    selectedImage,
-    isModalOpen,
-    handleImageUpload,
-    removeImage,
-    openModal,
-    closeModal,
-    onSubmit,
-  }
-}
+  return { form, onSubmit };
+};
