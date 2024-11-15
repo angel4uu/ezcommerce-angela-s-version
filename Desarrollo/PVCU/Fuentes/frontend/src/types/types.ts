@@ -11,15 +11,16 @@ export type Marca={
 }
 export type Plan={
   id:string,
-  tipo: string,
-  duracion: string,
-  precio: number,
   descripcion:string,
-  beneficios:string[]
+  precio: number,
+  duracion_meses: number|null,
+  productos_adicionales:number|null,
+  tipo?:string,
+  beneficios?:string[],
 }
 export type Suscripcion={
   id:string,
-  usuario:string,
+  marca:string,
   plan:string,
   fecha_vencimiento:string|null,
 }

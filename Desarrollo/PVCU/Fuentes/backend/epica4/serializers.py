@@ -9,10 +9,15 @@ class EtiquetaSerializer(serializers.ModelSerializer):
 
 class CatalogoSerializer(serializers.ModelSerializer):
     id_usuario = serializers.IntegerField(source='id_usuario.id')
-    id_marca = serializers.IntegerField(source='id_marca.id')
+    id_marca = serializers.SerializerMethodField()
     class Meta:
         model = Catalogo
         fields = '__all__'
+
+    def get_id_marca(self, obj):
+        # Verifica si `id_marca` es None y maneja el caso.
+        return obj.id_marca.id if obj.id_marca else None
+
 
 class ArticuloSerializer(serializers.ModelSerializer):    
     id_catalogo = serializers.IntegerField(source='id_catalogo.id')

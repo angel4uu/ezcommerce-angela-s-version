@@ -1,19 +1,28 @@
 import { Helmet } from 'react-helmet-async';
-import { categories } from '../../mocks/mainPage-mocks';
 import { Checkbox } from '../../components/ui/checkbox';
 import * as Switch from '@radix-ui/react-switch';
-import { Slider } from '../../components/ui/slider';
 import { useLocation, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { PaginationComp } from '../../components/Epica03/paginationComponent';
+import { Search } from 'lucide-react'
+import { Input } from "@/components/ui/input"
 import axios from 'axios'
 
 
 const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
-export const SearchPage = () => {
+export const SearchSellers = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+    const [sellerName, setSellerName] = useState('')
+  const handleSearch = () => {
+    if (sellerName) {
+      navigate(`/sellers?name=${encodeURIComponent(sellerName)}`);
+    } else {
+      navigate("/search"); 
+    }
+  };
 
   const [items, setItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,10 +31,7 @@ export const SearchPage = () => {
 
   const [tempFilters, setTempFilters] = useState({
     name: '',
-    categorias: [] as string[],
     facultades: [] as string[],
-    min: 0,
-    max: 500,
     brandFilter: false,
   });
 
@@ -39,10 +45,7 @@ export const SearchPage = () => {
     queryParams.append('limit', itemsPerPage.toString());
 
     if (filters.name) queryParams.append('name', filters.name);
-    filters.categorias.forEach((cat) => queryParams.append('categorias', cat));
     filters.facultades.forEach((fac) => queryParams.append('facultades', fac));
-    if (filters.min !== 0) queryParams.append('min', filters.min.toString());
-    if (filters.max !== 500) queryParams.append('max', filters.max.toString());
     if (filters.brandFilter) queryParams.append('byBrand', 'true');
 
     return `${apiUrl}?${queryParams.toString()}`;
@@ -76,12 +79,8 @@ export const SearchPage = () => {
     searchParams.set('limit', itemsPerPage.toString());
 
     if (tempFilters.name) searchParams.set('name', tempFilters.name);
-    searchParams.delete('categorias');
-    tempFilters.categorias.forEach((cat) => searchParams.append('categorias', cat));
     searchParams.delete('facultades');
     tempFilters.facultades.forEach((fac) => searchParams.append('facultades', fac));
-    if (tempFilters.min !== 0) searchParams.set('min', tempFilters.min.toString());
-    if (tempFilters.max !== 500) searchParams.set('max', tempFilters.max.toString());
     searchParams.set('byBrand', tempFilters.brandFilter ? 'true' : '');
 
     navigate(`?${searchParams.toString()}`);
@@ -98,17 +97,14 @@ export const SearchPage = () => {
   const handleClearFilters = () => {
     setTempFilters({
       name: '',
-      categorias: [],
       facultades: [],
-      min: 0,
-      max: 500,
       brandFilter: false,
     });
     setCurrentPage(1);
   };
 
   // Manejo del cambio de estado en los checkboxes de categorías y facultades
-  const handleCheckboxChange = (category: string, type: 'categorias' | 'facultades') => {
+  const handleCheckboxChange = (category: string, type: 'facultades') => {
     const updatedFilters = { ...tempFilters };
     const filterList = updatedFilters[type];
     updatedFilters[type] = filterList.includes(category) ? filterList.filter((item) => item !== category) : [...filterList, category];
@@ -129,10 +125,7 @@ export const SearchPage = () => {
     const newTempFilters = {
       ...tempFilters,
       name: nameParam,
-      categorias: searchParams.getAll('categorias'),
       facultades: searchParams.getAll('facultades'),
-      min: Number(searchParams.get('min') || '0'),
-      max: Number(searchParams.get('max') || '500'),
       brandFilter: searchParams.get('byBrand') === 'true',
     };
     setTempFilters(newTempFilters);
@@ -146,29 +139,40 @@ export const SearchPage = () => {
   return (
     <>
       <Helmet>
-        <title>Search - EzCommerce</title>
+        <title>Vendedores - EzCommerce</title>
       </Helmet>
-
-      <div className="w-full gap-4 flex flex-row min-h-96 my-10 ">
+      <section className="w-full mx-auto mt-8">
+      <div className="bg-gradient-to-b from-[#00366926] to-white rounded-lg px-6 pt-8 pb-2 space-y-6">
+        <div className="space-y-2 text-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-secondaryLight">
+            Vendedores estudiantiles
+          </h2>
+          <p className="text-slate-600">
+            Descubre los productos que ofrecen estos estudiantes.
+          </p>
+          <p className="text-slate-600">
+            Apoya a los universitarios emprendedores mientras impulsas sus sueños y
+            proyectos.
+          </p>
+        </div>
+      </div>
+    </section>
+    <div className='w-full mx-auto px-6  mt-10 mb-8'>
+        <div className="relative max-w-4xl  mx-auto ">
+            <Input
+            className="pr-9 bg-slate-50"
+            placeholder="Buscar..."
+            type="search"
+            value={sellerName}
+            onChange={(e) => setSellerName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()} 
+            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        </div>
+    </div>
+      <div className="w-full gap-4 flex flex-row min-h-96 mt-4 mb-10 ">
         <div className="w-[300px] border rounded border-slate-300 p-8">
           <h3 className="font-bold text-xl text-secondaryLight mb-4">Filtros</h3>
-
-          <div className="mb-4">
-            <h3 className="font-bold text-xl">Categorias</h3>
-            {categories.map((cat) => (
-              <div key={cat.title} className="flex items-center space-x-2 my-4">
-                <Checkbox
-                  id={cat.title.toLowerCase()}
-                  className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(cat.title, 'categorias')}
-                  checked={tempFilters.categorias.includes(cat.title)}
-                />
-                <label htmlFor={cat.title.toLowerCase()} className="text-md font-medium leading-none">
-                  {cat.title}
-                </label>
-              </div>
-            ))}
-          </div>
 
           <div className="mb-4">
             <h3 className="font-bold text-xl">Facultades</h3>
@@ -197,29 +201,7 @@ export const SearchPage = () => {
               <Switch.Thumb className="block size-[28px] translate-x-0.5 rounded-full bg-white transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[34px]" />
             </Switch.Root>
           </div>
-
-          <div className="flex flex-col mb-4 gap-4">
-            <h3 className="font-bold text-xl">Precio</h3>
-            <div>
-              <h3 className="text-md mb-2">Desde: S/. {tempFilters.min}</h3>
-              <Slider
-                min={1}
-                max={500}
-                step={1}
-                value={[tempFilters.min]}
-                onValueChange={([value]) => setTempFilters((prev) => ({ ...prev, min: value }))}
-              />
-            </div>
-            <div>
-              <h3 className="text-md mb-2">Hasta: S/. {tempFilters.max}</h3>
-              <Slider
-                min={1}
-                max={500}
-                step={1}
-                value={[tempFilters.max]}
-                onValueChange={([value]) => setTempFilters((prev) => ({ ...prev, max: Math.max(value, prev.min) }))}
-              />
-            </div>
+            
             <div className='flex flex-row gap-4 justify-center'>
               <button
                 onClick={handleClearFilters}
@@ -235,23 +217,7 @@ export const SearchPage = () => {
               </button>
             </div>
           </div>
-
-        </div>
-
         <div className="flex flex-col grow border rounded border-slate-300 p-4">
-          <div className='flex flex-row justify-between mb-4'>
-            <div>
-              {tempFilters.name && (<h3>{items.length} resultados para "{tempFilters.name}"</h3>)}
-            </div>
-            <div className='mr-8'>
-              <PaginationComp
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                maxVisiblePages={5}
-              />
-            </div>
-          </div>
           <div className='grow'>
 
           </div>
@@ -290,7 +256,7 @@ export const SearchPage = () => {
             </div>
           </div>
         </div>
-      </div>
+    </div>
     </>
   );
 };
