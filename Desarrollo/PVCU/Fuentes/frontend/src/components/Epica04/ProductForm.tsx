@@ -2,13 +2,15 @@ import { useImageUpload } from "../../pages/Epica04/hooks/useImageUpload";
 import { useProductForm } from "../../pages/Epica04/hooks/useProductForm";
 import { ImageUpload } from "./formulario/ImageUpload";
 import { ImagePreviewModal } from "./formulario/ImagePreviewModal";
-import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { LoadEtiquetas } from "../../helpers/LoadEtiquetas";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { Checkbox } from "../ui/checkbox";
+import { Switch } from "../ui/switch";
 
 export const ProductForm = () => {
   // Hook para manejar la subida y gestión de imágenes
@@ -16,7 +18,13 @@ export const ProductForm = () => {
   // Hook para manejar el formulario de producto
   const { form, onSubmit } = useProductForm({ images, setImages });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [etiquetas, setEtiquetas] = useState<{ id: number; nombre: string }[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    LoadEtiquetas().then((data) => setEtiquetas(data));
+  }, []);
+
   const onCancel = () => {
     form.reset();
     setImages([]);  
@@ -25,7 +33,9 @@ export const ProductForm = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-8 font-sans">
-      <h1 className="text-2xl font-bold">Formulario para agregar o actualizar un producto</h1>
+      <h1 className="text-2xl font-bold">
+        Formulario para agregar o actualizar un producto
+      </h1>
 
       {/* Componente para cargar y gestionar imágenes */}
       <div className="space-y-4">
@@ -47,12 +57,15 @@ export const ProductForm = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="productName"
+            name="nombre"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nombre del producto</FormLabel>
                 <FormControl>
-                  <Input placeholder="Escribe el nombre de tu producto" {...field} />
+                  <Input
+                    placeholder="Escribe el nombre de tu producto"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -60,7 +73,7 @@ export const ProductForm = () => {
           />
           <FormField
             control={form.control}
-            name="price"
+            name="precio"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Precio del producto</FormLabel>
@@ -86,7 +99,7 @@ export const ProductForm = () => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="descripcion"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Descripción</FormLabel>
@@ -99,33 +112,88 @@ export const ProductForm = () => {
           />
           <FormField
             control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Categoría</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Categoría del producto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="electronics">Electrónicos</SelectItem>
-                      <SelectItem value="clothing">Ropa</SelectItem>
-                      <SelectItem value="home">Hogar</SelectItem>
-                      <SelectItem value="books">Libros</SelectItem>
-                      <SelectItem value="other">Otro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
+            name="etiquetas"
+            render={() => (
+              <FormItem className="">
+                <div className="mb-4">
+                  <FormLabel className="text-base">Etiquetas</FormLabel>
+                  <FormDescription>
+                    Seleccions las etiquetas que describan tu producto
+                  </FormDescription>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {etiquetas.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="etiquetas"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {item.nombre}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="is_marca"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <FormLabel>Publicar producto como marca</FormLabel>
+                  <FormDescription>
+                    Si cuentas con una marca, puedes activar esta opción para publicar el producto a nombre de la marca. De lo contrario, se publicará a tu nombre.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={!field.value} 
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <div className="flex gap-4">
-            <Button type="submit" className="flex-1 bg-[#00457C] hover:bg-[#00457C]/90">
+            <Button
+              type="submit"
+              className="flex-1 bg-[#00457C] hover:bg-[#00457C]/90"
+            >
               Guardar
             </Button>
-            <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={onCancel}
+            >
               Cancelar
             </Button>
           </div>
@@ -133,7 +201,10 @@ export const ProductForm = () => {
       </Form>
 
       {/* Modal de vista previa de la imagen */}
-      <ImagePreviewModal imageUrl={selectedImage} onClose={() => setSelectedImage(null)} />
+      <ImagePreviewModal
+        imageUrl={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 };
