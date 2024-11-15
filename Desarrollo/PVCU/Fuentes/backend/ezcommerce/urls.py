@@ -43,7 +43,7 @@ router.register(r'roles', views_epica1.GroupViewSet)
 # epica2
 router.register(r'facultades', views_epica2.FacultadViewSet)
 router.register(r'escuelasprofesionales', views_epica2.EscuelaProfesionalViewSet)
-
+ 
 # epica4
 router.register(r'etiquetas', views_epica4.EtiquetaViewSet)
 router.register(r'catalogos', views_epica4.CatalogoViewSet)
@@ -74,7 +74,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    #path('adminepica4/', include('epica4.urls')),
 
 ] 
 

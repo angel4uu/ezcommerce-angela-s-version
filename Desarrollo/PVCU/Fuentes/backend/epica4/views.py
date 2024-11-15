@@ -1,15 +1,19 @@
 from django.shortcuts import render, get_object_or_404
+from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import *
 from .models import *
 from epica1.models import Usuario
 from epica2.models import EscuelaProfesional, Facultad
+from epica1.serializers import UsuarioSerializer
+from epica5.serializers import MarcaSerializer
 from rest_framework.permissions import AllowAny
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from .pagination import CustomArticuloPagination
+from rest_framework.response import Response
 
 #------------------------------------------------------> Filtros <----------------------------------------------------------
 
@@ -159,6 +163,5 @@ class ImagenViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
         return [permission() for permission in permission_classes]
-
 
 
