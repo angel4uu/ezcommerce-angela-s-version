@@ -5,13 +5,13 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 
 export interface IProductCardProps {
-    id: string,
+    id: number,
     name: string,
     price: number,
-    isFavourite: boolean,
+    isFavourite?: boolean,
     img:string
     brand?:string,
-    qualification:number,
+    qualification?:number,
     
 }
 
