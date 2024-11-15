@@ -1,31 +1,45 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from epica1.models import User
-from epica1.serializers import UserSerializer
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import *
+from .models import *
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+class FacultadViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Facultad.
+    """
+    queryset = Facultad.objects.all()
+    serializer_class = FacultadSerializer
+    filterset_fields = '__all__'
+
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
+
+        return [permission() for permission in permission_classes]
 
 
-class UserUpdateView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class EscuelaProfesionalViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de EscuelaProfesional.
+    """
+    queryset = EscuelaProfesional.objects.all()
+    serializer_class = EscuelaProfesionalSerializer
+    filterset_fields = '__all__'
 
-    def get_object(self):
-        return self.request.user
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
-
-
-class UserDeleteView(generics.DestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def delete(self, request, *args, **kwargs):
-        user = self.get_object()
-        self.perform_destroy(user)
-        return Response({"detail": "Cuenta eliminada exitosamente."}, status=status.HTTP_204_NO_CONTENT)
+        return [permission() for permission in permission_classes]

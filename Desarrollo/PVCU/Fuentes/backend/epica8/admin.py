@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+class ReporteAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Reporte._meta.fields]
+    ordering = ('titulo',)
+
+admin.site.register(Reporte, ReporteAdmin)

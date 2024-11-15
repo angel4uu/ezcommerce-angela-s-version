@@ -1,79 +1,167 @@
-from django.shortcuts import render
-from rest_framework import generics, permissions
-from rest_framework.views import Response
-from .models import Catalogo, Articulo
-from .serializers import CatalogoSerializer, ArticuloSerializer
+from django.shortcuts import render, get_object_or_404
+from rest_framework.decorators import action
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import *
+from .models import *
+from epica1.models import Usuario
+from epica2.models import EscuelaProfesional, Facultad
+from epica1.serializers import UsuarioSerializer
+from epica5.serializers import MarcaSerializer
+from rest_framework.permissions import AllowAny
+from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from .pagination import CustomArticuloPagination
+from rest_framework.response import Response
 
-# Create your views here.
+#------------------------------------------------------> Filtros <----------------------------------------------------------
+
+class ArticuloFilter(filters.FilterSet):
+    nombre = filters.CharFilter(field_name='nombre', lookup_expr='icontains')
+    id_catalogo__id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
+        field_name='id_catalogo__id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')    
+    id_catalogo__id_usuario__id_escuela__nombre = filters.CharFilter(
+        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')    
+    precio_min = filters.NumberFilter(field_name='precio', lookup_expr='gte') 
+    precio_max = filters.NumberFilter(field_name='precio', lookup_expr='lte')  
+
+    class Meta:
+        model = Articulo
+        fields = [
+            'nombre', 'etiquetas', 'disponible',
+            'id_catalogo__id_usuario',
+            'id_catalogo__id_marca',
+            'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
+            'id_catalogo__id_usuario__id_escuela',
+            'precio_min', 'precio_max', 
+        ]
 
 
-class CatalogoCreateView(generics.CreateAPIView):
+class CatalogoFilter(filters.FilterSet):
+    id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
+        field_name='id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')    
+    id_usuario__id_escuela__nombre = filters.CharFilter(
+        field_name='id_usuario__id_escuela__nombre', lookup_expr='icontains')   
+
+    class Meta:
+        model = Catalogo
+        fields = [            
+            'id_usuario',
+            'id_marca',
+            'id_usuario__id_escuela__id_facultad__siglas',
+            'id_usuario__id_escuela__nombre'
+        ]
+
+
+
+#------------------------------------------------------> Vistas <----------------------------------------------------------
+
+class EtiquetaViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Etiqueta.
+    """
+    queryset = Etiqueta.objects.all()
+    serializer_class = EtiquetaSerializer
+    filterset_fields = '__all__'
+
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
+
+        return [permission() for permission in permission_classes]
+
+
+class CatalogoViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Catalogo.
+    """
     queryset = Catalogo.objects.all()
     serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filterset_class = CatalogoFilter  
+    filter_backends = [DjangoFilterBackend]
 
-    def perform_create(self, serializer):
-        serializer.save(usuario_id=self.request.user)
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
-class CatalogoListView(generics.ListAPIView):
-    queryset = Catalogo.objects.all()
-    serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Catalogo.objects.filter(usuario_id=self.request.user)
-
-
-class CatalogoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Catalogo.objects.all()
-    serializer_class = CatalogoSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return Catalogo.objects.get(id=self.kwargs['pk'], usuario_id=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(usuario_id=self.request.user)
-
-    def perform_destroy(self, instance):
-        instance.delete()
+        return [permission() for permission in permission_classes]
 
 
-class ArticuloCreateView(generics.CreateAPIView):
+class ArticuloViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Articulo.
+    """
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    filterset_class = ArticuloFilter  
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+
+    ordering_fields = [
+        # Ordenar por nombre de la marca: ?ordering=id_marca__nombre
+        'id_marca__nombre',  
+
+        # Ordenar por nombre de la facultad: ?ordering=id_catalogo__id_usuario__id_escuela__id_facultad__nombre        
+        'id_catalogo__id_usuario__id_escuela__id_facultad__nombre', 
+        
+        # Ordenar por nombre de la escuela profesional: ?ordering=id_catalogo__id_usuario__id_escuela__nombre
+        'id_catalogo__id_usuario__id_escuela__nombre',
+
+        # Ordenar por nombre del artículo: ?ordering=nombre
+        'nombre', 
+        
+        # Ordenar por precio ascendente: ?ordering=precio
+        # Ordenar por precio descendente: ?ordering=-precio
+        'precio', 
+
+        # Ordenar por nombre de etiquetas: ?ordering=etiquetas__nombre
+        'etiquetas__nombre',   
+    ]
+    ordering = ['nombre']  # Orden predeterminado
+    
+    #paginación: ?page=1&limit=10
+    pagination_class = CustomArticuloPagination  #cambiar datos luego de 'page='y 'limit=' según necesite.
 
 
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
-class ArticuloListView(generics.ListAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        catalogo_id = self.kwargs['pk']
-
-        if not catalogo_id:
-            raise ValueError('No se ha proporcionado un catálogo.')
-        # Asegúrate de que el catálogo pertenece al usuario autenticado
-        catalogo = Catalogo.objects.filter(id=catalogo_id, usuario_id=self.request.user).first()
-        if catalogo:
-            return Articulo.objects.filter(catalogo=catalogo)
-        else:
-            return Articulo.objects.none()
+        return [permission() for permission in permission_classes]
 
 
-class ArticuloDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class ImagenViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Imagen.
+    """
+    queryset = Imagen.objects.all()
+    serializer_class = ImagenSerializer
+    filterset_fields = '__all__'
 
-    def get_object(self):
-        return Articulo.objects.get(id=self.kwargs['pk'])
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
-    def perform_update(self, serializer):
-        serializer.save(usuario_id=self.request.user)
+        return [permission() for permission in permission_classes]
 
-    def perform_destroy(self, instance):
-        instance.delete()
+
