@@ -18,7 +18,6 @@ import {
   EditProductPage,
   ShoppingCartPage,
   FavouritesPage,
-  ProductPage,
 } from "../pages/Epica04";
 import { Layout } from "../components/layouts/Layout";
 import { PrivateRoute } from "../components/Epica1/PrivateRoute";
@@ -29,6 +28,7 @@ import {
 } from "@/pages/Epica06";
 import { Chat } from "@/pages/Epica06/Chat";
 import { PendingPurchasePay } from "@/pages/Epica06/PendingPurchasePay";
+import { ProductDetailsPage } from "@/pages/Epica06/ProductDetailsPage";
 
 const routes = createBrowserRouter([
   {
@@ -65,8 +65,8 @@ const routes = createBrowserRouter([
       },
       {
         // path: "/product/productId",
-        path: "/product",
-        element: <ProductPage />,
+        path: "/product/:productId",
+        element: <ProductDetailsPage />,
         // loader:
       },
       {
