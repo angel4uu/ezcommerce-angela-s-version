@@ -1,4 +1,9 @@
 // Archivo barril para exportaciones
-export * from './SearchSellers'
-export * from './MainPage';
-export * from './SearchPage';
+import { MainPage } from './MainPage';
+import { SearchPage } from './SearchPage';
+import { SearchSellers } from './SearchSellers'
+export{
+    SearchSellers,
+    SearchPage,
+    MainPage
+}

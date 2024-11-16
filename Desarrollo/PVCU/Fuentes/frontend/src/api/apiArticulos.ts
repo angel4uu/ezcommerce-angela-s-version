@@ -58,3 +58,4 @@ export const getArticulo = (id: number) => {
 export const getArticulosByUsuario = (usuarioId: number) => {
   return articulosApi.get(`/?id_catalogo__id_usuario=${usuarioId}`);
 };
+

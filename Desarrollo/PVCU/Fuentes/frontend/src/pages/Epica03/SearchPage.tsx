@@ -21,6 +21,7 @@ export const SearchPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const defaultFilters = {
     name: "",
@@ -64,31 +65,22 @@ export const SearchPage = () => {
     }
   };
   
-  // Actualizar URL con filtros actuales
-  const updateUrl = () => {
-    const searchParams = new URLSearchParams();
-    if (currentPage > 1) searchParams.set("page", currentPage.toString());
-    searchParams.set("limit", itemsPerPage.toString());
-  
-    if (filters.name) searchParams.set("nombre", filters.name);
-    filters.categorias.forEach((cat) => searchParams.append("etiquetas", cat.toString()));
-    filters.facultades.forEach((fac) => searchParams.append("facultades", fac));
-    if (filters.min) searchParams.set("precio_min", filters.min.toString());
-    if (filters.max) searchParams.set("precio_max", filters.max.toString());
-  
-    navigate(`?${searchParams.toString()}`);
-  };
-  
+
   // Cambiar página
   const handlePageChange = (page: number) => {
-    navigate(`?page=${page}`);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", page.toString());
+    navigate(`?${searchParams.toString()}`);
   };
   
   // Cambiar elementos por página
   const handleLimitChange = (newLimit: number) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", "1"); 
+    searchParams.set("limit", newLimit.toString());
+    
+    navigate(`?${searchParams.toString()}`);
     setItemsPerPage(newLimit);
-    setCurrentPage(1);
-    updateUrl();
   };
   
   // Limpiar filtros
@@ -99,9 +91,14 @@ export const SearchPage = () => {
   };
   
   // Manejar cambios en los filtros
-  const handleCheckboxChange = (value: number | string, type: "categorias" | "facultades") => {
+  const handleCheckboxChange = (
+    value: number | string,
+    type: "categorias" | "facultades"
+  ) => {
     setFilters((prevFilters) => {
       const updated = { ...prevFilters };
+  
+      // Actualiza las categorías o facultades según el tipo y valor
       if (type === "categorias" && typeof value === "number") {
         updated.categorias = prevFilters.categorias.includes(value)
           ? prevFilters.categorias.filter((item) => item !== value)
@@ -111,33 +108,54 @@ export const SearchPage = () => {
           ? prevFilters.facultades.filter((item) => item !== value)
           : [...prevFilters.facultades, value];
       }
+  
+      // Construye los parámetros de búsqueda actualizados
+      const searchParams = new URLSearchParams();
+      searchParams.set("page", "1"); // Reinicia a la primera página
+      searchParams.set("limit", itemsPerPage.toString());
+  
+      if (filters.name) searchParams.set("nombre", filters.name);
+      updated.categorias.forEach((cat) => searchParams.append("etiquetas", cat.toString()));
+      updated.facultades.forEach((fac) => searchParams.append("facultades", fac));
+      if (filters.min) searchParams.set("precio_min", filters.min.toString());
+      if (filters.max) searchParams.set("precio_max", filters.max.toString());
+  
+      // Navega con los nuevos parámetros
+      navigate(`?${searchParams.toString()}`);
+  
       return updated;
     });
-    setCurrentPage(1); // Reiniciar a la primera página
   };
   
   // Leer filtros desde la URL al cargar o cambiar la URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    setFilters({
+  
+    // Actualiza los filtros desde la URL
+    const newFilters = {
       name: searchParams.get("nombre") || "",
-      categorias: searchParams.getAll("etiquetas").map(Number),
-      facultades: searchParams.getAll("facultades"),
-      min: Number(searchParams.get("precio_min") || "0"),
-      max: Number(searchParams.get("precio_max") || "500"),
-    });
+      categorias: searchParams.getAll("etiquetas").map(Number), // Convierte etiquetas a números
+      facultades: searchParams.getAll("facultades"), // Facultades como strings
+      min: Number(searchParams.get("precio_min") || "0"), // Precio mínimo
+      max: Number(searchParams.get("precio_max") || "500"), // Precio máximo
+    };
   
-    const pageFromUrl = Number(searchParams.get("page") || "1");
-    setCurrentPage(pageFromUrl > 0 ? pageFromUrl : 1);
-  
+    // Establece los filtros, página y límite desde la URL
+    setFilters(newFilters);
+    setCurrentPage(Number(searchParams.get("page") || "1"));
     setItemsPerPage(Number(searchParams.get("limit") || "10"));
-    fetchData();
+  
+    // Llama a la API para obtener los datos
+    setIsInitialized(true);
   }, [location.search]);
   
-  // Llamar a la API cada vez que cambien los filtros, página o límite
+  // Actualiza la URL cada vez que cambian los filtros, página o límite
   useEffect(() => {
-    updateUrl();
-  }, [filters, currentPage, itemsPerPage]);
+    if (isInitialized) {
+      fetchData();
+    }
+  }, [isInitialized, filters, currentPage, itemsPerPage]);
+
   return (
     <>
       <Helmet>
@@ -246,7 +264,7 @@ export const SearchPage = () => {
                 <div className="relative">
                   <select
                     onChange={(e) => handleLimitChange(Number(e.target.value))}
-                    defaultValue="10"
+                    value={itemsPerPage}
                     className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:ring focus:border-blue-300"
                   >
                     <option value="10">10</option>
