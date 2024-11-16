@@ -13,44 +13,44 @@ import { Articulo } from '../../api/apiArticulos';
 const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
 export const SearchPage = () => {
-
   const { etiquetasList, setLoadingPage } = useContext(EtiquetasContext);
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   const [items, setItems] = useState<Articulo[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  
   const defaultFilters = {
-    name: '',
+    name: "",
     categorias: [] as number[],
     facultades: [] as string[],
     min: 0,
     max: 500,
   };
-  
   const [filters, setFilters] = useState(defaultFilters);
-
-  const apiUrl = 'http://localhost:8000/articulos';
-
-  // Construcción de URL para API
+  
+  const apiUrl = "http://localhost:8000/articulos";
+  
+  // Construcción de la URL de la API
   const constructApiUrl = () => {
     const queryParams = new URLSearchParams();
-    queryParams.append('page', currentPage.toString());
-    queryParams.append('limit', itemsPerPage.toString());
-
-    if (filters.name) queryParams.append('nombre', filters.name);
-    filters.categorias.forEach((cat) => queryParams.append('etiquetas', cat.toString()));
-    filters.facultades.forEach((fac) => queryParams.append('id_catalogo__id_usuario__id_escuela__id_facultad__siglas', fac));
-    if (filters.min) queryParams.append('precio_min', filters.min.toString());
-    if (filters.max) queryParams.append('precio_max', filters.max.toString());
-
+    if (currentPage > 1) queryParams.append("page", currentPage.toString());
+    queryParams.append("limit", itemsPerPage.toString());
+  
+    if (filters.name) queryParams.append("nombre", filters.name);
+    filters.categorias.forEach((cat) => queryParams.append("etiquetas", cat.toString()));
+    if (filters.facultades.length > 0) {
+      queryParams.append("facultades", filters.facultades.join(","));
+    }
+    if (filters.min) queryParams.append("precio_min", filters.min.toString());
+    if (filters.max) queryParams.append("precio_max", filters.max.toString());
+  
     return `${apiUrl}?${queryParams.toString()}`;
   };
-
-  // Fetch datos con filtros aplicados
+  
+  // Actualización de datos desde la API
   const fetchData = async () => {
     setLoadingPage(true);
     try {
@@ -63,79 +63,81 @@ export const SearchPage = () => {
       setLoadingPage(false);
     }
   };
-
-  // Aplicar filtros
-  const handleFilterApply = () => {
+  
+  // Actualizar URL con filtros actuales
+  const updateUrl = () => {
+    const searchParams = new URLSearchParams();
+    if (currentPage > 1) searchParams.set("page", currentPage.toString());
+    searchParams.set("limit", itemsPerPage.toString());
+  
+    if (filters.name) searchParams.set("nombre", filters.name);
+    filters.categorias.forEach((cat) => searchParams.append("etiquetas", cat.toString()));
+    filters.facultades.forEach((fac) => searchParams.append("facultades", fac));
+    if (filters.min) searchParams.set("precio_min", filters.min.toString());
+    if (filters.max) searchParams.set("precio_max", filters.max.toString());
+  
+    navigate(`?${searchParams.toString()}`);
+  };
+  
+  // Cambiar página
+  const handlePageChange = (page: number) => {
+    navigate(`?page=${page}`);
+  };
+  
+  // Cambiar elementos por página
+  const handleLimitChange = (newLimit: number) => {
+    setItemsPerPage(newLimit);
     setCurrentPage(1);
-    fetchData();
     updateUrl();
   };
-
+  
   // Limpiar filtros
   const handleClearFilters = () => {
     setFilters(defaultFilters);
     setCurrentPage(1);
-    navigate('?'); // Limpia la URL
-    fetchData();
+    navigate("?");
   };
-
-  // Actualizar URL con los filtros actuales
-  const updateUrl = () => {
-    const searchParams = new URLSearchParams();
-    searchParams.set('page', currentPage.toString());
-    searchParams.set('limit', itemsPerPage.toString());
-
-    if (filters.name) searchParams.set('nombre', filters.name);
-    filters.categorias.forEach((cat) => searchParams.append('etiquetas', cat.toString()));
-    filters.facultades.forEach((fac) => searchParams.append('siglas', fac));
-    if (filters.min) searchParams.set('precio_min', filters.min.toString());
-    if (filters.max) searchParams.set('precio_max', filters.max.toString());
-
-    navigate(`?${searchParams.toString()}`);
-  };
-
-  // Checkbox para categorías y facultades
-  const handleCheckboxChange = (value: number | string, type: 'categorias' | 'facultades') => {
+  
+  // Manejar cambios en los filtros
+  const handleCheckboxChange = (value: number | string, type: "categorias" | "facultades") => {
     setFilters((prevFilters) => {
       const updated = { ...prevFilters };
-      if (type === 'categorias' && typeof value === 'number') {
+      if (type === "categorias" && typeof value === "number") {
         updated.categorias = prevFilters.categorias.includes(value)
           ? prevFilters.categorias.filter((item) => item !== value)
           : [...prevFilters.categorias, value];
-      } else if (type === 'facultades' && typeof value === 'string') {
+      } else if (type === "facultades" && typeof value === "string") {
         updated.facultades = prevFilters.facultades.includes(value)
           ? prevFilters.facultades.filter((item) => item !== value)
           : [...prevFilters.facultades, value];
       }
       return updated;
     });
-  };
-
-  const handleLimitChange = (newLimit: number) => {
-    setItemsPerPage(newLimit);
     setCurrentPage(1); // Reiniciar a la primera página
-    updateUrl()
   };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    updateUrl()
-  };
-
+  
+  // Leer filtros desde la URL al cargar o cambiar la URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     setFilters({
-      name: searchParams.get('nombre') || '',
-      categorias: searchParams.getAll('etiquetas').map(Number),
-      facultades: searchParams.getAll('siglas'),
-      min: Number(searchParams.get('precio_min') || '0'),
-      max: Number(searchParams.get('precio_max') || '500'),
+      name: searchParams.get("nombre") || "",
+      categorias: searchParams.getAll("etiquetas").map(Number),
+      facultades: searchParams.getAll("facultades"),
+      min: Number(searchParams.get("precio_min") || "0"),
+      max: Number(searchParams.get("precio_max") || "500"),
     });
-    setCurrentPage(Number(searchParams.get('page') || '1'));
+  
+    const pageFromUrl = Number(searchParams.get("page") || "1");
+    setCurrentPage(pageFromUrl > 0 ? pageFromUrl : 1);
+  
+    setItemsPerPage(Number(searchParams.get("limit") || "10"));
     fetchData();
   }, [location.search]);
-
-
+  
+  // Llamar a la API cada vez que cambien los filtros, página o límite
+  useEffect(() => {
+    updateUrl();
+  }, [filters, currentPage, itemsPerPage]);
   return (
     <>
       <Helmet>
@@ -205,15 +207,9 @@ export const SearchPage = () => {
             <div className='flex flex-row gap-4 justify-center'>
               <button
                 onClick={handleClearFilters}
-                className='mt-4 px-1 py-2 w-2/5 bg-red-500 text-sm text-white rounded-lg'
+                className='mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg'
               >
                 Limpiar filtro
-              </button>
-              <button
-                onClick={handleFilterApply}
-                className='mt-4 px-4 py-2 w-2/5 bg-secondaryLight text-white rounded-lg'
-              >
-                Aplicar
               </button>
             </div>
           </div>
@@ -236,7 +232,7 @@ export const SearchPage = () => {
               />
             </div>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6 p-4'>
             {items ? items.map((p) => (
               <ProductCard key={p.id} id={p.id} name={p.nombre} price={p.precio} qualification={4} img={''} />
             )) : null}

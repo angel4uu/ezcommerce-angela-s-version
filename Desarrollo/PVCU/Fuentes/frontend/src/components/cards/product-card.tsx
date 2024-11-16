@@ -71,7 +71,7 @@ export const ProductCard = ({
                     </div>
                     : null}
             </div>
-            <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">{name}</h3>
+            <h3 className="font-sans truncate font-bold text-secondaryLight text-base mb-1">{name}</h3>
             <p className="text-sm font-bold text-terciaryLight">S/ {price}</p>
         </div>
       </CardContent>
