@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,22 +24,28 @@ import { useForm } from "react-hook-form";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUser } from "@/api/api";
+import { createUsuario, getEscuelas } from "@/api/apiUsuarios";
+import { EscuelaProfesional } from "@/types";
 
 const formSchema = z.object({
-  first_name: z
+  nombres: z
     .string({ message: "Nombres inválidos" })
-    .min(1,{message:"Nombres inválidos"})
+    .min(1, { message: "Nombres inválidos" })
     .max(50, { message: "Nombres deben tener como máximo 50 carácteres" }),
-  last_name: z
+  apellido_p: z
     .string({ message: "Apellidos inválidos" })
-    .min(1,{message:"Apellidos inválidos"})
+    .min(1, { message: "Apellidos inválidos" })
     .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
-  code: z
+  apellido_m: z
+    .string({ message: "Apellidos inválidos" })
+    .min(1, { message: "Apellidos inválidos" })
+    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
+  codigo: z
     .string({ message: "Código inválido" })
-    .min(1,{message:"Código inválido"})
+    .min(1, { message: "Código inválido" })
     .max(8, { message: "Código debe tener como máximo 8 carácteres" }),
-  qr_yape: z
+  celular: z.string({ message: "Celular inválido" }),
+  codigoqr: z
     .union([
       z.instanceof(FileList).refine(
         (fileList) => {
@@ -49,12 +55,11 @@ const formSchema = z.object({
         },
         { message: "El archivo debe ser una imagen." }
       ),
-      z.string()
+      z.string(),
     ])
     .optional()
     .nullable(),
-  escuela: z
-    .number({required_error: "Seleccione una escuela"}),
+  id_escuela: z.number({ required_error: "Seleccione una escuela" }),
   email: z
     .string({ message: "Email inválido" })
     .email({ message: "Email inválido" })
@@ -62,58 +67,78 @@ const formSchema = z.object({
   password: z
     .string({ message: "Contraseña inválida" })
     .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
-  username:z
-    .string()
+  username: z.string(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
 
+interface LoaderData {
+  escuelasData: EscuelaProfesional[];
+}
+
+import { AxiosResponse } from "axios";
+
+interface LoaderData {
+  escuelasData: EscuelaProfesional[];
+}
+
+export async function loader(): Promise<LoaderData> {
+  try {
+    const response: AxiosResponse<EscuelaProfesional[]> = await getEscuelas();
+    const escuelasData = response.data.results;
+    return { escuelasData };
+  } catch (error) {
+    console.error("Se produjo un error:", error);
+    return { escuelasData: [] };
+  }
+}
+
 export const RegisterPage = () => {
   const form = useForm<FormFields>({
     resolver: zodResolver(formSchema),
-    defaultValues:{
-      first_name:"",
-      last_name:"",
-      code:"",
-      qr_yape:null,
-      escuela:0,
-      email:"",
-      password:"",
-      username:""
-    }
+    defaultValues: {
+      nombres: "",
+      apellido_p: "",
+      apellido_m: "",
+      codigo: "",
+      celular: "",
+      codigoqr: null,
+      id_escuela: 0,
+      email: "",
+      password: "",
+      username: "",
+    },
   });
+  const { escuelasData } = useLoaderData() as LoaderData;
 
-  const fileRef = form.register("qr_yape");
+  const fileRef = form.register("codigoqr");
 
   async function onSubmit(values: FormFields) {
-    const fileInput = form.getValues("qr_yape");
+    const fileInput = form.getValues("codigoqr");
     let updatedValues = { ...values };
 
     //If qr, obtain url
     if (fileInput && fileInput[0]) {
       const selectedFile = fileInput[0];
       try {
-        const url = await getFileURL(selectedFile as File , "qr_yape_images");
-        updatedValues = { ...values, qr_yape: url };
-      } 
-      catch (error) {
-        console.log("Error al obtener el URL del archivo:",error);
+        const url = await getFileURL(selectedFile as File, "codigoqr_images");
+        updatedValues = { ...values, codigoqr: url };
+      } catch (error) {
+        console.log("Error al obtener el URL del archivo:", error);
         return;
       }
-    } 
-    else {
-      updatedValues = { ...values, qr_yape: null };
+    } else {
+      updatedValues = { ...values, codigoqr: null };
     }
-    
-    //Set username as email
-    updatedValues = { ...updatedValues, username: updatedValues.email};
 
-    try{
-      const { qr_yape, ...rest } = updatedValues;
-      await createUser(rest);
+    //Set username as email
+    updatedValues = { ...updatedValues, username: updatedValues.email };
+
+    try {
+      const { codigoqr, ...rest } = updatedValues;
+      await createUsuario(rest);
       toast.success("Su cuenta fue registrada con éxito");
-    }
-    catch(error){
+    } catch (error) {
       toast.error("Se produjo un error al crear su cuenta");
     }
     console.log("Datos del formulario:", updatedValues);
@@ -125,7 +150,7 @@ export const RegisterPage = () => {
         <title>Registrarse</title>
       </Helmet>
 
-      <div className=" h-screen py-2 px-10 md:px-20 lg:px-36 ">
+      <div className=" h-auto py-2 px-10 md:px-20 lg:px-36 ">
         <div className=" h-full flex gap-14">
           <div className="bg-slate-600 h-full w-full flex-1  hidden lg:flex">
             <img src={personaGestion} className="object-cover w-full" />
@@ -152,7 +177,7 @@ export const RegisterPage = () => {
                     className="flex flex-col h-full justify-around"
                   >
                     <FormField
-                      name="first_name"
+                      name="nombres"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
@@ -169,14 +194,16 @@ export const RegisterPage = () => {
                       )}
                     />
                     <FormField
-                      name="last_name"
+                      name="apellido_p"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base">Apellidos</FormLabel>
+                          <FormLabel className="text-base">
+                            Apellido paterno
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Apellidos"
+                              placeholder="Apellido paterno"
                               type="text"
                               {...field}
                             />
@@ -185,61 +212,53 @@ export const RegisterPage = () => {
                         </FormItem>
                       )}
                     />
-                    <div className="md:flex justify-between gap-1">
-                      <FormField
-                        name="code"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel className="text-base">
-                              Código institucional
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Código"
-                                type="text"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        name="qr_yape"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel className="text-base">
-                              QR Yape {`(opcional)`}
-                            </FormLabel>
-                            <FormControl>
-                              <Input type="file" {...fileRef} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
                     <FormField
-                      name="escuela"
+                      name="apellido_m"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">
+                            Apellido materno
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Apellido materno"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="id_escuela"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-base">Escuela</FormLabel>
                           <Select
-                            onValueChange={(value)=>field.onChange(Number(value))}
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
+                            }
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>
-                              <SelectTrigger >
+                              <SelectTrigger>
                                 <SelectValue placeholder="Selecciona una escuela" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="1">
-                                Ingeniería de sistemas
-                              </SelectItem>
+                              {escuelasData.map(
+                                (escuela: EscuelaProfesional) => (
+                                  <SelectItem
+                                    key={escuela.id}
+                                    value={escuela.id!}
+                                  >
+                                    {escuela.nombre}
+                                  </SelectItem>
+                                )
+                              )}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -281,6 +300,61 @@ export const RegisterPage = () => {
                         </FormItem>
                       )}
                     />
+
+                    <div className="md:flex justify-between gap-1">
+                      <FormField
+                        name="codigo"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-base">
+                              Código institucional
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Código"
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name="celular"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-base">Celular</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Celular"
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      name="codigoqr"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel className="text-base">
+                            QR Yape {`(opcional)`}
+                          </FormLabel>
+                          <FormControl>
+                            <Input type="file" {...fileRef} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <Button
                       type="submit"
                       className="bg-secondaryLight hover:bg-secondaryLightHovered w-full"
