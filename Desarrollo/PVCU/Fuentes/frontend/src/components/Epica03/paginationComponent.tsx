@@ -36,7 +36,6 @@ export const PaginationComp = ({
                 <PaginationItem >
                     <PaginationPrevious 
                         isActive={!(currentPage === 1)}
-                        href="#"
                         onClick={(e) => {
                             e.preventDefault();
                             if (currentPage > 1) onPageChange(currentPage - 1);
@@ -63,7 +62,6 @@ export const PaginationComp = ({
                 <PaginationItem >
                     <PaginationNext
                         isActive={!(currentPage === totalPages)}
-                        href="#"
                         onClick={(e) => {
                             e.preventDefault();
                             if (currentPage < totalPages) onPageChange(currentPage + 1);

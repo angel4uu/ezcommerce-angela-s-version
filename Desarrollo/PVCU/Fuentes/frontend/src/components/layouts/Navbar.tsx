@@ -27,7 +27,7 @@ export const Navbar = () => {
 
   const handleSearch = () => {
     if (searchTerm) {
-      navigate(`/search?name=${encodeURIComponent(searchTerm)}`);
+      navigate(`/search?nombre=${encodeURIComponent(searchTerm)}`);
     } else {
       navigate("/search"); 
     }

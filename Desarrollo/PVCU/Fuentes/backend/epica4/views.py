@@ -14,13 +14,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from .pagination import CustomArticuloPagination
 from rest_framework.response import Response
+from django.db.models import Q
 
 #------------------------------------------------------> Filtros <----------------------------------------------------------
 
 class ArticuloFilter(filters.FilterSet):
     nombre = filters.CharFilter(field_name='nombre', lookup_expr='icontains')
-    id_catalogo__id_usuario__id_escuela__id_facultad__siglas = filters.CharFilter(
-        field_name='id_catalogo__id_usuario__id_escuela__id_facultad__siglas', lookup_expr='icontains')    
+    facultades = filters.CharFilter(method='filter_siglas')  # Filtro personalizado
     id_catalogo__id_usuario__id_escuela__nombre = filters.CharFilter(
         field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')    
     precio_min = filters.NumberFilter(field_name='precio', lookup_expr='gte') 
@@ -32,10 +32,29 @@ class ArticuloFilter(filters.FilterSet):
             'nombre', 'etiquetas', 'disponible',
             'id_catalogo__id_usuario',
             'id_catalogo__id_marca',
-            'id_catalogo__id_usuario__id_escuela__id_facultad__siglas',
+            'facultades',  # Alias amigable para siglas
             'id_catalogo__id_usuario__id_escuela',
             'precio_min', 'precio_max', 
         ]
+
+    def filter_siglas(self, queryset, name, value):
+        """
+        Filtra registros que contengan al menos una de las siglas proporcionadas.
+        """
+        if not value:
+            return queryset
+        
+        # Divide las siglas enviadas separadas por comas
+        siglas_list = [sigla.strip() for sigla in value.split(",")]
+
+        # Creamos un conjunto de condiciones OR para cada sigla
+        query = Q()
+        for sigla in siglas_list:
+            # Esto asegura que si el producto tiene una facultad asociada, cualquiera de las siglas coincididas se aplique
+            query |= Q(id_catalogo__id_usuario__id_escuela__id_facultad__siglas__icontains=sigla)
+
+        # Filtra el queryset aplicando todas las condiciones OR
+        return queryset.filter(query)
 
 
 class CatalogoFilter(filters.FilterSet):
