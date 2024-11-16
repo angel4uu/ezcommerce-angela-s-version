@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
 import { createArticulo, Articulo } from "../../../api/apiArticulos";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
+import { useEffect, useState } from "react";
 
 // Esquema de validación de Zod
 
@@ -32,6 +33,20 @@ interface UseProductFormProps {
 export const useProductForm = ({ images, setImages }: UseProductFormProps) => {
   const navigate = useNavigate();
   const { authState } = useAuth();
+  const [catalogoUser, setCatalogoUser] = useState<{
+    id: number;
+    id_usuario: number;
+    id_marca: number | null;
+    capacidad_maxima: number;
+    espacio_ocupado: number;
+  }>({
+    id: 0,
+    id_usuario: 0,
+    id_marca: null,
+    capacidad_maxima: 0,
+    espacio_ocupado: 0,
+  });
+
 
 
 
@@ -48,14 +63,30 @@ export const useProductForm = ({ images, setImages }: UseProductFormProps) => {
     },
   });
 
+  useEffect(() => {
+    if (authState.userId !== null) {
+      LoadCatalogos(authState.userId).then((data) => {
+        if (data) {
+          setCatalogoUser(data);
+        } else {
+          console.error("No se encontró ningún catálogo para este usuario.");
+        }
+      });
+    }
+  }, [authState.userId]);
 
-  const onSubmit = async(values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    console.log(images);
-    // const res = await createArticulo(); 
-    form.reset(); 
-    setImages([]); 
-    navigate("/my-published-products"); 
+  console.log("Catalogo del usuario:", catalogoUser.id);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const data = { ...values, id_catalogo: catalogoUser.id};
+      const response = await createArticulo(data as Articulo);
+      console.log("Artículo creado exitosamente:", response.data);
+      form.reset();
+      setImages([]);
+      navigate("/my-published-products");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return { form, onSubmit };
