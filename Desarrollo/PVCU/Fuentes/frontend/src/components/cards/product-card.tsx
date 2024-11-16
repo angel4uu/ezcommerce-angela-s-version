@@ -5,13 +5,13 @@ import { useState } from "react"
 import { useNavigate } from "react-router"
 
 export interface IProductCardProps {
-    id: string,
+    id: number,
     name: string,
     price: number,
-    isFavourite: boolean,
+    isFavourite?: boolean,
     img:string
     brand?:string,
-    qualification:number,
+    qualification?:number,
     
 }
 
@@ -71,7 +71,7 @@ export const ProductCard = ({
                     </div>
                     : null}
             </div>
-            <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">{name}</h3>
+            <h3 className="font-sans truncate font-bold text-secondaryLight text-base mb-1">{name}</h3>
             <p className="text-sm font-bold text-terciaryLight">S/ {price}</p>
         </div>
       </CardContent>

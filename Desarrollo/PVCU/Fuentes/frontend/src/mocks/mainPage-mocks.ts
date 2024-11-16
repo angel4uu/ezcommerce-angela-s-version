@@ -65,37 +65,37 @@ export const distinguishedSellers: ISellersCardProps[] = [
 
 export const categories = [
     {   
-      id:'Electrónica 1',  
+      id:4,  
       image: TestImage,
-      title: 'Electrónica 1',
-      description: 'Aquí va un texto de descripción para el producto 1.',
+      title: 'Electrónico',
+      description: 'Artículos electrónicos.',
       horiz:false  
     },
-    { id: 'Electrónica 2',  
+    { id: 5,  
       image: TestImage,
-      title: 'Electrónica 2',
-      description: 'Aquí va un texto de descripción para el producto 2.',
+      title: 'Estudio',
+      description: 'Artículos y material de Estudio.',
       horiz:true
     },
     { 
-      id:'elec3',    
+      id:6,    
       image: TestImage,
-      title: 'Electrónica 3',
-      description: 'Aquí va un texto de descripción para el producto 3.',
+      title: 'Insumos académicos',
+      description: 'Insumos y materiales que se podrían necesitar a lo largo de la carrera universitaria.',
       horiz:true
     },
     {
-      id:'dads',  
+      id:8,  
       image: TestImage,
-      title: 'Electrónica 4',
-      description: 'Aquí va un texto de descripción para el producto 4.',
+      title: 'Accesorios',
+      description: 'Accesorios.',
       horiz:false
     },
   ];
 
   export const mockProducts: IProductCardProps[] = [
     {
-        id: "1",
+        id: 1,
         name: "Smartphone X",
         price: 499.99,
         isFavourite: true,
@@ -104,7 +104,7 @@ export const categories = [
         qualification: 4.5
     },
     {
-        id: "2",
+        id: 2,
         name: "Laptop Pro",
         price: 1299.99,
         isFavourite: false,
@@ -113,7 +113,7 @@ export const categories = [
         qualification: 4.7
     },
     {
-        id: "3",
+        id: 3,
         name: "Wireless Earbuds",
         price: 99.99,
         isFavourite: true,
@@ -122,7 +122,7 @@ export const categories = [
         qualification: 4.3
     },
     {
-        id: "4",
+        id: 4,
         name: "4K TV",
         price: 799.99,
         isFavourite: false,
@@ -131,7 +131,7 @@ export const categories = [
         qualification: 4.6
     },
     {
-        id: "5",
+        id: 5,
         name: "Smartwatch Series 5",
         price: 199.99,
         isFavourite: true,
@@ -140,7 +140,7 @@ export const categories = [
         qualification: 4.2
     },
     {
-        id: "6",
+        id: 6,
         name: "Gaming Console",
         price: 499.99,
         isFavourite: false,
@@ -149,7 +149,7 @@ export const categories = [
         qualification: 4.8
     },
     {
-        id: "7",
+        id: 7,
         name: "Bluetooth Speaker",
         price: 49.99,
         isFavourite: false,
@@ -158,7 +158,7 @@ export const categories = [
         qualification: 4.0
     },
     {
-        id: "8",
+        id: 8,
         name: "Tablet Pro",
         price: 349.99,
         isFavourite: true,

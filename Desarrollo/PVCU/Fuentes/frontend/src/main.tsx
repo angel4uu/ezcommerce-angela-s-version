@@ -4,7 +4,7 @@ import { EzCommercerApp } from "./EzCommercerApp";
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <StrictMode> {/* quitarlo en produccion */}
     <EzCommercerApp />
   </StrictMode>,
 )
