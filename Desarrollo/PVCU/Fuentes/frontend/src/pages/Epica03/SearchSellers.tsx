@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { Checkbox } from '../../components/ui/checkbox';
-import * as Switch from '@radix-ui/react-switch';
 import { useLocation, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { PaginationComp } from '../../components/Epica03/paginationComponent';
@@ -12,131 +11,132 @@ import axios from 'axios'
 const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
 export const SearchSellers = () => {
+
   const location = useLocation();
   const navigate = useNavigate();
+  const [sellerName, setSellerName] = useState('')
 
-    const [sellerName, setSellerName] = useState('')
   const handleSearch = () => {
     if (sellerName) {
-      navigate(`/sellers?name=${encodeURIComponent(sellerName)}`);
+      navigate(`/sellers?nombre=${encodeURIComponent(sellerName)}`);
     } else {
-      navigate("/search"); 
+      navigate("/sellers"); 
     }
   };
 
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  const [tempFilters, setTempFilters] = useState({
-    name: '',
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  const defaultFilters = {
+    name: "",
     facultades: [] as string[],
-    brandFilter: false,
-  });
-
-  const [appliedFilters, setAppliedFilters] = useState(tempFilters);
-  const apiUrl = 'https://api.example.com/items';
-
-  // Construir la URL de la API
-  const constructApiUrl = (page: number, filters: typeof appliedFilters) => {
-    const queryParams = new URLSearchParams();
-    queryParams.append('page', page.toString());
-    queryParams.append('limit', itemsPerPage.toString());
-
-    if (filters.name) queryParams.append('name', filters.name);
-    filters.facultades.forEach((fac) => queryParams.append('facultades', fac));
-    if (filters.brandFilter) queryParams.append('byBrand', 'true');
-
-    return `${apiUrl}?${queryParams.toString()}`;
   };
-
-  // Obtener datos desde la API con Axios
-  const fetchData = async (page: number, filters: typeof appliedFilters) => {
-    try {
-      const url = constructApiUrl(page, filters);
-      const response = await axios.get(url);
-
-      setItems(response.data.items);
-      setTotalPages(response.data.totalPages);
-    } catch (error) {
-      console.error("Error al obtener los datos:", error);
-    }
-  };
-
-  // Cambiar de página
+  const [filters, setFilters] = useState(defaultFilters);
+  
+  const apiUrl = "http://localhost:8000/usuarios";
+  
+  // Cambiar página
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    fetchData(page, appliedFilters);
-    updateUrlWithPage(page);
-  };
-
-  // Actualizar la URL con la página actual
-  const updateUrlWithPage = (page: number) => {
     const searchParams = new URLSearchParams(location.search);
-
-    searchParams.set('page', page.toString());
-    searchParams.set('limit', itemsPerPage.toString());
-
-    if (tempFilters.name) searchParams.set('name', tempFilters.name);
-    searchParams.delete('facultades');
-    tempFilters.facultades.forEach((fac) => searchParams.append('facultades', fac));
-    searchParams.set('byBrand', tempFilters.brandFilter ? 'true' : '');
-
+    searchParams.set("page", page.toString());
     navigate(`?${searchParams.toString()}`);
   };
-
-  // Aplicar filtros
-  const handleFilterApply = () => {
-    setAppliedFilters(tempFilters);
-    fetchData(1, tempFilters);
-    setCurrentPage(1);
+  
+  // Cambiar elementos por página
+  const handleLimitChange = (newLimit: number) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", "1"); 
+    searchParams.set("limit", newLimit.toString());
+    
+    navigate(`?${searchParams.toString()}`);
+    setItemsPerPage(newLimit);
   };
-
+  
   // Limpiar filtros
   const handleClearFilters = () => {
-    setTempFilters({
-      name: '',
-      facultades: [],
-      brandFilter: false,
-    });
+    setFilters(defaultFilters);
     setCurrentPage(1);
+    navigate("?");
   };
-
-  // Manejo del cambio de estado en los checkboxes de categorías y facultades
-  const handleCheckboxChange = (category: string, type: 'facultades') => {
-    const updatedFilters = { ...tempFilters };
-    const filterList = updatedFilters[type];
-    updatedFilters[type] = filterList.includes(category) ? filterList.filter((item) => item !== category) : [...filterList, category];
-    setTempFilters(updatedFilters);
+  
+  // Manejar cambios en los filtros
+  const handleCheckboxChange = (value: string) => {
+    setFilters((prevFilters) => {
+      const updated = { ...prevFilters };
+      updated.facultades = prevFilters.facultades.includes(value)
+        ? prevFilters.facultades.filter((item) => item !== value)
+        : [...prevFilters.facultades, value];
+  
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.delete("facultades");
+      updated.facultades.forEach((fac) => searchParams.append("facultades", fac));
+      searchParams.set("page", "1"); // Reinicia a la primera página
+      navigate(`?${searchParams.toString()}`);
+  
+      return updated;
+    });
   };
-
-  const handleLimitChange = (newLimit: number) => {
-    setItemsPerPage(newLimit);
-    setCurrentPage(1); // Reiniciar a la primera página
-    updateUrlWithPage(1); // Actualizar URL con el nuevo límite
-    fetchData(1, appliedFilters); // Recargar datos con el nuevo límite
+  
+   // Construcción de la URL de la API
+   const constructApiUrl = () => {
+    const queryParams = new URLSearchParams();
+  
+    if (currentPage > 1) queryParams.append("page", currentPage.toString());
+    queryParams.append("limit", itemsPerPage.toString());
+  
+    if (filters.name) queryParams.append("nombre", filters.name);
+    if (filters.facultades.length > 0) {
+      queryParams.append("facultades", filters.facultades.join(","));
+    }
+  
+    return `${apiUrl}?${queryParams.toString()}`;
   };
-
-  // Leer los filtros desde la URL
+  
+  // Actualización de datos desde la API
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(constructApiUrl());
+      setItems(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / itemsPerPage));
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    } 
+  };
+  
+  // Actualizar URL con filtros actuales
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const nameParam = searchParams.get('name') || '';
-    const newTempFilters = {
-      ...tempFilters,
-      name: nameParam,
-      facultades: searchParams.getAll('facultades'),
-      brandFilter: searchParams.get('byBrand') === 'true',
+  
+    const name = searchParams.get("nombre") || "";
+    const facultades = searchParams.getAll("facultades");
+    const pageFromUrl = Number(searchParams.get("page") || "1");
+    const limitFromUrl = Number(searchParams.get("limit") || "10");
+  
+    const newFilters = {
+      name,
+      facultades,
     };
-    setTempFilters(newTempFilters);
-    setAppliedFilters(newTempFilters);
-    setCurrentPage(Number(searchParams.get('page') || '1'));
-
-    fetchData(currentPage, newTempFilters);
+  
+    // Actualiza los estados con los valores desde la URL
+    setFilters(newFilters);
+    setCurrentPage(pageFromUrl > 0 ? pageFromUrl : 1);
+    setItemsPerPage(limitFromUrl);
+  
+    // Marca como inicializado
+    setIsInitialized(true);
   }, [location.search]);
 
 
-  return (
+  useEffect(() => {
+    if (isInitialized) {
+      fetchData();
+    }
+  }, [isInitialized, filters, currentPage, itemsPerPage]);
+
+  return(
     <>
       <Helmet>
         <title>Vendedores - EzCommerce</title>
@@ -181,8 +181,8 @@ export const SearchSellers = () => {
                 <Checkbox
                   id={fac.toLowerCase()}
                   className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(fac, 'facultades')}
-                  checked={tempFilters.facultades.includes(fac)}
+                  onCheckedChange={() => handleCheckboxChange(fac)}
+                  checked={filters.facultades.includes(fac)}
                 />
                 <label htmlFor={fac.toLowerCase()} className="text-md font-medium leading-none">
                   {fac}
@@ -190,30 +190,13 @@ export const SearchSellers = () => {
               </div>
             ))}
           </div>
-
-          <div className="mb-4 flex">
-            <h3 className="font-bold text-md pt-1">Filtrar por marca</h3>
-            <Switch.Root
-              className="ml-9 relative h-[32px] w-[64px] cursor-default rounded-full bg-slate-300 outline-none data-[state=checked]:bg-secondaryLight"
-              onCheckedChange={() => setTempFilters((prev) => ({ ...prev, brandFilter: !prev.brandFilter }))}
-              checked={tempFilters.brandFilter}
-            >
-              <Switch.Thumb className="block size-[28px] translate-x-0.5 rounded-full bg-white transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[34px]" />
-            </Switch.Root>
-          </div>
             
             <div className='flex flex-row gap-4 justify-center'>
               <button
                 onClick={handleClearFilters}
-                className='mt-4 px-1 py-2 w-2/5 bg-red-500 text-sm text-white rounded-lg'
+                className='mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg'
               >
                 Limpiar filtro
-              </button>
-              <button
-                onClick={handleFilterApply}
-                className='mt-4 px-4 py-2 w-2/5 bg-secondaryLight text-white rounded-lg'
-              >
-                Aplicar
               </button>
             </div>
           </div>
@@ -230,7 +213,7 @@ export const SearchSellers = () => {
                 <div className="relative">
                   <select
                     onChange={(e) => handleLimitChange(Number(e.target.value))}
-                    defaultValue="10"
+                    value={itemsPerPage}
                     className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:ring focus:border-blue-300"
                   >
                     <option value="10">10</option>
@@ -258,5 +241,5 @@ export const SearchSellers = () => {
         </div>
     </div>
     </>
-  );
+  )
 };

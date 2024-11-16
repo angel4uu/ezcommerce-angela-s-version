@@ -1,10 +1,15 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
 import { Link, useLoaderData } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,9 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -91,7 +102,8 @@ export async function loader(): Promise<LoaderData> {
 }
 
 export const RegisterPage = () => {
-  const form = useForm<FormFields>({
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombres: "",
@@ -136,6 +148,7 @@ export const RegisterPage = () => {
       await createUsuario(rest);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
+    } catch (error) {
       toast.error("Se produjo un error al crear su cuenta");
     }
     console.log("Datos del formulario:", updatedValues);
@@ -171,7 +184,7 @@ export const RegisterPage = () => {
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col h-full justify-around"
+                    className="space-y-4"
                   >
                     <FormField
                       name="nombres"

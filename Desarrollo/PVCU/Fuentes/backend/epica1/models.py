@@ -48,6 +48,7 @@ class Usuario(AbstractBaseUser):
     codigo = models.CharField("Código de estudiante", max_length = 100, unique = True)
     fecha_nacimiento = models.DateField("Fecha de nacimiento", null=True, blank=True)
     codigoqr = models.URLField("Código QR", null=True, blank=True)
+    tiene_marca = models.BooleanField("Tiene marca", default=False)
 
     fecha_registro = models.DateTimeField(auto_now_add=True)
     
