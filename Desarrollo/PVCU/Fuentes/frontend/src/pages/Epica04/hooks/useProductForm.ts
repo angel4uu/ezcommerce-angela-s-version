@@ -1,75 +1,93 @@
-import * as React from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { useNavigate } from "react-router-dom";
+import { UploadedImage } from "./useImageUpload";
+import { createArticulo, Articulo } from "../../../api/apiArticulos";
+import { useAuth } from "@/hooks/useAuth";
+import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
+import { useEffect, useState } from "react";
 
-// Definición del esquema de validación con Zod
+// Esquema de validación de Zod
+
+
 const formSchema = z.object({
-  productName: z.string().nonempty("El nombre del producto es obligatorio"),
-  price: z.number().positive("Debe ser un número positivo"),
-  stock: z.number().int().nonnegative("El stock debe ser un número no negativo"),
-  description: z.string().optional(),
-  category: z.string().nonempty("Selecciona una categoría"),
-  condition: z.string().nonempty("Selecciona una condición"),
-})
+  nombre : z.string().min(1, { message: "Este campo es requerido" }), 
+  precio: z.coerce.number().min(0, { message: "El precio debe ser un número no negativo" }),
+  stock: z.coerce.number().min(1, { message: "El stock debe ser un número no negativo" }),
+  descripcion: z.string().min(10, { message: "Este campo es requerido con un minimo de 10 caracteres" }), 
+  etiquetas: z.array(z.number()).refine((value) => value.some((item) => item), {
+    message: "Selecciona al menos una etiqueta",
+  }),
+  id_marca: z.number().optional(),
+  is_marca: z.boolean().optional(),
+});
 
-type FormData = z.infer<typeof formSchema>
 
-export const useProductForm = () => {
 
+interface UseProductFormProps {
+  images: UploadedImage[];
+  setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
+}
+
+export const useProductForm = ({ images, setImages }: UseProductFormProps) => {
   const navigate = useNavigate();
-  const form = useForm<FormData>({
+  const { authState } = useAuth();
+  const [catalogoUser, setCatalogoUser] = useState<{
+    id: number;
+    id_usuario: number;
+    id_marca: number | null;
+    capacidad_maxima: number;
+    espacio_ocupado: number;
+  }>({
+    id: 0,
+    id_usuario: 0,
+    id_marca: null,
+    capacidad_maxima: 0,
+    espacio_ocupado: 0,
+  });
+
+
+
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      productName: "",
-      price: 0,
-      stock: 0,
-      description: "",
-      category: "",
-      condition: "",
+      nombre: "",
+      descripcion: "",
+      precio: 0,
+      stock: 1,
+      etiquetas: [],
+      id_marca: undefined,
+      is_marca: false,
     },
-  })
+  });
 
-  const [images, setImages] = React.useState<File[]>([])
-  const [selectedImage, setSelectedImage] = React.useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files && files.length > 0) {
-      setImages((prev) => [...prev, ...Array.from(files)].slice(0, 10))
+  useEffect(() => {
+    if (authState.userId !== null) {
+      LoadCatalogos(authState.userId).then((data) => {
+        if (data) {
+          setCatalogoUser(data);
+        } else {
+          console.error("No se encontró ningún catálogo para este usuario.");
+        }
+      });
     }
-  }
+  }, [authState.userId]);
 
-  const removeImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
-  }
+  console.log("Catalogo del usuario:", catalogoUser.id);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const data = { ...values, id_catalogo: catalogoUser.id};
+      const response = await createArticulo(data as Articulo);
+      console.log("Artículo creado exitosamente:", response.data);
+      form.reset();
+      setImages([]);
+      navigate("/my-published-products");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const openModal = (imageUrl: string) => {
-    setSelectedImage(imageUrl)
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedImage(null)
-  }
-
-  const onSubmit = (data: FormData) => {
-    console.log("Datos del formulario:", data)
-    navigate("/my-published-products")
-  }
-
-  return {
-    form,
-    images,
-    selectedImage,
-    isModalOpen,
-    handleImageUpload,
-    removeImage,
-    openModal,
-    closeModal,
-    onSubmit,
-  }
-}
+  return { form, onSubmit };
+};

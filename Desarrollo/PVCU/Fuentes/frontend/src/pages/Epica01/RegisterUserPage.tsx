@@ -1,10 +1,14 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,107 +22,88 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUser } from "@/api/api";
+import { createUser,escuelaProfesional  } from "@/api/api";
+import { Link } from "react-router-dom";
+
 
 const formSchema = z.object({
-  first_name: z
-    .string({ message: "Nombres inválidos" })
-    .min(1,{message:"Nombres inválidos"})
-    .max(50, { message: "Nombres deben tener como máximo 50 carácteres" }),
-  last_name: z
-    .string({ message: "Apellidos inválidos" })
-    .min(1,{message:"Apellidos inválidos"})
-    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
-  code: z
-    .string({ message: "Código inválido" })
-    .min(1,{message:"Código inválido"})
-    .max(8, { message: "Código debe tener como máximo 8 carácteres" }),
-  qr_yape: z
-    .union([
-      z.instanceof(FileList).refine(
-        (fileList) => {
-          if (!fileList || fileList.length === 0) return true;
-          const file = fileList[0];
-          return file && file.type.startsWith("image/");
-        },
-        { message: "El archivo debe ser una imagen." }
-      ),
-      z.string()
-    ])
-    .optional()
-    .nullable(),
-  escuela: z
-    .number({required_error: "Seleccione una escuela"}),
-  email: z
-    .string({ message: "Email inválido" })
-    .email({ message: "Email inválido" })
-    .max(50, { message: "Email debe tener como máximo 50 carácteres" }),
-  password: z
-    .string({ message: "Contraseña inválida" })
-    .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
-  username:z
-    .string()
+  id_escuela: z.number(),
+  username: z.string(),
+  email: z.string().email("Correo electrónico inválido"),
+  nombres: z.string().min(1, "Nombres son requeridos"),
+  apellido_p: z.string().min(1, "Apellido paterno es requerido"),
+  apellido_m: z.string().min(1, "Apellido materno es requerido"),
+  celular: z.string().min(9, "Celular debe tener al menos 9 dígitos"),
+  codigo: z.string().min(1, "Código de estudiante es requerido"),
+  
+  codigoqr: z.string().url("URL inválida").optional().or(z.literal("")),
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
-type FormFields = z.infer<typeof formSchema>;
-
 export const RegisterPage = () => {
-  const form = useForm<FormFields>({
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues:{
-      first_name:"",
-      last_name:"",
-      code:"",
-      qr_yape:null,
-      escuela:0,
-      email:"",
-      password:"",
-      username:""
-    }
+    defaultValues: {
+      username: "",
+      email: "",
+      nombres: "",
+      apellido_p: "",
+      apellido_m: "",
+      celular: "",
+      codigo: "",
+      codigoqr: "",
+      password: "",
+      id_escuela: 1,
+    },
   });
 
-  const fileRef = form.register("qr_yape");
-
-  async function onSubmit(values: FormFields) {
-    const fileInput = form.getValues("qr_yape");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const fileInput = form.getValues("codigoqr");
     let updatedValues = { ...values };
-
-    //If qr, obtain url
-    if (fileInput && fileInput[0]) {
-      const selectedFile = fileInput[0];
-      try {
-        const url = await getFileURL(selectedFile as File , "qr_yape_images");
-        updatedValues = { ...values, qr_yape: url };
-      } 
-      catch (error) {
-        console.log("Error al obtener el URL del archivo:",error);
-        return;
-      }
-    } 
-    else {
-      updatedValues = { ...values, qr_yape: null };
+    
+    // Aquí iría la lógica para enviar formData al servidor
+    //Set username as email
+    updatedValues = { ...updatedValues, username: updatedValues.email };
+    console.log("Datos del formulario:", updatedValues);
+    try {
+      const { codigoqr, ...rest } = updatedValues;
+      
+      await createUser(rest as any);
+      toast.success("Su cuenta fue registrada con éxito");
+    } catch (error) {
+      toast.error("Se produjo un error al crear su cuenta");
+      console.error("Error creating user:", error);
     }
     
-    //Set username as email
-    updatedValues = { ...updatedValues, username: updatedValues.email};
-
-    try{
-      const { qr_yape, ...rest } = updatedValues;
-      await createUser(rest);
-      toast.success("Su cuenta fue registrada con éxito");
-    }
-    catch(error){
-      toast.error("Se produjo un error al crear su cuenta");
-    }
-    console.log("Datos del formulario:", updatedValues);
   }
 
+  // const [escuelas, setEscuelas] = useState([]);
+  // const fetchEscuelas = async () => {
+  //   try {
+  //     const response = await escuelaProfesional ();
+  //     setEscuelas(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching escuelas:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchEscuelas();
+  // }, []);
+  // console.log(escuelas);
   return (
     <>
       <Helmet>
@@ -149,95 +134,25 @@ export const RegisterPage = () => {
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col h-full justify-around"
+                    className="space-y-4"
                   >
                     <FormField
-                      name="first_name"
                       control={form.control}
+                      name="id_escuela"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base">Nombres</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Nombres"
-                              type="text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="last_name"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base">Apellidos</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Apellidos"
-                              type="text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="md:flex justify-between gap-1">
-                      <FormField
-                        name="code"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel className="text-base">
-                              Código institucional
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Código"
-                                type="text"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        name="qr_yape"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel className="text-base">
-                              QR Yape {`(opcional)`}
-                            </FormLabel>
-                            <FormControl>
-                              <Input type="file" {...fileRef} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <FormField
-                      name="escuela"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base">Escuela</FormLabel>
+                          <FormLabel>Escuela Profesional</FormLabel>
                           <Select
                             onValueChange={(value)=>field.onChange(Number(value))}
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>
-                              <SelectTrigger >
-                                <SelectValue placeholder="Selecciona una escuela" />
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecciona tu escuela" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="1">
+                            <SelectItem value="1">
                                 Ingeniería de sistemas
                               </SelectItem>
                             </SelectContent>
@@ -247,14 +162,14 @@ export const RegisterPage = () => {
                       )}
                     />
                     <FormField
-                      name="email"
                       control={form.control}
+                      name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base">Correo</FormLabel>
+                          <FormLabel>Correo electrónico</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="usuario@unmsm.edu.pe"
+                              placeholder="correo@ejemplo.com"
                               {...field}
                             />
                           </FormControl>
@@ -263,17 +178,66 @@ export const RegisterPage = () => {
                       )}
                     />
                     <FormField
-                      name="password"
                       control={form.control}
+                      name="nombres"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-base">
-                            Contraseña
-                          </FormLabel>
+                          <FormLabel>Nombres</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nombres" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="apellido_p"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Apellido paterno</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Apellido paterno" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="apellido_m"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Apellido materno</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Apellido materno" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="celular"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Celular</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Número de celular" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="codigo"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Código de estudiante</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Introduce tu contraseña"
-                              type="password"
+                              placeholder="Código de estudiante"
                               {...field}
                             />
                           </FormControl>
@@ -281,10 +245,47 @@ export const RegisterPage = () => {
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      className="bg-secondaryLight hover:bg-secondaryLightHovered w-full"
-                    >
+                    
+                    <FormField
+                      control={form.control}
+                      name="codigoqr"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Código QR</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) =>
+                                field.onChange(e.target.files?.[0] || "")
+                              }
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Opcional: Sube una imagen del código QR
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contraseña</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Contraseña"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">
                       Crear cuenta
                     </Button>
                   </form>
