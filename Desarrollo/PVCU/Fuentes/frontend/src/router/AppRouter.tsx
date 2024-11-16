@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 // Epicas
 import { LoginPage, RegisterPage } from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
-import { MainPage, SearchPage } from "../pages/Epica03";
+import { MainPage, SearchPage, SearchSellers } from "../pages/Epica03";
 import {
   PlansPage,
   PayPlanPage,
@@ -27,6 +27,7 @@ import {
   PurchaseManagementPage,
 } from "@/pages/Epica06";
 import { Chat } from "@/pages/Epica06/Chat";
+import { ContactPage } from "../pages/Epica08/ContactPage";
 import { PendingPurchasePay } from "@/pages/Epica06/PendingPurchasePay";
 import { ProductDetailsPage } from "@/pages/Epica06/ProductDetailsPage";
 
@@ -53,6 +54,14 @@ const routes = createBrowserRouter([
         path: "/search",
         element: <SearchPage />,
         // loader:
+      },
+      {
+        path:"/sellers",
+        element:<SearchSellers />
+      },
+      { 
+        path:"/contact",
+        element:<ContactPage />
       },
       {
         path: "/profile-buyer",

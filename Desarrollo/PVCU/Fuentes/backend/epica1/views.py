@@ -1,33 +1,42 @@
-from rest_framework import generics, permissions
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from .serializers import UserSerializer
+from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import *
+from .models import *
+from rest_framework.permissions import AllowAny
 
-# Create your views here.
+class UsuarioViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Usuario.
+    """
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
 
-class RegisterView(generics.CreateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]
+    def get_permissions(self):
+        """
+        Asigna permisos diferentes dependiendo del método HTTP.
+        """
+        if self.action == 'create':  # Para POST (creación de usuarios)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera crear un usuario
+        else:  # Para otros métodos como GET, PUT, DELETE
+            permission_classes = [permissions.IsAuthenticated]  # Solo los usuarios autenticados pueden ver los datos
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return [permission() for permission in permission_classes]
 
-class UserProfielView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API Endpoint para CRUD de Group.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    def get_permissions(self):
+        """
+        Asigna permisos dependiendo del método HTTP.
+        """
+        if self.action == 'list' or self.action == 'retrieve':  # Para GET (ver)
+            permission_classes = [permissions.AllowAny]  # Permite a cualquiera ver los datos
+        else:  # Para POST, PUT, PATCH, DELETE (editar o agregar)
+            permission_classes = [permissions.IsAuthenticated]  # Solo los autenticados pueden modificar
 
-    def get(self, request):
-        user = request.user
-        user_data = {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name
-        }
-        return Response(user_data)
+        return [permission() for permission in permission_classes]
+

@@ -42,10 +42,11 @@ export const MainPage = () => {
             }}>
                 <CarouselContent>
                   {
-                    images.map((i) => (
+                    images.map((i,index) => (
                       <CarouselItem>
-                         <div className="overflow-hidden rounded-lg shadow-lg max-h-[500px]">
+                         <div key={`d-${index}`} className="overflow-hidden rounded-lg shadow-lg max-h-[500px]">
                           <img
+                            key={`i-${index}`}
                             src={i.src}
                             alt={i.alt}
                             className="w-full h-full object-cover"
@@ -67,8 +68,8 @@ export const MainPage = () => {
                         {
                           mockProducts.map((p) => (
                             <>
-                            <CarouselItem className='basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4'>
-                                <ProductCard id={p.id} name={p.name} brand={p.brand} isFavourite={p.isFavourite} price={p.price} qualification={p.qualification} img={p.img}  />
+                            <CarouselItem key={`ci-${p.id}`} className='basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4'>
+                                <ProductCard key={p.id} id={p.id} name={p.name} brand={p.brand} isFavourite={p.isFavourite} price={p.price} qualification={p.qualification} img={p.img}  />
                               </CarouselItem>
                             </>
                           ))
@@ -90,7 +91,7 @@ export const MainPage = () => {
             {categories.map((category, index) => (
               <CategoriesCard
                 id={category.id}
-                key={index}
+                key={`cc-${index}`}
                 image={category.image}
                 title={category.title}
                 description={category.description}
@@ -112,10 +113,11 @@ export const MainPage = () => {
                 }} >
                     <CarouselContent className='mb-24 mx-2'>
                         {
-                          distinguishedSellers.map((seller) => (
+                          distinguishedSellers.map((seller,index) => (
                             <>
-                            <CarouselItem className='basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/5'>
+                            <CarouselItem key={`ci-${index}`} className='basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/5'>
                                 <SellersCard 
+                                    key={`sc-${index}`}
                                     id={seller.id}
                                     name={seller.name}
                                     description={seller.description}

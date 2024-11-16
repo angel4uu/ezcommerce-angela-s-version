@@ -1,5 +1,5 @@
 import axios from 'axios';
-export const baseURL='http://localhost:8000/api';
+export const baseURL='http://localhost:8000';
 
 interface User{
   username:string,
@@ -12,9 +12,15 @@ interface User{
 }
 
 const registerApi = axios.create({
-  baseURL: `${baseURL}/register` 
+  baseURL: `${baseURL}/usuarios` 
 });
 
 export const createUser = (user:User) => {
   return registerApi.post('/', user);
 };
+
+
+
+export const escuelaProfesional = () => {
+  return axios.get(`${baseURL}/escuelasprofesionales`);
+}

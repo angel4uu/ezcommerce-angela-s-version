@@ -25,6 +25,7 @@ export default {
 				secondaryDark:'rgb(242,226,210)',//crema
 				terciaryDark:'rgb(247,248,250)',//gris claro (fuente)
 				//
+				'skyBlue': '#003669',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

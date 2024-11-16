@@ -1,77 +1,66 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
-import { ImageUpload } from "./formulario/ImageUpload"
-import { ImagePreviewModal } from "./formulario/ImagePreviewModal"
-import { useProductForm } from "../../pages/Epica04/hooks/useProductForm"
-import { Product } from "../../pages/Epica04/mocks/products"
-import { Link } from "react-router-dom"
+import { useImageUpload } from "../../pages/Epica04/hooks/useImageUpload";
+import { useProductForm } from "../../pages/Epica04/hooks/useProductForm";
+import { ImageUpload } from "./formulario/ImageUpload";
+import { ImagePreviewModal } from "./formulario/ImagePreviewModal";
+import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { LoadEtiquetas } from "../../helpers/LoadEtiquetas";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import { Checkbox } from "../ui/checkbox";
+import { Switch } from "../ui/switch";
 
-interface ProductFormProps {
-  product?: Product
-}
+export const ProductForm = () => {
+  // Hook para manejar la subida y gestión de imágenes
+  const { images, setImages, handleFileUpload, removeImage, handleDragEnd } = useImageUpload(5);
+  // Hook para manejar el formulario de producto
+  const { form, onSubmit } = useProductForm({ images, setImages });
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [etiquetas, setEtiquetas] = useState<{ id: number; nombre: string }[]>([]);
+  const navigate = useNavigate();
 
-export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
-  const {
-    form,
-    images,
-    selectedImage,
-    handleImageUpload,
-    removeImage,
-    openModal,
-    closeModal,
-    onSubmit,
-  } = useProductForm()
+  useEffect(() => {
+    LoadEtiquetas().then((data) => setEtiquetas(data));
+  }, []);
 
-  // Cargar los datos del producto en el formulario si se está editando
-  React.useEffect(() => {
-    if (product) {
-      form.reset({
-        productName: product.name,
-        price: product.price,
-        stock: product.stock,
-        description: product.description,
-        category: product.category,
-        condition: product.condition,
-      })
-    }
-  }, [product, form])
+  const onCancel = () => {
+    form.reset();
+    setImages([]);  
+    navigate("/my-published-products");
+  };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="font-sans max-w-3xl py-9 space-y-8 mx-auto"
-      >
-        <h1 className="text-3xl font-semibold">
-          {product ? "Editar Producto" : "Agregar Producto"}
-        </h1>
+    <div className="w-full max-w-3xl mx-auto p-4 space-y-8 font-sans">
+      <h1 className="text-2xl font-bold">
+        Formulario para agregar o actualizar un producto
+      </h1>
 
+      {/* Componente para cargar y gestionar imágenes */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Imágenes de tus productos</h2>
+        <p className="text-sm text-muted-foreground">
+          Fotos - {images.length}/5 - Puedes agregar un máximo de 5 fotos
+        </p>
         <ImageUpload
           images={images}
-          onImageUpload={handleImageUpload}
-          onRemoveImage={removeImage}
-          onImageClick={openModal}
+          onPreview={setSelectedImage}
+          handleFileUpload={handleFileUpload}
+          removeImage={removeImage}
+          onDragEnd={handleDragEnd}
         />
+      </div>
 
-        <ImagePreviewModal imageUrl={selectedImage} onClose={closeModal} />
-
-        <div className="space-y-6 font-sans">
-          <div className="space-y-3">
-            <h2 className="text-2xl font-semibold">Obligatorio</h2>
-            <p className="tex-base text-muted-foreground">
-              Proporciona una descripción que sea lo mas detallada posible
-            </p>
-          </div>
+      {/* Formulario de producto */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
-            name="productName"
+            name="nombre"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base">Nombre del producto</FormLabel>
+                <FormLabel>Nombre del producto</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Escribe el nombre de tu producto"
@@ -82,117 +71,140 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product }) => {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="price"
+            name="precio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base">Precio del producto</FormLabel>
+                <FormLabel>Precio del producto</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="S/ 0.00" {...field} />
+                  <Input placeholder="S/ 0.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="stock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base">Stock</FormLabel>
+                <FormLabel>Stock</FormLabel>
                 <FormControl>
-                  <Input type="number" min="0" placeholder="0" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="description"
+            name="descripcion"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base">Descripción</FormLabel>
+                <FormLabel>Descripción</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Descripción"
-                    className="min-h-[100px] max-h-52"
-                    {...field}
+                  <Textarea placeholder="Descripción" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="etiquetas"
+            render={() => (
+              <FormItem className="">
+                <div className="mb-4">
+                  <FormLabel className="text-base">Etiquetas</FormLabel>
+                  <FormDescription>
+                    Seleccions las etiquetas que describan tu producto
+                  </FormDescription>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {etiquetas.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="etiquetas"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {item.nombre}
+                            </FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="is_marca"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <FormLabel>Publicar producto como marca</FormLabel>
+                  <FormDescription>
+                    Si cuentas con una marca, puedes activar esta opción para publicar el producto a nombre de la marca. De lo contrario, se publicará a tu nombre.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={!field.value} 
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              className="flex-1 bg-[#00457C] hover:bg-[#00457C]/90"
+            >
+              Guardar
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={onCancel}
+            >
+              Cancelar
+            </Button>
+          </div>
+        </form>
+      </Form>
 
-          {/* Campo para la categoría con valor seleccionado */}
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">Categoría</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Categoría del producto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="electronics">Electrónicos</SelectItem>
-                      <SelectItem value="clothing">Ropa</SelectItem>
-                      <SelectItem value="home">Hogar</SelectItem>
-                      <SelectItem value="books">Libros</SelectItem>
-                      <SelectItem value="other">Otro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Campo para la condición con valor seleccionado */}
-          <FormField
-            control={form.control}
-            name="condition"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">Condición</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Estado del producto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="new">Nuevo</SelectItem>
-                      <SelectItem value="used">Usado</SelectItem>
-                      <SelectItem value="refurbished">Reacondicionado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="flex items-center justify-center flex-wrap sm:flex-nowrap gap-4">
-          <Button
-            type="submit"
-            className="bg-secondaryLight hover:bg-blue-900 w-full"
-            size="lg"
-          >
-            Guardar
-          </Button>
-          <Button type="button" variant="outline" className="w-full px-0" size="lg">
-            <Link to="/my-published-products" className="w-full">Cancelar</Link>
-          </Button>
-        </div>
-      </form>
-    </Form>
-  )
-}
+      {/* Modal de vista previa de la imagen */}
+      <ImagePreviewModal
+        imageUrl={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
+    </div>
+  );
+};

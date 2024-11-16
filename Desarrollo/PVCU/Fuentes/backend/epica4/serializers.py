@@ -1,27 +1,64 @@
 from rest_framework import serializers
-from .models import Catalogo, Articulo
+from .models import Etiqueta, Catalogo, Articulo, Imagen
+from epica5.models import Marca
+
+class EtiquetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Etiqueta
+        fields = '__all__'
+
 
 class CatalogoSerializer(serializers.ModelSerializer):
+    id_usuario = serializers.IntegerField(source='id_usuario.id')
+    id_marca = serializers.SerializerMethodField()
 
     class Meta:
         model = Catalogo
         fields = '__all__'
-        # campo user_id solo se puede modificar cuando se crea, no cuando se actualiza
-        extra_kwargs = {'usuario_id': {'read_only': True}}
 
-    def validate(self, attrs):
-        if attrs['espacio_ocupado'] > attrs['capacidad_maxima']:
-            raise serializers.ValidationError('El espacio ocupado no puede ser mayor que la capacidad máxima.')
-        return attrs
+    def get_id_marca(self, obj):
+        # Verifica si `id_marca` es None y maneja el caso.
+        return obj.id_marca.id if obj.id_marca else None
 
-class ArticuloSerializer(serializers.ModelSerializer):
+
+class ArticuloSerializer(serializers.ModelSerializer):    
+    id_catalogo = serializers.PrimaryKeyRelatedField(queryset=Catalogo.objects.all())  # Directamente relacionado
+    id_marca = serializers.SerializerMethodField()
+    etiquetas = serializers.PrimaryKeyRelatedField(queryset=Etiqueta.objects.all(), many=True)  # Maneja ManyToMany
 
     class Meta:
         model = Articulo
         fields = '__all__'
 
-    def validate(self, attrs):
-        if self.instance is None:
-            if attrs.get('catalogo') is None:
-                raise serializers.ValidationError({"catalogo": "Catalogo es obligatorio."})
-        return attrs
+    def get_id_marca(self, obj):
+        # Verifica si `id_marca` en `id_catalogo` es None y maneja el caso.
+        return obj.id_catalogo.id_marca.id if obj.id_catalogo.id_marca else None
+
+    def create(self, validated_data):
+        # Extrae etiquetas del validated_data
+        etiquetas_data = validated_data.pop('etiquetas', [])
+        # Crea el artículo sin etiquetas
+        articulo = Articulo.objects.create(**validated_data)
+        # Asigna las etiquetas al artículo
+        articulo.etiquetas.set(etiquetas_data)
+        return articulo
+
+    def update(self, instance, validated_data):
+        # Extrae etiquetas del validated_data
+        etiquetas_data = validated_data.pop('etiquetas', [])
+        # Actualiza los campos del artículo
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # Actualiza las etiquetas del artículo
+        instance.etiquetas.set(etiquetas_data)
+        return instance
+
+
+
+class ImagenSerializer(serializers.ModelSerializer):    
+    id_articulo = serializers.IntegerField(source='id_articulo.id')
+
+    class Meta:
+        model = Imagen
+        fields = '__all__'

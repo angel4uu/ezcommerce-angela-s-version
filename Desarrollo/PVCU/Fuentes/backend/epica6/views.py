@@ -12,6 +12,7 @@ class OrdenCompraViewSet(viewsets.ModelViewSet):
     queryset = OrdenCompra.objects.all()
     serializer_class = OrdenCompraSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 class DetalleViewSet(viewsets.ModelViewSet):
     """
@@ -20,6 +21,7 @@ class DetalleViewSet(viewsets.ModelViewSet):
     queryset = Detalle.objects.all()
     serializer_class = DetalleSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 class TipoMensajeViewSet(viewsets.ModelViewSet):
     """
@@ -28,6 +30,7 @@ class TipoMensajeViewSet(viewsets.ModelViewSet):
     queryset = TipoMensaje.objects.all()
     serializer_class = TipoMensajeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 class TipoSalaViewSet(viewsets.ModelViewSet):
     """
@@ -36,6 +39,7 @@ class TipoSalaViewSet(viewsets.ModelViewSet):
     queryset = TipoSala.objects.all()
     serializer_class = TipoSalaSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = '__all__'
 
 class SalaChatViewSet(viewsets.ModelViewSet):
     """

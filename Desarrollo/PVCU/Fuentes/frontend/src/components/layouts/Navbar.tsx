@@ -6,7 +6,6 @@ import { MenuFaculties } from "./MenuFaculties";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
 import { useState } from "react";
 
 const icons = [
@@ -28,7 +27,7 @@ export const Navbar = () => {
 
   const handleSearch = () => {
     if (searchTerm) {
-      navigate(`/search?name=${encodeURIComponent(searchTerm)}`);
+      navigate(`/search?nombre=${encodeURIComponent(searchTerm)}`);
     } else {
       navigate("/search"); 
     }
