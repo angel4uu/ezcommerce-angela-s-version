@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import {jwtDecode} from "jwt-decode";  
 import axios from "axios";
-import { baseURL } from "../api/api";
 import {AuthState, Tokens, DecodedToken} from "@/types/types";
 
 interface AuthContextType {
@@ -68,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const tokens: Tokens | null = JSON.parse(localStorage.getItem("tokens") || "null");
         if (tokens?.refresh) {
             try {
-                const response = await axios.post(`${baseURL}/api/token/refresh/`, {
+                const response = await axios.post(`http://localhost:8000/api/token/refresh/`, {
                     refresh: tokens.refresh,
                 });
                 const newTokens = { ...tokens, access: response.data.access };
@@ -90,7 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (username: string, password: string): Promise<void> => {
         try {
-            const response = await axios.post(`${baseURL}/api/token/`, { username, password });
+            const response = await axios.post(`http://localhost:8000/api/token/`, { username, password });
             const tokens: Tokens = { access: response.data.access, refresh: response.data.refresh };
             const decodedToken: DecodedToken = jwtDecode(tokens.access);
             setAuthState({ accessToken: tokens.access, userId: decodedToken.user_id });

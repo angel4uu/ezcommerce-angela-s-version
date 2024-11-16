@@ -24,3 +24,4 @@ export const createUser = (user:User) => {
 export const escuelaProfesional = () => {
   return axios.get(`${baseURL}/escuelasprofesionales`);
 }
+

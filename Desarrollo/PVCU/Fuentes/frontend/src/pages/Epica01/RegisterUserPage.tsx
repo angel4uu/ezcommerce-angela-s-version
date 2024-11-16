@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
+import { Link, useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,83 +35,132 @@ import { format } from "date-fns";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUser,escuelaProfesional  } from "@/api/api";
-import { Link } from "react-router-dom";
-
+import { createUsuario, getEscuelas } from "@/api/apiUsuarios";
+import { EscuelaProfesional, APIResponse } from "@/types";
 
 const formSchema = z.object({
-  id_escuela: z.number(),
+  nombres: z
+    .string({ message: "Nombres inválidos" })
+    .min(1, { message: "Nombres inválidos" })
+    .max(50, { message: "Nombres deben tener como máximo 50 carácteres" }),
+  apellido_p: z
+    .string({ message: "Apellidos inválidos" })
+    .min(1, { message: "Apellidos inválidos" })
+    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
+  apellido_m: z
+    .string({ message: "Apellidos inválidos" })
+    .min(1, { message: "Apellidos inválidos" })
+    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
+  codigo: z
+    .string({ message: "Código inválido" })
+    .min(1, { message: "Código inválido" })
+    .max(8, { message: "Código debe tener como máximo 8 carácteres" }),
+  celular: z.string({ message: "Celular inválido" }),
+  codigoqr: z
+    .union([
+      z.instanceof(FileList).refine(
+        (fileList) => {
+          if (!fileList || fileList.length === 0) return true;
+          const file = fileList[0];
+          return file && file.type.startsWith("image/");
+        },
+        { message: "El archivo debe ser una imagen." }
+      ),
+      z.string(),
+    ])
+    .optional()
+    .nullable(),
+  id_escuela: z.number({ required_error: "Seleccione una escuela" }),
+  email: z
+    .string({ message: "Email inválido" })
+    .email({ message: "Email inválido" })
+    .max(50, { message: "Email debe tener como máximo 50 carácteres" }),
+  password: z
+    .string({ message: "Contraseña inválida" })
+    .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
   username: z.string(),
-  email: z.string().email("Correo electrónico inválido"),
-  nombres: z.string().min(1, "Nombres son requeridos"),
-  apellido_p: z.string().min(1, "Apellido paterno es requerido"),
-  apellido_m: z.string().min(1, "Apellido materno es requerido"),
-  celular: z.string().min(9, "Celular debe tener al menos 9 dígitos"),
-  codigo: z.string().min(1, "Código de estudiante es requerido"),
-  
-  codigoqr: z.string().url("URL inválida").optional().or(z.literal("")),
-  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
+
+type FormFields = z.infer<typeof formSchema>;
+
+
+import { AxiosResponse } from "axios";
+
+interface LoaderData {
+  escuelasData: EscuelaProfesional[];
+}
+
+export async function loader(): Promise<LoaderData> {
+  try {
+    const response: AxiosResponse<APIResponse> = await getEscuelas();
+    const escuelasData = response.data.results;
+    return { escuelasData };
+  } catch (error) {
+    console.error("Se produjo un error:", error);
+    return { escuelasData: [] };
+  }
+}
 
 export const RegisterPage = () => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: "",
       nombres: "",
       apellido_p: "",
       apellido_m: "",
-      celular: "",
       codigo: "",
-      codigoqr: "",
+      celular: "",
+      codigoqr: null,
+      id_escuela: 0,
+      email: "",
       password: "",
-      id_escuela: 1,
+      username: "",
     },
   });
+  const { escuelasData } = useLoaderData() as LoaderData;
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const fileRef = form.register("codigoqr");
+
+  async function onSubmit(values: FormFields) {
     const fileInput = form.getValues("codigoqr");
     let updatedValues = { ...values };
-    
-    // Aquí iría la lógica para enviar formData al servidor
+
+    //If qr, obtain url
+    if (fileInput && fileInput[0]) {
+      const selectedFile = fileInput[0];
+      try {
+        const url = await getFileURL(selectedFile as File, "codigoqr_images");
+        updatedValues = { ...values, codigoqr: url };
+      } catch (error) {
+        console.log("Error al obtener el URL del archivo:", error);
+        return;
+      }
+    } else {
+      updatedValues = { ...values, codigoqr: null };
+    }
+
     //Set username as email
     updatedValues = { ...updatedValues, username: updatedValues.email };
-    console.log("Datos del formulario:", updatedValues);
+
     try {
       const { codigoqr, ...rest } = updatedValues;
-      
-      await createUser(rest as any);
+      await createUsuario(rest);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
+    } catch (error) {
       toast.error("Se produjo un error al crear su cuenta");
-      console.error("Error creating user:", error);
     }
-    
+    console.log("Datos del formulario:", updatedValues);
   }
 
-  // const [escuelas, setEscuelas] = useState([]);
-  // const fetchEscuelas = async () => {
-  //   try {
-  //     const response = await escuelaProfesional ();
-  //     setEscuelas(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching escuelas:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchEscuelas();
-  // }, []);
-  // console.log(escuelas);
   return (
     <>
       <Helmet>
         <title>Registrarse</title>
       </Helmet>
 
-      <div className=" h-screen py-2 px-10 md:px-20 lg:px-36 ">
+      <div className=" h-auto py-2 px-10 md:px-20 lg:px-36 ">
         <div className=" h-full flex gap-14">
           <div className="bg-slate-600 h-full w-full flex-1  hidden lg:flex">
             <img src={personaGestion} className="object-cover w-full" />
@@ -137,24 +187,88 @@ export const RegisterPage = () => {
                     className="space-y-4"
                   >
                     <FormField
+                      name="nombres"
                       control={form.control}
-                      name="id_escuela"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Escuela Profesional</FormLabel>
+                          <FormLabel className="text-base">Nombres</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Nombres"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="apellido_p"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">
+                            Apellido paterno
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Apellido paterno"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="apellido_m"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">
+                            Apellido materno
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Apellido materno"
+                              type="text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      name="id_escuela"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Escuela</FormLabel>
                           <Select
-                            onValueChange={(value)=>field.onChange(Number(value))}
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
+                            }
                             defaultValue={field.value?.toString()}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Selecciona tu escuela" />
+                                <SelectValue placeholder="Selecciona una escuela" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                            <SelectItem value="1">
-                                Ingeniería de sistemas
-                              </SelectItem>
+                              {escuelasData.map(
+                                (escuela: EscuelaProfesional) => (
+                                  <SelectItem
+                                    key={escuela.id}
+                                    value={escuela.id!}
+                                  >
+                                    {escuela.nombre}
+                                  </SelectItem>
+                                )
+                              )}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -162,14 +276,14 @@ export const RegisterPage = () => {
                       )}
                     />
                     <FormField
-                      control={form.control}
                       name="email"
+                      control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Correo electrónico</FormLabel>
+                          <FormLabel className="text-base">Correo</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="correo@ejemplo.com"
+                              placeholder="usuario@unmsm.edu.pe"
                               {...field}
                             />
                           </FormControl>
@@ -178,106 +292,17 @@ export const RegisterPage = () => {
                       )}
                     />
                     <FormField
-                      control={form.control}
-                      name="nombres"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nombres</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Nombres" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="apellido_p"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Apellido paterno</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Apellido paterno" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="apellido_m"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Apellido materno</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Apellido materno" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="celular"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Celular</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Número de celular" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="codigo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Código de estudiante</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Código de estudiante"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="codigoqr"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Código QR</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) =>
-                                field.onChange(e.target.files?.[0] || "")
-                              }
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Opcional: Sube una imagen del código QR
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
                       name="password"
+                      control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Contraseña</FormLabel>
+                          <FormLabel className="text-base">
+                            Contraseña
+                          </FormLabel>
                           <FormControl>
                             <Input
+                              placeholder="Introduce tu contraseña"
                               type="password"
-                              placeholder="Contraseña"
                               {...field}
                             />
                           </FormControl>
@@ -285,7 +310,65 @@ export const RegisterPage = () => {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit" className="w-full">
+
+                    <div className="md:flex justify-between gap-1">
+                      <FormField
+                        name="codigo"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-base">
+                              Código institucional
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Código"
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        name="celular"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-base">Celular</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Celular"
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      name="codigoqr"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel className="text-base">
+                            QR Yape {`(opcional)`}
+                          </FormLabel>
+                          <FormControl>
+                            <Input type="file" {...fileRef} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="bg-secondaryLight hover:bg-secondaryLightHovered w-full"
+                    >
                       Crear cuenta
                     </Button>
                   </form>
