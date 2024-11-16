@@ -1,12 +1,15 @@
 import axios from 'axios';
 export const baseURL='http://localhost:8000/articulos';
 export interface Articulo{
-  id:number,
-  nombre:string,
-  descripcion:string,
-  precio:number,
-  stock:number,
-  categoria:number
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    stock: number;
+    etiquetas: number[];
+    id_marca: number;
+    is_marca: boolean;
+    id_catalogo: number;
 }
 const articulosApi = axios.create({
   baseURL: `${baseURL}` 
