@@ -57,3 +57,6 @@ export type AuthState ={
   accessToken: string | null;
   userId: number | null;
 }
+export type APIResponse ={
+  results: EscuelaProfesional[];               
+}
