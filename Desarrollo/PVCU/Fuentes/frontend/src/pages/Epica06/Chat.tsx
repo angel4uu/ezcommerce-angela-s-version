@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,7 +35,7 @@ export function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [contacts, setContacts] = useState<Contact[]>([
+  const [contactsSeller, setContactsSeller] = useState<Contact[]>([
     {
       id: "1",
       name: "Juan Rodriguez",
@@ -53,6 +53,35 @@ export function Chat() {
       timestamp: "02:05 pm",
       unreadCount: 2,
       faculty: "FISI",
+    },
+  ]);
+  const [contactsBuyer, setContactsBuyer] = useState<Contact[]>([
+    {
+      id: "1",
+      name: "Adriana Rodriguez",
+      avatar: "/placeholder.svg",
+      lastMessage: "Lorem ipsum",
+      timestamp: "01:05 pm",
+      unreadCount: 2,
+      faculty: "FCF",
+    },
+    {
+      id: "2",
+      name: "Rodrigo Meza",
+      avatar: "/placeholder.svg",
+      lastMessage: "Lorem ipsum",
+      timestamp: "02:05 pm",
+      unreadCount: 4,
+      faculty: "FCB",
+    },
+    {
+      id: "3",
+      name: "Juan Carlos",
+      avatar: "/placeholder.svg",
+      lastMessage: "Lorem ipsum",
+      timestamp: "02:05 pm",
+      unreadCount: 1,
+      faculty: "FIEE",
     },
   ]);
 
@@ -102,43 +131,82 @@ export function Chat() {
                 Vendedor
               </TabsTrigger>
             </TabsList>
+            <TabsContent value="comprador">
+              <ScrollArea className="h-[calc(100vh-8rem)]">
+                {contactsSeller.map((contact) => (
+                  <button
+                    key={contact.id}
+                    onClick={() => setSelectedContact(contact)}
+                    className="w-full p-4 flex items-start gap-3 hover:bg-accent transition-colors"
+                  >
+                    <Avatar>
+                      <AvatarImage src={contact.avatar} />
+                      <AvatarFallback>{contact.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 text-left">
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{contact.name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {contact.timestamp}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-sm text-muted-foreground">
+                          {contact.lastMessage}
+                        </p>
+                        {contact.unreadCount && (
+                          <Badge
+                            variant="default"
+                            className="rounded-full bg-secondaryLight"
+                          >
+                            {contact.unreadCount}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="vendedor">
+              <ScrollArea className="h-[calc(100vh-8rem)]">
+                {contactsBuyer.map((contact) => (
+                  <button
+                    key={contact.id}
+                    onClick={() => setSelectedContact(contact)}
+                    className="w-full p-4 flex items-start gap-3 hover:bg-accent transition-colors"
+                  >
+                    <Avatar>
+                      <AvatarImage src={contact.avatar} />
+                      <AvatarFallback>{contact.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 text-left">
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{contact.name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {contact.timestamp}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-sm text-muted-foreground">
+                          {contact.lastMessage}
+                        </p>
+                        {contact.unreadCount && (
+                          <Badge
+                            variant="default"
+                            className="rounded-full bg-secondaryLight"
+                          >
+                            {contact.unreadCount}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </ScrollArea>
+            </TabsContent>
           </Tabs>
         </div>
-        <ScrollArea className="h-[calc(100vh-8rem)]">
-          {contacts.map((contact) => (
-            <button
-              key={contact.id}
-              onClick={() => setSelectedContact(contact)}
-              className="w-full p-4 flex items-start gap-3 hover:bg-accent transition-colors"
-            >
-              <Avatar>
-                <AvatarImage src={contact.avatar} />
-                <AvatarFallback>{contact.name[0]}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 text-left">
-                <div className="flex justify-between">
-                  <span className="font-semibold">{contact.name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {contact.timestamp}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    {contact.lastMessage}
-                  </p>
-                  {contact.unreadCount && (
-                    <Badge
-                      variant="default"
-                      className="rounded-full bg-secondaryLight"
-                    >
-                      {contact.unreadCount}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </button>
-          ))}
-        </ScrollArea>
       </div>
       {/* Panel del medio - Chat */}
       <div className="flex-1 flex flex-col rounded-lg border">
