@@ -11,12 +11,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Checkbox } from "../ui/checkbox";
 import { Switch } from "../ui/switch";
+import { Articulo } from "../../api/apiArticulos";
 
-export const ProductForm = () => {
+export const ProductForm = ({ product }: {product?:Articulo}) => {
   // Hook para manejar la subida y gestión de imágenes
   const { images, setImages, handleFileUpload, removeImage, handleDragEnd } = useImageUpload(5);
   // Hook para manejar el formulario de producto
-  const { form, onSubmit } = useProductForm({ images, setImages });
+  const { form, onSubmit, isMarca } = useProductForm({ images, setImages, product });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [etiquetas, setEtiquetas] = useState<{ id: number; nombre: string }[]>([]);
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export const ProductForm = () => {
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-8 font-sans">
       <h1 className="text-2xl font-bold">
-        Formulario para agregar o actualizar un producto
+        {product ? "Editar producto" : "Agregar producto"}
       </h1>
 
       {/* Componente para cargar y gestionar imágenes */}
@@ -129,21 +130,17 @@ export const ProductForm = () => {
                       name="etiquetas"
                       render={({ field }) => {
                         return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                             <FormControl>
                               <Checkbox
-                                checked={field.value?.includes(item.id)}
+                                checked={field.value?.includes(item.id)} // Verifica si el ID está en la lista
                                 onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.id])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
-                                        )
-                                      );
+                                  const newValue = checked
+                                    ? [...field.value, item.id] // Agrega la etiqueta seleccionada
+                                    : field.value.filter(
+                                        (value) => value !== item.id
+                                      ); // Remueve la etiqueta
+                                  field.onChange(newValue);
                                 }}
                               />
                             </FormControl>
@@ -168,14 +165,15 @@ export const ProductForm = () => {
                 <div className="space-y-0.5">
                   <FormLabel>Publicar producto como marca</FormLabel>
                   <FormDescription>
-                    Si cuentas con una marca, puedes activar esta opción para publicar el producto a nombre de la marca. De lo contrario, se publicará a tu nombre.
+                    Si cuentas con una marca, puedes activar esta opción para
+                    publicar el producto a nombre de la marca.
                   </FormDescription>
                 </div>
                 <FormControl>
                   <Switch
-                    checked={field.value}
+                    checked={field.value} // El estado inicial viene de `defaultValues`
                     onCheckedChange={field.onChange}
-                    disabled={!field.value} 
+                    disabled={!isMarca}
                   />
                 </FormControl>
               </FormItem>

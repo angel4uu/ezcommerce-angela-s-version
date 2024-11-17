@@ -1,22 +1,33 @@
-import { Star } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct"
-import { Product } from "../../pages/Epica04/mocks/products"
-import { Link } from "react-router-dom"
+import { Star } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct";
+import { Link } from "react-router-dom";
 
-interface CardPublishedEditProps {
-  product: Product;
+interface CardProduct {
+  id: number;
+  nombre: string;
+  precio: number;
+  imageUrl: string;
+  rating: number;
 }
 
-export const CardPublishedEdit: React.FC<CardPublishedEditProps> = ({ product }) => {
+interface CardPublishedEditProps {
+  product: CardProduct;
+  onProductDeleted: (id: number) => void; // Callback para manejar la eliminación
+}
+
+export const CardPublishedEdit: React.FC<CardPublishedEditProps> = ({
+  product,
+  onProductDeleted,
+}) => {
   return (
     <Card className="w-52 p-3 overflow-hidden">
       <CardContent className="p-0">
         <div className="aspect-square overflow-hidden rounded-md mb-4">
           <img
             src={product.imageUrl}
-            alt={product.name}
+            alt={product.nombre}
             className="object-cover w-full h-full"
           />
         </div>
@@ -25,17 +36,25 @@ export const CardPublishedEdit: React.FC<CardPublishedEditProps> = ({ product })
             <Star className="w-3 h-3 fill-white" />
             <span className="text-xs font-sans ml-1">{product.rating}</span>
           </div>
-          <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">{product.name}</h3>
-          <p className="text-sm font-bold text-terciaryLight">S/ {product.price.toFixed(2)}</p>
+          <h3 className="font-sans font-bold text-secondaryLight text-base mb-1">
+            {product.nombre}
+          </h3>
+          <p className="text-sm font-bold text-terciaryLight">
+            S/ {product.precio}
+          </p>
         </div>
       </CardContent>
       <CardFooter className="grid gap-3 p-0">
         <Button variant="edit" className="p-0">
-          {/* Pasar el ID del producto en la URL */}
-          <Link to={`/edit-product/${product.id}`} className="w-full">Editar</Link>
+          <Link to={`/edit-product/${product.id}`} className="w-full">
+            Editar
+          </Link>
         </Button>
-        <ModalDeleteProduct />
+        <ModalDeleteProduct
+          productId={product.id}
+          onDeleteSuccess={() => onProductDeleted(product.id)}
+        />
       </CardFooter>
     </Card>
-  )
-}
+  );
+};
