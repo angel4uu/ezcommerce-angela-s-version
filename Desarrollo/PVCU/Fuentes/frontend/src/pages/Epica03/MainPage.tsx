@@ -12,13 +12,17 @@ import { CategoriesCard, SellersCard } from '../../components/cards';
 import { categories, distinguishedSellers, mockProducts, images } from '../../mocks/mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
 import { LoginModal } from '@/components/Epica5/LoginModal';
+import { useTrademark } from '@/hooks/useTrademark';
 
 
 
 export const MainPage = () => {
   const navigate = useNavigate();
   const {authState, setLoginModal}=useAuth();
+  const{marca,membresia,plan}=useTrademark();
+  
   console.log("User id:",authState.userId);
+  console.log({ marca: marca, membresia: membresia, plan: plan });
 
   function handleTrademarkClick(){
     if(authState.userId){
