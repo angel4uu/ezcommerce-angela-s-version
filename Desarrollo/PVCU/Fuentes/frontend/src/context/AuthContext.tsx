@@ -3,6 +3,8 @@ import {jwtDecode} from "jwt-decode";
 import axios from "axios";
 import {AuthState, Tokens, DecodedToken} from "@/types/types";
 
+
+
 interface AuthContextType {
     authState: AuthState;
     loginModal:boolean;
@@ -28,22 +30,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         //Refreash access token if refresh token 
         refreshAccessToken();
-        //Initialize request interceptor with authorization if tokens
-        initializeRequestInterceptor();
         //Refresh access token if 401 error in response
         initializeResponseInterceptor();
     }, []);
-
-    const initializeRequestInterceptor = () => {
-        axios.interceptors.request.use((config) => {
-            const tokens: Tokens | null = JSON.parse(localStorage.getItem("tokens") || "null");
-            if (tokens?.access) {
-                config.headers.Authorization = `Bearer ${tokens.access}`;
-            }
-            return config;
-        });
-    };
-
+    
     const initializeResponseInterceptor = () => {
         axios.interceptors.response.use(
             (response) => response,
@@ -56,6 +46,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         originalRequest.headers.Authorization = `Bearer ${newTokens.access}`;
                         console.log("401 so access token refreshed");
                         return axios(originalRequest);
+                    }
+                    else {
+                        logout();
                     }
                 }
                 return Promise.reject(error);

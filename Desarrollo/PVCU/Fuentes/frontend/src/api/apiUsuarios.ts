@@ -1,22 +1,20 @@
-import { Usuario } from '@/types';
+import {Usuario } from '@/types';
 import axios from 'axios';
+import { baseURL } from './api';
 
 //Usuarios
-export const baseURL='http://localhost:8000/usuarios';
-
 const usuariosApi = axios.create({
-  baseURL: `${baseURL}` 
+  baseURL: `${baseURL}/usuarios/` 
 });
 
 export const createUsuario = (usuario:Usuario) => {
   return usuariosApi.post('/', usuario);
 };
 
-//Escuelas
-export const baseURLEscuela='http://localhost:8000/escuelasprofesionales';
 
+//Escuelas
 const escuelasApi = axios.create({
-  baseURL: `${baseURLEscuela}` 
+  baseURL: `${baseURL}/escuelasprofesionales/` 
 });
 export const getEscuelas = () => {
   return escuelasApi.get('/');

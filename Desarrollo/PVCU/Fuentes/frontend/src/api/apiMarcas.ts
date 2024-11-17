@@ -1,27 +1,39 @@
+import { Marca, Tokens } from "@/types";
+import {baseURL } from "./api";
 import axios from "axios";
-export const baseURL = "http://localhost:8000";
 
 //Marcas
 const marcasApi = axios.create({
-  baseURL: `${baseURL}/marcas`,
+  baseURL: `${baseURL}/marcas/`,
 });
 
 export const getMarcaByUsuario = (idUsuario: number | null) => {
   return marcasApi.get(`/?id_usuario=${idUsuario}`);
 };
+export const createMarca = (marca:Marca) => {
+  return marcasApi.post("/",marca);
+};
 
-//Membresia
-const membresiaApi = axios.create({
-  baseURL: `${baseURL}/membresias`,
+marcasApi.interceptors.request.use((config) => {
+  const tokens: Tokens | null = JSON.parse(localStorage.getItem("tokens") || "null");
+  if (tokens?.access) {
+      config.headers.Authorization = `Bearer ${tokens.access}`;
+  }
+  return config;
+});
+
+//Membresias
+const membresiasApi = axios.create({
+  baseURL: `${baseURL}/membresias/`,
 });
 
 export const getMembresiaByMarca = (idMarca: number) => {
-  return membresiaApi.get(`/?id_marca=${idMarca}`);
+  return membresiasApi.get(`/?id_marca=${idMarca}`);
 };
 
-//Plan
+//Planes
 const planesApi = axios.create({
-  baseURL: `${baseURL}/planes`,
+  baseURL: `${baseURL}/planes/`,
 });
 
 export const getPlan = async (planId: number) => {
