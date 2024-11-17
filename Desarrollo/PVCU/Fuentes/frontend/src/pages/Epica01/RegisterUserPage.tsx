@@ -148,7 +148,6 @@ export const RegisterPage = () => {
       await createUsuario(rest);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
-    } catch (error) {
       toast.error("Se produjo un error al crear su cuenta");
     }
     console.log("Datos del formulario:", updatedValues);
