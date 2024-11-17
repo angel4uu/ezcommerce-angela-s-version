@@ -81,7 +81,7 @@ export const PlansPage = () => {
                 <CarouselItem key={index} className="md:basis-1/2">
                   <div className="p-4 flex justify-center h-full">
                     
-                      <PlanCard key={plan.id} {...plan}/>
+                      <PlanCard key={plan.id} planCard={plan}/>
                     
                   </div>
                 </CarouselItem>
