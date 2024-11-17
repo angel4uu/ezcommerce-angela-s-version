@@ -10,7 +10,6 @@ export async function getFileURL(elemFile:File, storageDirec:string) {
     await uploadBytes(fileRef, elemFile);
     const fileURL = await getDownloadURL(fileRef);
     return fileURL;
-
   } catch (error) {
     console.error("Error subiendo el archivo o obteniendo la URL:", error);
     return null;
