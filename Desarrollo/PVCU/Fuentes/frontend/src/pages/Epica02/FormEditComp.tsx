@@ -11,97 +11,146 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { formSchema } from "./FormEditSchema";
+import { formSchema, UserData } from "./FormEditSchema";
 import { useState, useEffect } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-
-interface UserData {
-  nameStudent: string;
-  lastname: string;
-  profilePhoto: string;
-  qrCode: string;
-  institutionalCode: string;
-  faculty: string;
-  email: string;
-  password: string;
-  isMarca: boolean;
-  nameMarca: string;
-  logoMarca: string;
-  descriptionMarca: string;
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+//import { Textarea } from "@/components/ui/textarea";
+interface Escuelas {
+  id: number;
+  id_facultad: number;
+  codigo: string;
+  nombre: string;
 }
 
 export function FormEditComp() {
-  const [isMarca, setIsMarca] = useState(true);
+  const { authState } = useAuth();
+  const userId = authState.userId;
+  const { toast } = useToast();
+
+  //const [isMarca, setIsMarca] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [userData, setUserData] = useState<UserData>({
-    nameStudent: "Juan Carlos",
-    lastname: "Pérez Morales",
-    profilePhoto: "http://example.com/photo.jpg",
-    qrCode: "http://example.com/qrcode.jpg",
-    institutionalCode: "12345",
-    faculty: "Ingeniería",
-    email: "juan.perez@example.com",
-    password: "password123",
-    isMarca: false,
-    nameMarca: "Electrónica SM",
-    logoMarca: "http://example.com/logo.png",
-    descriptionMarca: "lorem ipsum",
-  });
+  const [escuelas, setEscuelas] = useState<Escuelas[]>([]);
+  const [userData, setUserData] = useState<UserData>();
 
   const handleEdit = () => {
     setIsEditing(true);
   };
+
   const handleCancel = () => {
     form.reset(userData);
     setIsEditing(false);
   };
 
-  /*const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      nameStudent: "",
-      profilePhoto: "",
-      qrCode: "",
-      institutionalCode: "",
-      faculty: "",
-      email: "",
-      password: "",
-      isMarca: false,
-      nameMarca: "",
-      logoMarca: "",
-      descriptionMarca: "",
-    },
-  });*/
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: userData,
+    defaultValues: userData ?? {
+      username: "",
+      nombres: "",
+      apellido_p: "",
+      apellido_m: "",
+      codigo: "",
+      celular: "",
+      id_escuela: 0,
+      email: "",
+      password: "",
+    },
   });
 
   useEffect(() => {
-    // Datos ficticios
-    setIsMarca(userData.isMarca);
+    const fetchEscuelas = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/escuelasprofesionales/",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${authState.accessToken}`,
+            },
+          }
+        );
+        const dataEscuelas = await response.json();
+        setEscuelas(dataEscuelas);
+      } catch (error) {}
+    };
+    fetchEscuelas();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/usuarios/${userId}/`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${authState.accessToken}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      setUserData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!userData) {
+      fetchData();
+    }
     form.reset(userData);
-  }, [userData, form]);
+  }, [userData]);
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: UserData) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setUserData({ ...userData, ...values });
     console.log(values);
-    setShowPassword(false);
+    try {
+      const response = await fetch(
+        `http://localhost:8000/usuarios/${userId}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${authState.accessToken}`,
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error en actualizar los datos");
+      }
+      toast({
+        title: "Datos actualizados ✅",
+      });
+    } catch (error) {
+      console.error("Error en el envio: ", error);
+    }
+    setUserData({ ...userData, ...values });
     setIsEditing(false);
   }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col items-start gap-6 self-stretch"
       >
-        {isMarca ? (
+        {/*isMarca ? (
           <div className="flex flex-col items-start gap-6 self-stretch">
             <FormField
               control={form.control}
@@ -158,62 +207,34 @@ export function FormEditComp() {
           </div>
         ) : (
           ""
-        )}
+        )*/}
         <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
           <FormField
             control={form.control}
-            name="nameStudent"
+            name="username"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Nombre de usuario</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Nombre de usuario"
+                    disabled={!isEditing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="nombres"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Nombres</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nombres" disabled={true} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastname"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Apellidos</FormLabel>
-                <FormControl>
-                  <Input placeholder="Apellidos" disabled={true} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
-          <FormField
-            control={form.control}
-            name="profilePhoto"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Mi foto de perfil</FormLabel>
-                <FormControl>
                   <Input
-                    placeholder="Enlace a la imagen de su foto de perfil"
-                    disabled={!isEditing}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="qrCode"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Mi QR</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enlace a la imagen de su código QR de su Yape"
+                    placeholder="Nombres"
                     disabled={!isEditing}
                     {...field}
                   />
@@ -226,14 +247,50 @@ export function FormEditComp() {
         <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
           <FormField
             control={form.control}
-            name="institutionalCode"
+            name="apellido_p"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Apellido Paterno</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Apellido Paterno"
+                    disabled={!isEditing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="apellido_m"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Aepllido Materno</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Apellido Materno"
+                    disabled={!isEditing}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex flex-col gap-6 self-stretch sm:gap-12 sm:flex-row">
+          <FormField
+            control={form.control}
+            name="codigo"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Código institucional</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Código institucional"
-                    disabled={true}
+                    disabled={!isEditing}
                     {...field}
                   />
                 </FormControl>
@@ -243,14 +300,14 @@ export function FormEditComp() {
           />
           <FormField
             control={form.control}
-            name="faculty"
+            name="celular"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Facultad</FormLabel>
+                <FormLabel>Celular</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Facultad a la que pertenece"
-                    disabled={true}
+                    placeholder="Número de celular"
+                    disabled={!isEditing}
                     {...field}
                   />
                 </FormControl>
@@ -259,7 +316,51 @@ export function FormEditComp() {
             )}
           />
         </div>
-
+        <FormField
+          control={form.control}
+          name="id_escuela"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Escuela Profesional</FormLabel>
+              <Select
+                onValueChange={(value) => field.onChange(Number(value))}
+                defaultValue={field.value?.toString()}
+              >
+                <FormControl>
+                  <SelectTrigger disabled={!isEditing}>
+                    <SelectValue placeholder="Selecciona tu escuela" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {escuelas.map((escuela) => (
+                    <SelectItem key={escuela.id} value={escuela.id.toString()}>
+                      {escuela.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="codigoqr"
+          render={({ field }) => (
+            <FormItem className="self-stretch">
+              <FormLabel>Código QR</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Código"
+                  disabled={!isEditing}
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
@@ -269,7 +370,7 @@ export function FormEditComp() {
               <FormControl>
                 <Input
                   placeholder="Correo institucional"
-                  disabled={true}
+                  disabled={!isEditing}
                   {...field}
                 />
               </FormControl>
@@ -287,23 +388,10 @@ export function FormEditComp() {
                 <div className="relative">
                   <Input
                     placeholder="Contraseña"
-                    type={showPassword ? "text" : "password"}
-                    disabled={!isEditing}
+                    type="password"
+                    disabled={true}
                     {...field}
                   />
-                  {showPassword ? (
-                    <EyeOff
-                      className="absolute top-2 right-4 cursor-pointer"
-                      size={18}
-                      onClick={() => setShowPassword(!showPassword)}
-                    ></EyeOff>
-                  ) : (
-                    <Eye
-                      className="absolute top-2 right-4 cursor-pointer"
-                      size={18}
-                      onClick={() => setShowPassword(!showPassword)}
-                    ></Eye>
-                  )}
                 </div>
               </FormControl>
               <FormMessage />
