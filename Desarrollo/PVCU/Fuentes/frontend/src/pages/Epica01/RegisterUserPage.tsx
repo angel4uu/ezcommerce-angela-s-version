@@ -134,8 +134,7 @@ export const RegisterPage = () => {
     updatedValues = { ...updatedValues, username: updatedValues.email };
 
     try {
-      const { codigoqr, ...rest } = updatedValues;
-      await createUsuario(rest);
+      await createUsuario(updatedValues);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
       console.log(error);
