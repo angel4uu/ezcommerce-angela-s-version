@@ -20,30 +20,27 @@ export type EscuelaProfesional={
 }
 
 export type Marca={
-  id:string,
+  id?:number,
+  id_usuario:number,
   nombre:string,
-  logo?:string|FileList|null,
   descripcion:string,
-  facebook?:string,
-  instagram?:string,
-  tiktok?:string,
-  otra_red_social?:string,
-  activado:boolean,
+  logo:string|FileList|null,
 }
 export type Plan={
-  id:string,
+  id?:number,
+  nombre:string,
   descripcion:string,
-  precio: number,
-  duracion_meses: number|null,
-  productos_adicionales:number|null,
-  tipo?:string,
+  espacio_extra:number,
+  duracion:number,
+  precio:number,
   beneficios?:string[],
 }
-export type Suscripcion={
-  id:string,
-  marca:string,
-  plan:string,
-  fecha_vencimiento:string|null,
+export type Membresia={
+  id?:number,
+  id_marca:number,
+  id_plan:number,
+  fecha_inicio:string,
+  fecha_final:string,
 }
 
 export type DecodedToken ={

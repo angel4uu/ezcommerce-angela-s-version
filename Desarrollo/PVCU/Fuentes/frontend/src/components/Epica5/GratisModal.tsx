@@ -3,7 +3,7 @@ import { useTrademark } from "@/hooks/useTrademark";
 import { Ban } from "lucide-react";
 
 export const GratisModal = () => {
-  const { suscripcion, gratisModal, setGratisModal } = useTrademark();
+  const { membresia, gratisModal, setGratisModal } = useTrademark();
 
   return (
     <ModalMessage
@@ -30,7 +30,7 @@ export const GratisModal = () => {
           </div>
           <div className="flex justify-between">
             <p>Fecha de activación</p>
-            <p>{suscripcion.fecha_vencimiento}</p>
+            <p>{membresia?.fecha_final}</p>
           </div>
         </div>
       </div>

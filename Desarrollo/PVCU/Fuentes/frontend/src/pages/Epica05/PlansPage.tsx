@@ -4,59 +4,55 @@ import { Plan } from "@/types";
 import { GratisModal } from "../../components/Epica5/GratisModal";
 import { useLoaderData } from "react-router";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { getPlanes } from "@/api/apiMarcas";
 
 const beneficios_basicos = [
-  "Publicar productos",
-  "Comprar productos",
-  "Carrito de compras",
-  "Favoritos",
+  "Publica tus productos para llegar a más clientes potenciales.",
+  "Compra productos de la comunidad universitaria.",
+  "Guarda tus productos favoritos para acceder a ellos más tarde.",
+  "Agrega productos a tu carrito y compra rápidamente.",
 ];
-const beneficios_marcas = (productos_adicionales: number | null) => {
+const beneficios_marcas = (espacios_extra: number) => {
   const nuevos_beneficios = [...beneficios_basicos];
-  nuevos_beneficios.push("Publicidad de tus productos en la página principal.");
-  nuevos_beneficios.push(
-    `${productos_adicionales} espacios adicionales para publicar productos en tu catálogo.`
-  );
+  nuevos_beneficios.push("Destaca tus productos con publicidad en la página principal.");
+  if(espacios_extra>0){
+    nuevos_beneficios.push(
+      `Amplía tu catálogo con ${espacios_extra}  espacios adicionales para mostrar más productos.`
+    );
+  }
   return nuevos_beneficios;
 };
 const planGratuito: Plan = {
-  id: "0",
-  descripcion: "Acceso a funcionalidades básicas",
+  id: 0,
+  nombre:"plan gratuito",
+  descripcion: "Acceso a funcionalidades básicas.",
+  espacio_extra: 0,
   precio: 0,
-  duracion_meses: null,
-  productos_adicionales: null,
-  tipo: "gratuito",
+  duracion: 0,
   beneficios: beneficios_basicos,
 };
 
 
 interface LoaderData {
-  planesData: Plan[];
+  planesData: Plan[] | null;
 }
-export function loader():LoaderData {
-  const planesData: Plan[] = [
-    {
-      id: "1",
-      duracion_meses: 1,
-      productos_adicionales: 5,
-      precio: 6,
-      descripcion: "descripcion 1 y 5.",
-    },
-    {
-      id: "2",
-      duracion_meses: 2,
-      productos_adicionales: 10,
-      precio: 15,
-      descripcion: "descripcion 2 y 10.",
-    },
-  ];
+
+export async function loader(): Promise<LoaderData> {
+  try {
+    const planesResponse = await getPlanes();
+    const planes = planesResponse.data.results as Plan[];
+
+    planes.forEach((plan: Plan) => {
+      plan.beneficios = beneficios_marcas(plan.espacio_extra);
+    });
+    planes.unshift(planGratuito);
   
-  planesData.forEach((plan) => {
-    plan.beneficios = beneficios_marcas(plan.productos_adicionales);
-    plan.tipo = "marcas";
-  });
-  planesData.unshift(planGratuito);
-  return { planesData };
+    return { planesData: planes }; 
+  } catch (error) {
+    console.error("Fetching error", error);
+
+    return { planesData: null }; 
+  }
 }
 
 export const PlansPage = () => {
@@ -81,11 +77,11 @@ export const PlansPage = () => {
           </h2>
           <Carousel className="w-full mt-12">
             <CarouselContent>
-            {planesData.map((plan,index) => (
+            {planesData?.map((plan,index) => (
                 <CarouselItem key={index} className="md:basis-1/2">
                   <div className="p-4 flex justify-center h-full">
                     
-                      <PlanCard key={plan.id} planObj={plan} />
+                      <PlanCard key={plan.id} planCard={plan}/>
                     
                   </div>
                 </CarouselItem>

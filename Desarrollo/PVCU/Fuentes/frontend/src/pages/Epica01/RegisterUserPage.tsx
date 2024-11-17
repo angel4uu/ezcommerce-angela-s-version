@@ -1,7 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import personaGestion from "../../assets/persona_gestion.png";
 import { Link, useLoaderData } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,15 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -148,6 +138,7 @@ export const RegisterPage = () => {
       await createUsuario(rest);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
+      console.log(error);
       toast.error("Se produjo un error al crear su cuenta");
     }
     console.log("Datos del formulario:", updatedValues);

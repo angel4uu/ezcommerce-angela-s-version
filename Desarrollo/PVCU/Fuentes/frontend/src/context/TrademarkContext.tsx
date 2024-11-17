@@ -1,72 +1,80 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
-import { Marca, Plan, Suscripcion } from "@/types";
-
-const marcaData:Marca={
-  id:"1",
-  nombre: "marca1",
-  logo: "logo1",
-  descripcion: "descripcion1",
-  facebook: "facebook1",
-  instagram: "instagram1",
-  tiktok: "tiktok1",
-  otra_red_social: "red_social1",
-  activado:false,
-}
-const planData:Plan={
-  id: "1",
-  tipo: "marcas",
-  duracion: "mes",
-  precio: 6,
-  descripcion:
-    "Diseñado para universitarios que ya posean una marca, proporcionando funcionalidades avanzadas.",
-  beneficios: [
-    "Publicar productos",
-    "Comprar productos",
-    "Carrito de compras",
-    "Favoritos",
-    "Publicar anuncios",
-    "Mayor publicidad de tus productos",
-    "Sección especial de Marcas",
-    "Productos con check de verificación",
-  ],
-}
-const suscripcionData:Suscripcion={
-  id:"1",
-  usuario:"1",
-  plan:"1",
-  fecha_vencimiento:"22/12/2024",
-}
+import { Marca, Plan, Membresia } from "@/types";
+import {
+  getMembresiaByMarca,
+  getPlan,
+  getMarcaByUsuario,
+} from "@/api/apiMarcas";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TrademarkContextType {
-  marca: Marca|null;
-  setMarca: React.Dispatch<React.SetStateAction<Marca|null>>;
-  suscripcion: Suscripcion;
-  plan: Plan;
-  planSeleccionado: Plan|null;
-  setPlanSeleccionado: React.Dispatch<React.SetStateAction<Plan|null>>;
+  marca: Marca | null;
+  setMarca: React.Dispatch<React.SetStateAction<Marca | null>>;
+  membresia: Membresia | null;
+  plan: Plan | null;
+  planSeleccionado: Plan | null;
+  setPlanSeleccionado: React.Dispatch<React.SetStateAction<Plan | null>>;
   gratisModal: boolean;
   setGratisModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const TrademarkContext = createContext<TrademarkContextType | null>(null);
+export const TrademarkContext = createContext<TrademarkContextType | null>(
+  null
+);
 
 export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
-  
-  const [marca, setMarca] = useState<Marca|null>(marcaData);
-  const [suscripcion, setSuscripcion] = useState<Suscripcion>(suscripcionData);
-  const [plan, setPlan] = useState<Plan>(planData);
+  const [marca, setMarca] = useState<Marca | null>(null);
+  const [membresia, setMembresia] = useState<Membresia | null>(null);
+  const [plan, setPlan] = useState<Plan | null>(null);
 
-  const [planSeleccionado, setPlanSeleccionado] = useState<Plan|null>(null);
+  const [planSeleccionado, setPlanSeleccionado] = useState<Plan | null>(null);
   const [gratisModal, setGratisModal] = useState<boolean>(false);
+  const { authState } = useAuth();
 
   useEffect(() => {
-    //setMarca(get api from marca)
-    //setPlanActual(get api from plan)
-  }, []);
+    const fetchData = async () => {
+      if (!authState.userId) return;
+
+      try {
+        const marcaResponse = await getMarcaByUsuario(authState.userId);
+        const fetchedMarca = marcaResponse?.data?.results?.[0];
+        if (!fetchedMarca?.id) return;
+        setMarca(fetchedMarca);
+
+        const membresiaResponse = await getMembresiaByMarca(fetchedMarca);
+        const fetchedMembresia = membresiaResponse?.data?.results?.[0];
+        if (!fetchedMembresia?.id) return;
+        setMembresia(fetchedMembresia);
+
+        const planResponse = await getPlan(fetchedMembresia.id_plan);
+        const fetchedPlan = planResponse?.data?.results?.[0];
+        if (!fetchedPlan?.id) return;
+        setPlan(fetchedPlan);
+      } catch (error) {
+        console.log("Fetching error", error);
+      }
+    };
+
+    fetchData();
+    console.log(marca);
+    console.log(membresia);
+    console.log(plan);
+  }, [authState.userId, marca, membresia, plan]);
 
   return (
-    <TrademarkContext.Provider value={{ marca, setMarca, suscripcion,plan,  planSeleccionado, setPlanSeleccionado,gratisModal, setGratisModal}}>
+    <TrademarkContext.Provider
+      value={{
+        marca,
+        setMarca,
+        membresia,
+        plan,
+        planSeleccionado,
+        setPlanSeleccionado,
+        gratisModal,
+        setGratisModal,
+      }}
+    >
       {children}
     </TrademarkContext.Provider>
   );
-}
+};
