@@ -6,7 +6,8 @@ export async function getFileURL(elemFile:File, storageDirec:string) {
   if (!elemFile) return null;
 
   try {
-    const fileRef = ref(storage, `${storageDirec}/${elemFile.name}-${v4()}`);
+    const shortUUID = v4().split('-')[0]
+    const fileRef = ref(storage, `${storageDirec}/${elemFile.name}-${shortUUID}`);
     await uploadBytes(fileRef, elemFile);
     const fileURL = await getDownloadURL(fileRef);
     return fileURL;

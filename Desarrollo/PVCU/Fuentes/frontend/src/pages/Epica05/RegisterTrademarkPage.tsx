@@ -76,6 +76,7 @@ export const RegisterTrademark = () => {
     
     //Post marca
     try{
+      console.log(updatedValues);
       const response=await createMarca(updatedValues);
       console.log("response",response);
     }
@@ -84,7 +85,6 @@ export const RegisterTrademark = () => {
       toast.error("Ocurrió un error al registrar su marca");
       return;
     }
-    
     setMarca(updatedValues);
     toast.success("Marca registrada con éxito");
     navigate("/pay-plan");
