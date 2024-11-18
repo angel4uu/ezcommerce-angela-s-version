@@ -11,7 +11,7 @@ interface ICategoriesCardProps {
 
 export const CategoriesCard = ({id, image, title, description, horiz, index }:ICategoriesCardProps) => {
     const navigate = useNavigate()
-    const goToCategory = () => navigate(`/userId/search/${id}`)
+    const goToCategory = () => navigate(`/search?etiquetas=${id}`)
 
     const posicion = horiz ? `col-span-2 row-start-${index} col-start-2` : `row-span-2 col-start-${index+1} row-start-1`
     
