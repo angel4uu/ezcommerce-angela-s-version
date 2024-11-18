@@ -6,9 +6,9 @@ import { PaginationComp } from '../../components/Epica03/paginationComponent';
 import { Search } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import axios from 'axios'
+import { Facultad, getAllFacultades } from '../../api/apiFacultades';
 
 
-const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
 export const SearchSellers = () => {
 
@@ -29,6 +29,26 @@ export const SearchSellers = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [facultades, setFacultades] = useState<Facultad[]>([])
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const fetchFacus = async () => {
+      try {
+        const data1 = await getAllFacultades(1)
+        const data2 = await getAllFacultades(2)
+        const facultadesT = [...data1.data.results, ...data2.data.results]
+
+        setFacultades(facultadesT)
+
+      } catch (error) {
+        throw error
+      }
+    }
+    fetchFacus()
+  }, [])
+
+  const displayedFacultades = showAll ? facultades : facultades.slice(0, 10);
   
   const defaultFilters = {
     name: "",
@@ -36,7 +56,7 @@ export const SearchSellers = () => {
   };
   const [filters, setFilters] = useState(defaultFilters);
   
-  const apiUrl = "http://localhost:8000/usuarios";
+  const apiUrl = "http://localhost:8000/usuarios/?tiene_marca=true";
   
   // Cambiar página
   const handlePageChange = (page: number) => {
@@ -176,19 +196,27 @@ export const SearchSellers = () => {
 
           <div className="mb-4">
             <h3 className="font-bold text-xl">Facultades</h3>
-            {facultades.map((fac) => (
-              <div key={fac} className="flex items-center space-x-2 my-4">
+            {displayedFacultades.map((fac) => (
+              <div key={fac.codigo} className="flex items-center space-x-2 my-4">
                 <Checkbox
-                  id={fac.toLowerCase()}
+                  id={fac.codigo.toString()}
                   className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(fac)}
-                  checked={filters.facultades.includes(fac)}
+                  onCheckedChange={() => handleCheckboxChange(fac.siglas)}
+                  checked={filters.facultades.includes(fac.siglas)}
                 />
-                <label htmlFor={fac.toLowerCase()} className="text-md font-medium leading-none">
-                  {fac}
+                <label htmlFor={fac.siglas} className="text-md font-medium leading-none">
+                  {fac.siglas}
                 </label>
               </div>
             ))}
+            {facultades.length > 10 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="mt-4 text-secondaryLight font-medium "
+              >
+                {showAll ? 'Mostrar menos' : 'Mostrar más'}
+              </button>
+            )}
           </div>
             
             <div className='flex flex-row gap-4 justify-center'>

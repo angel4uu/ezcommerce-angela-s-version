@@ -3,7 +3,7 @@ import axios from 'axios';
 import { baseURL } from './api';
 
 //Usuarios
-const usuariosApi = axios.create({
+export const usuariosApi = axios.create({
   baseURL: `${baseURL}/usuarios/` 
 });
 
