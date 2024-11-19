@@ -12,13 +12,25 @@ import { CategoriesCard, SellersCard } from '../../components/cards';
 import { categories, distinguishedSellers, mockProducts, images } from '../../mocks/mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
 import { LoginModal } from '@/components/Epica5/LoginModal';
+import { useTrademark } from '@/hooks/useTrademark';
+import { useEffect, useState } from 'react';
+import { Articulo, getArticulos } from '../../api/apiArticulos';
+import { EscuelaProfesional, Usuario } from '../../types';
+import { getEscuelas, usuariosApi } from '../../api/apiUsuarios';
+import { baseURL } from '../../api/api';
 
 
 
 export const MainPage = () => {
   const navigate = useNavigate();
   const {authState, setLoginModal}=useAuth();
+  const{marca,membresia,plan}=useTrademark();
+  const[products, setProducts] = useState<Articulo[]>([])
+  const [escuelas,setEscuelas] = useState<EscuelaProfesional[]>([])
+  const [sellers, setSellers] = useState<Usuario[]>([])
+  
   console.log("User id:",authState.userId);
+  console.log({ marca: marca, membresia: membresia, plan: plan });
 
   function handleTrademarkClick(){
     if(authState.userId){
@@ -28,6 +40,25 @@ export const MainPage = () => {
       setLoginModal(true);
     }
   }
+
+  useEffect(()=>{
+    const fetchData = async () =>{
+      try {
+        const articulos = await getArticulos()
+        setProducts(articulos.data.results)
+
+        const escuelas = await getEscuelas()
+        setEscuelas(escuelas.data.results)
+
+        const vendedores = await usuariosApi.get('/?tiene_marca=true')
+        setSellers(vendedores.data.results)
+        
+      } catch (error) {
+        throw error
+      }
+    }
+    fetchData()
+  },[])
 
   return (
     <>
@@ -66,10 +97,10 @@ export const MainPage = () => {
         }} >
                     <CarouselContent className='mb-12 mt-4 mx-auto px-20'>
                         {
-                          mockProducts.map((p) => (
+                          products.map((p) => (
                             <>
                             <CarouselItem key={`ci-${p.id}`} className='basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4'>
-                                <ProductCard key={p.id} id={p.id} name={p.name} brand={p.brand} isFavourite={p.isFavourite} price={p.price} qualification={p.qualification} img={p.img}  />
+                                <ProductCard key={p.id} id={p.id} name={p.nombre} price={p.precio} qualification={4.4} img={''}  />
                               </CarouselItem>
                             </>
                           ))
@@ -90,7 +121,7 @@ export const MainPage = () => {
             <div className='grid grid-cols-4 grid-rows-2 gap-4 px-24'>
             {categories.map((category, index) => (
               <CategoriesCard
-                id={category.id}
+                id={category.id.toString()}
                 key={`cc-${index}`}
                 image={category.image}
                 title={category.title}

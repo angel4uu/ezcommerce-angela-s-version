@@ -1,3 +1,4 @@
+import { createMarca } from "@/api/apiMarcas";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,9 +9,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
 import { useTrademark } from "@/hooks/useTrademark";
 import { getFileURL } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AwardIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -18,79 +21,71 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
+  id_usuario: z.number(),
   nombre: z
     .string({ message: "Nombre inválido" })
-    .min(1, { message: "Nombre inválido" }),
-  logo: z
-    .union([
-      z.instanceof(FileList).refine(
-        (fileList) => {
-          if (!fileList || fileList.length === 0) return true;
-          const file = fileList[0];
-          return file && file.type.startsWith("image/");
-        },
-        { message: "El archivo debe ser una imagen." }
-      ),
-      z.string(),
-    ])
-    .optional()
-    .nullable(),
+    .min(1,{message:"Nombre inválido"}),
+  logo: z.union([
+    z.instanceof(FileList).refine(
+      (fileList) => {
+        if (!fileList || fileList.length === 0) return false; 
+        const file = fileList[0];
+        return file && file.type.startsWith("image/"); 
+      },
+      { message: "El archivo debe ser una imagen válida." }
+    ),
+    z.string()
+  ]),
   descripcion: z
-    .string({ message: "Descripción inválida" })
-    .min(1, { message: "Descripción inválida" }),
-  facebook: z.string({ message: "Facebook inválido" }).optional(),
-  instagram: z.string({ message: "Instagram inválido" }).optional(),
-  tiktok: z.string({ message: "Instagram inválido" }).optional(),
-  otra_red_social: z.string({ message: "Red social inválida" }).optional(),
-  activado: z.boolean(),
-  fecha_activacion:z.string(),
-  fecha_vencimiento:z.string(),
+    .string({ message: "Descripción inválida" }) 
+    .min(1,{message:"Descripción inválida"}),
 });
 
 type FormFields = z.infer<typeof formSchema>;
 
 export const RegisterTrademark = () => {
+  const { authState } = useAuth();
   const form = useForm<FormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombre: "",
-      logo: null,
+      logo: undefined,
       descripcion: "",
-      facebook: undefined,
-      instagram: undefined,
-      tiktok: undefined,
-      otra_red_social: undefined,
-      activado: false,
-      fecha_activacion:"",
-      fecha_vencimiento:"",
+      id_usuario: authState.userId!,
     },
   });
 
   const fileRef = form.register("logo");
   const { setMarca } = useTrademark();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   async function onSubmit(values: FormFields) {
     const fileInput = form.getValues("logo");
     let updatedValues = { ...values };
 
-    //If qr, obtain url
-    if (fileInput && fileInput[0]) {
-      const selectedFile = fileInput[0];
-      try {
-        const url = await getFileURL(selectedFile as File, "logo_images");
-        updatedValues = { ...values, logo: url };
-      } catch (error) {
-        console.log("Error al obtener el URL del archivo:", error);
-        return;
-      }
-    } else {
-      updatedValues = { ...values, logo: null };
+    //Image to Link
+    const selectedFile = fileInput[0];
+    const url = await getFileURL(selectedFile as File, "logo_images");
+    if(url){
+      updatedValues = { ...values, logo: url };
     }
-
-    //post marca
+    else{
+      toast.error("Ocurrió un error al subir su imagen");
+      return;
+    }
+    
+    //Post marca
+    try{
+      console.log(updatedValues);
+      const response=await createMarca(updatedValues);
+      console.log("response",response);
+    }
+    catch(error){
+      console.log("Posting error",error);
+      toast.error("Ocurrió un error al registrar su marca");
+      return;
+    }
     setMarca(updatedValues);
-    console.log(updatedValues);
     toast.success("Marca registrada con éxito");
     navigate("/pay-plan");
   }
@@ -105,7 +100,10 @@ export const RegisterTrademark = () => {
         <h1 className="font-semibold text-4xl">Registrar marca</h1>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="pt-5 flex flex-col gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="pt-5 flex flex-col gap-4"
+          >
             <FormField
               name="nombre"
               control={form.control}
@@ -116,25 +114,10 @@ export const RegisterTrademark = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Escribe tu marca"
+                      placeholder="Escribe el nombre de tu marca"
                       type="text"
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="logo"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel className="text-base">
-                    Logo {`(opcional)`}
-                  </FormLabel>
-                  <FormControl>
-                    <Input type="file" {...fileRef} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,73 +142,21 @@ export const RegisterTrademark = () => {
                 </FormItem>
               )}
             />
-            <div className="flex flex-col gap-2">
-              <p className="text-base">Redes sociales</p>
-              <FormField
-                name="facebook"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Enlace a Facebook"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="instagram"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Enlace a Instagram"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="tiktok"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Enlace a Tiktok"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="otra_red_social"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Otra red social"
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              name="logo"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel className="text-base">
+                    Logo 
+                  </FormLabel>
+                  <FormControl>
+                    <Input type="file" {...fileRef} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button
               type="submit"
               className="bg-secondaryLight hover:bg-secondaryLightHovered self-end w-1/3"

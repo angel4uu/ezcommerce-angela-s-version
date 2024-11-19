@@ -8,21 +8,40 @@ import axios from 'axios'
 import { EtiquetasContext } from '../../context/EtiquetasContext';
 import { ProductCard } from '../../components/cards/product-card';
 import { Articulo } from '../../api/apiArticulos';
+import { Facultad, getAllFacultades } from '../../api/apiFacultades';
 
-
-const facultades = ['FIEE', 'FISI', 'FCE', 'FCB', 'FCF', 'FCM'];
 
 export const SearchPage = () => {
   const { etiquetasList, setLoadingPage } = useContext(EtiquetasContext);
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const [items, setItems] = useState<Articulo[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isInitialized, setIsInitialized] = useState(false);
-  
+  const [facultades, setFacultades] = useState<Facultad[]>([])
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    const fetchFacus = async () => {
+      try {
+        const data1 = await getAllFacultades(1)
+        const data2 = await getAllFacultades(2)
+        const facultadesT = [...data1.data.results, ...data2.data.results]
+
+        setFacultades(facultadesT)
+
+      } catch (error) {
+        throw error
+      }
+    }
+    fetchFacus()
+  }, [])
+
+  const displayedFacultades = showAll ? facultades : facultades.slice(0, 10);
+
   const defaultFilters = {
     name: "",
     categorias: [] as number[],
@@ -31,15 +50,15 @@ export const SearchPage = () => {
     max: 500,
   };
   const [filters, setFilters] = useState(defaultFilters);
-  
+
   const apiUrl = "http://localhost:8000/articulos";
-  
+
   // Construcción de la URL de la API
   const constructApiUrl = () => {
     const queryParams = new URLSearchParams();
     if (currentPage > 1) queryParams.append("page", currentPage.toString());
     queryParams.append("limit", itemsPerPage.toString());
-  
+
     if (filters.name) queryParams.append("nombre", filters.name);
     filters.categorias.forEach((cat) => queryParams.append("etiquetas", cat.toString()));
     if (filters.facultades.length > 0) {
@@ -47,10 +66,10 @@ export const SearchPage = () => {
     }
     if (filters.min) queryParams.append("precio_min", filters.min.toString());
     if (filters.max) queryParams.append("precio_max", filters.max.toString());
-  
+
     return `${apiUrl}?${queryParams.toString()}`;
   };
-  
+
   // Actualización de datos desde la API
   const fetchData = async () => {
     setLoadingPage(true);
@@ -64,7 +83,7 @@ export const SearchPage = () => {
       setLoadingPage(false);
     }
   };
-  
+
 
   // Cambiar página
   const handlePageChange = (page: number) => {
@@ -72,24 +91,24 @@ export const SearchPage = () => {
     searchParams.set("page", page.toString());
     navigate(`?${searchParams.toString()}`);
   };
-  
+
   // Cambiar elementos por página
   const handleLimitChange = (newLimit: number) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", "1"); 
+    searchParams.set("page", "1");
     searchParams.set("limit", newLimit.toString());
-    
+
     navigate(`?${searchParams.toString()}`);
     setItemsPerPage(newLimit);
   };
-  
+
   // Limpiar filtros
   const handleClearFilters = () => {
     setFilters(defaultFilters);
     setCurrentPage(1);
     navigate("?");
   };
-  
+
   // Manejar cambios en los filtros
   const handleCheckboxChange = (
     value: number | string,
@@ -97,7 +116,7 @@ export const SearchPage = () => {
   ) => {
     setFilters((prevFilters) => {
       const updated = { ...prevFilters };
-  
+
       // Actualiza las categorías o facultades según el tipo y valor
       if (type === "categorias" && typeof value === "number") {
         updated.categorias = prevFilters.categorias.includes(value)
@@ -108,29 +127,29 @@ export const SearchPage = () => {
           ? prevFilters.facultades.filter((item) => item !== value)
           : [...prevFilters.facultades, value];
       }
-  
+
       // Construye los parámetros de búsqueda actualizados
       const searchParams = new URLSearchParams();
       searchParams.set("page", "1"); // Reinicia a la primera página
       searchParams.set("limit", itemsPerPage.toString());
-  
+
       if (filters.name) searchParams.set("nombre", filters.name);
       updated.categorias.forEach((cat) => searchParams.append("etiquetas", cat.toString()));
       updated.facultades.forEach((fac) => searchParams.append("facultades", fac));
       if (filters.min) searchParams.set("precio_min", filters.min.toString());
       if (filters.max) searchParams.set("precio_max", filters.max.toString());
-  
+
       // Navega con los nuevos parámetros
       navigate(`?${searchParams.toString()}`);
-  
+
       return updated;
     });
   };
-  
+
   // Leer filtros desde la URL al cargar o cambiar la URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-  
+
     // Actualiza los filtros desde la URL
     const newFilters = {
       name: searchParams.get("nombre") || "",
@@ -139,16 +158,16 @@ export const SearchPage = () => {
       min: Number(searchParams.get("precio_min") || "0"), // Precio mínimo
       max: Number(searchParams.get("precio_max") || "500"), // Precio máximo
     };
-  
+
     // Establece los filtros, página y límite desde la URL
     setFilters(newFilters);
     setCurrentPage(Number(searchParams.get("page") || "1"));
     setItemsPerPage(Number(searchParams.get("limit") || "10"));
-  
+
     // Llama a la API para obtener los datos
     setIsInitialized(true);
   }, [location.search]);
-  
+
   // Actualiza la URL cada vez que cambian los filtros, página o límite
   useEffect(() => {
     if (isInitialized) {
@@ -185,19 +204,27 @@ export const SearchPage = () => {
 
           <div className="mb-4">
             <h3 className="font-bold text-xl">Facultades</h3>
-            {facultades.map((fac) => (
-              <div key={fac} className="flex items-center space-x-2 my-4">
+            {displayedFacultades.map((fac) => (
+              <div key={fac.codigo} className="flex items-center space-x-2 my-4">
                 <Checkbox
-                  id={fac.toLowerCase()}
+                  id={fac.codigo.toString()}
                   className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(fac, 'facultades')}
-                  checked={filters.facultades.includes(fac)}
+                  onCheckedChange={() => handleCheckboxChange(fac.siglas, 'facultades')}
+                  checked={filters.facultades.includes(fac.siglas)}
                 />
-                <label htmlFor={fac.toLowerCase()} className="text-md font-medium leading-none">
-                  {fac}
+                <label htmlFor={fac.siglas} className="text-md font-medium leading-none">
+                  {fac.siglas}
                 </label>
               </div>
             ))}
+            {facultades.length > 10 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="mt-4 text-secondaryLight font-medium "
+              >
+                {showAll ? 'Mostrar menos' : 'Mostrar más'}
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col mb-4 gap-4">

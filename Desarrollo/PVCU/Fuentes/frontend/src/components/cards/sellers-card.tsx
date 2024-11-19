@@ -18,7 +18,7 @@ export const SellersCard = (
      description
     }:ISellersCardProps) => {
         const navigate = useNavigate()
-        const goToProfile = () => navigate(`/userId/profile/${id}`)
+        const goToProfile = () => navigate(`/profile-buyer?id=${id}`)
 
         return(
             <>

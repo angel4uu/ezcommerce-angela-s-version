@@ -24,7 +24,7 @@ export type Marca={
   id_usuario:number,
   nombre:string,
   descripcion:string,
-  logo:string|FileList|null,
+  logo:string|FileList
 }
 export type Plan={
   id?:number,
