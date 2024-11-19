@@ -29,9 +29,21 @@ class Catalogo(models.Model):
         if self.espacio_ocupado < 0:
             self.espacio_ocupado = 0
 
+
     def save(self, *args, **kwargs):
         self.full_clean()  
+        if self.espacio_ocupado > 0: 
+            self.id_usuario.es_vendedor = True    
+            self.id_usuario.save() 
         super().save(*args, **kwargs)
+
+
+    def delete(self, *args, **kwargs):
+        if self.id_marca == None:                    
+            self.id_usuario.es_vendedor = False    
+            self.id_usuario.save() 
+        super().delete(*args, **kwargs)
+
 
     def __str__(self):
         if self.id_marca == None:
