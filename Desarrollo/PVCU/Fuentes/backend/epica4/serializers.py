@@ -31,7 +31,7 @@ class ArticuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Articulo
         fields = '__all__'
-
+        
     def get_id_marca(self, obj):
         return obj.id_catalogo.id_marca.id if obj.id_catalogo.id_marca else None
 
