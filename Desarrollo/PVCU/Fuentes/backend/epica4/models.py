@@ -63,10 +63,10 @@ class Articulo(models.Model):
     id_marca = models.ForeignKey(Marca, on_delete=models.CASCADE, null=True, blank=True)
     nombre = models.CharField("Nombre", max_length=100, unique=True)
     descripcion = models.TextField("Descripción")
+    precio = models.FloatField("Precio")
     stock = models.IntegerField("Stock disponible", default=1)
     etiquetas = models.ManyToManyField(Etiqueta)
     disponible = models.BooleanField("Disponible", default=True)
-    precio = models.FloatField("Precio")
     bloqueado = models.BooleanField("Bloqueado", default=False)
 
     def save(self, *args, **kwargs):

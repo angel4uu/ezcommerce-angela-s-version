@@ -22,7 +22,10 @@ class ArticuloFilter(filters.FilterSet):
     nombre = filters.CharFilter(field_name='nombre', lookup_expr='icontains')
     facultades = filters.CharFilter(method='filter_siglas')  # Filtro personalizado
     id_catalogo__id_usuario__id_escuela__nombre = filters.CharFilter(
-        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')    
+        field_name='id_catalogo__id_usuario__id_escuela__nombre', lookup_expr='icontains')   
+    nombre_marca = filters.CharFilter(
+        field_name='id_catalogo__id_marca__nombre', lookup_expr='icontains')     
+    
     precio_min = filters.NumberFilter(field_name='precio', lookup_expr='gte') 
     precio_max = filters.NumberFilter(field_name='precio', lookup_expr='lte')  
 
@@ -32,9 +35,10 @@ class ArticuloFilter(filters.FilterSet):
             'nombre', 'etiquetas', 'disponible',
             'id_catalogo__id_usuario',
             'id_catalogo__id_marca',
+            'nombre_marca',
             'facultades',  # Alias amigable para siglas
             'id_catalogo__id_usuario__id_escuela',
-            'precio_min', 'precio_max', 
+            'precio_min', 'precio_max'
         ]
 
     def filter_siglas(self, queryset, name, value):
@@ -121,7 +125,7 @@ class ArticuloViewSet(viewsets.ModelViewSet):
     """
     API Endpoint para CRUD de Articulo.
     """
-    queryset = Articulo.objects.all()
+    queryset = Articulo.objects.select_related('id_marca').all()
     serializer_class = ArticuloSerializer
     filterset_class = ArticuloFilter  
     filter_backends = [DjangoFilterBackend, OrderingFilter]
