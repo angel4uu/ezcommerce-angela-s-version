@@ -49,7 +49,7 @@ class Usuario(AbstractBaseUser):
     fecha_nacimiento = models.DateField("Fecha de nacimiento", null=True, blank=True)
     codigoqr = models.URLField("Código QR", null=True, blank=True)
     tiene_marca = models.BooleanField("Tiene marca", default=False)
-    es_vendedor = models.BooleanField("Tiene marca", default=False)
+    es_vendedor = models.BooleanField("Es usuario vendedor: ", default=False)
 
     fecha_registro = models.DateTimeField(auto_now_add=True)
     
