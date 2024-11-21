@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   AlertTriangle,
+  ChevronLeft,
   Flag,
   Heart,
   Minus,
@@ -30,11 +31,13 @@ import {
 import { Helmet } from "react-helmet-async";
 import { ProductCard } from "@/components/cards/product-card";
 import { useParams } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { getArticulo, Articulo, getArticulos } from "@/api/apiArticulos";
+import { Link } from "react-router-dom";
 
 interface IProductDetailProp {
-  id: string;
+  id: number;
   name: string;
   price: number;
   description: string;
@@ -46,7 +49,7 @@ interface IProductDetailProp {
 
 const products: IProductDetailProp[] = [
   {
-    id: "1",
+    id: 1,
     name: "Smartphone X",
     price: 499.99,
     description:
@@ -57,7 +60,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.5,
   },
   {
-    id: "2",
+    id: 2,
     name: "Laptop Pro",
     price: 1299.99,
     description:
@@ -68,7 +71,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.7,
   },
   {
-    id: "3",
+    id: 3,
     name: "Wireless Earbuds",
     price: 99.99,
     description:
@@ -79,7 +82,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.3,
   },
   {
-    id: "4",
+    id: 4,
     name: "4K TV",
     price: 799.99,
     description:
@@ -90,7 +93,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.6,
   },
   {
-    id: "5",
+    id: 5,
     name: "Smartwatch Series 5",
     price: 199.99,
     description:
@@ -101,7 +104,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.2,
   },
   {
-    id: "6",
+    id: 6,
     name: "Smartwatch Series 5",
     price: 199.99,
     description:
@@ -112,7 +115,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.2,
   },
   {
-    id: "7",
+    id: 7,
     name: "Smartwatch Series 5",
     price: 199.99,
     description:
@@ -123,7 +126,7 @@ const products: IProductDetailProp[] = [
     qualification: 4.2,
   },
   {
-    id: "8",
+    id: 8,
     name: "Smartwatch Series 5",
     price: 199.99,
     description:
@@ -138,14 +141,47 @@ const products: IProductDetailProp[] = [
 export function ProductDetailsPage() {
   const { productId } = useParams<{ productId: string }>();
   const [quantity, setQuantity] = useState(1);
+  const [articulo, setArticulo] = useState<Articulo | null>(null);
+  const [productos, setProductos] = useState<Articulo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 5));
+  useEffect(() => {
+    const fetchArticulo = async (id: number) => {
+      setIsLoading(true);
+      try {
+        const response = await getArticulo(id);
+        setArticulo(response.data);
+
+        const responseProductos = await getArticulos();
+        setProductos(responseProductos.data.results);
+
+        console.log(response.data);
+        console.log(responseProductos.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchArticulo(Number(productId));
+    }
+  }, [productId]);
+
+  const incrementQuantity = () => {
+    if (articulo?.stock) {
+      setQuantity((prev) => Math.min(prev + 1, articulo?.stock));
+    }
+  };
   const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1));
 
-  const product = products.find((p) => p.id === productId);
-
-  if (!product) {
-    return <p>Producto no encontrado</p>;
+  if (!articulo) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg font-semibold">Ups! Producto no encontrado 😅 </p>
+      </div>
+    );
   }
 
   const StarRating = ({ rating }: { rating: number }) => (
@@ -163,17 +199,30 @@ export function ProductDetailsPage() {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-terciaryLight"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <Helmet>
-        <title>{product.name}</title>
+        <title>{articulo?.nombre}</title>
       </Helmet>
 
       <div className="flex flex-wrap justify-between items-center gap-4 py-8">
         {/* Título del detalle del producto */}
-        <h3 className="text-lg md:text-xl font-semibold">
-          Detalles del producto
-        </h3>
+        <div className="flex items-center gap-2">
+          <Link to="/" className="rounded-full hover:bg-accent p-2">
+            <ChevronLeft></ChevronLeft>
+          </Link>
+          <h3 className="text-lg md:text-xl font-semibold">
+            Detalles del producto
+          </h3>
+        </div>
 
         {/* Migas de pan (Breadcrumb) */}
         <Breadcrumb>
@@ -227,7 +276,6 @@ export function ProductDetailsPage() {
 
           {/* PANEL DERECHO - INFORMACIÓN DEL PRODUCTO */}
           <div className="flex flex-col justify-between py-2 px-4 md:px-6">
-            {/* Información del producto */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap justify-between items-start">
                 <div>
@@ -235,10 +283,10 @@ export function ProductDetailsPage() {
                     Juan Carlos Rodriguez
                   </p>
                   <h1 className="text-lg md:text-2xl font-bold mb-4 text-terciaryLight">
-                    {product.name}
+                    {articulo.nombre}
                   </h1>
                   <p className="text-lg md:text-xl font-semibold text-terciaryLight">
-                    S/ {product.price.toFixed(2)}
+                    S/ {articulo.precio.toFixed(2)}
                   </p>
                 </div>
                 <Badge variant="secondary" className="uppercase text-[#555]">
@@ -246,7 +294,7 @@ export function ProductDetailsPage() {
                 </Badge>
               </div>
               <p className="text-sm md:text-base text-[#555] mb-4">
-                {product.description}
+                {articulo.descripcion}
               </p>
             </div>
 
@@ -276,14 +324,14 @@ export function ProductDetailsPage() {
                   <Plus className="h-4 w-4" />
                 </Button>
                 <span className="text-xs md:text-sm text-gray-500">
-                  Máximo de 5 unidades
+                  Máximo de {articulo.stock} unidades
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-4 text-primaryLight text-sm md:text-[16px]">
+                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-5 text-primaryLight text-sm md:text-[16px]">
                   <ShoppingCart className="mr-2 h-4 w-4" /> Añadir al carrito
                 </Button>
-                <Button variant="outline" size="icon" className="p-4 md:p-5">
+                <Button variant="outline" size="icon" className="p-5 md:p-5">
                   <Heart className="h-4 w-4 border-secondaryLight" />
                 </Button>
               </div>
@@ -307,20 +355,21 @@ export function ProductDetailsPage() {
               }}
             >
               <CarouselContent className="-ml-1">
-                {products.map((product) => (
+                {productos.map((product) => (
                   <>
                     <CarouselItem
                       key={product.id}
                       className="basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4"
                     >
                       <ProductCard
+                        key={product.id}
                         id={product.id}
-                        name={product.name}
-                        brand={product.brand}
-                        isFavourite={product.isFavourite}
-                        price={product.price}
-                        qualification={product.qualification}
-                        img={product.img}
+                        name={product.nombre}
+                        price={product.precio}
+                        qualification={4}
+                        img={
+                          "https://www.az-delivery.uk/cdn/shop/products/esp32-nodemcu-module-wlan-wifi-development-board-mit-cp2102-nachfolgermodell-zum-esp8266-kompatibel-mit-arduino-872375_grande.jpg?v=1679400491"
+                        }
                       />
                     </CarouselItem>
                   </>

@@ -17,9 +17,11 @@ class CatalogoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_id_marca(self, obj):
-        # Verifica si `id_marca` es None y maneja el caso.
+        # Verifica si 'id_marca' es None y maneja el caso.
         return obj.id_marca.id if obj.id_marca else None
-
+    
+    def get_nombre_marca(self, obj):
+        return obj.id_catalogo.id_marca.nombre if obj.id_catalogo.id_marca else None
 
 class ArticuloSerializer(serializers.ModelSerializer):    
     id_catalogo = serializers.PrimaryKeyRelatedField(queryset=Catalogo.objects.all())  # Directamente relacionado
@@ -31,8 +33,10 @@ class ArticuloSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_id_marca(self, obj):
-        # Verifica si `id_marca` en `id_catalogo` es None y maneja el caso.
         return obj.id_catalogo.id_marca.id if obj.id_catalogo.id_marca else None
+
+    def get_nombre_marca(self, obj):
+        return obj.id_catalogo.id_marca.nombre if obj.id_catalogo.id_marca else None
 
     def create(self, validated_data):
         # Extrae etiquetas del validated_data
