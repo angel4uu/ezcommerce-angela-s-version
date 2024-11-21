@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,20 +31,25 @@ const formSchema = z.object({
   nombres: z
     .string({ message: "Nombres inválidos" })
     .min(1, { message: "Nombres inválidos" })
-    .max(50, { message: "Nombres deben tener como máximo 50 carácteres" }),
+    .max(200, { message: "Nombres deben tener como máximo 200 carácteres" }),
   apellido_p: z
     .string({ message: "Apellidos inválidos" })
     .min(1, { message: "Apellidos inválidos" })
-    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
+    .max(200, { message: "Apellidos deben tener como máximo 200 carácteres" }),
   apellido_m: z
     .string({ message: "Apellidos inválidos" })
     .min(1, { message: "Apellidos inválidos" })
-    .max(30, { message: "Apellidos deben tener como máximo 30 carácteres" }),
+    .max(200, { message: "Apellidos deben tener como máximo 200 carácteres" }),
   codigo: z
     .string({ message: "Código inválido" })
+    .regex(/^\d+$/, { message: "El código debe contener solo números." })
     .min(1, { message: "Código inválido" })
     .max(8, { message: "Código debe tener como máximo 8 carácteres" }),
-  celular: z.string({ message: "Celular inválido" }),
+  celular: z
+    .string({ message: "Celular inválido" })
+    .regex(/^\+?\d+$/, { message: "El celular debe contener solo números." })
+    .min(9, { message: "El celular debe tener al menos 9 dígitos" })
+    .max(15, { message: "El celular debe tener como máximo 15 dígitos" }),
   codigoqr: z
     .union([
       z.instanceof(FileList).refine(
@@ -64,11 +68,15 @@ const formSchema = z.object({
   email: z
     .string({ message: "Email inválido" })
     .email({ message: "Email inválido" })
-    .max(50, { message: "Email debe tener como máximo 50 carácteres" }),
+    .max(254, { message: "Email debe tener como máximo 254 caracteres" })
+    .refine((email) => email.endsWith("@unmsm.edu.pe"), {
+      message: "El email debe terminar con @unmsm.edu.pe",
+    }),
   password: z
     .string({ message: "Contraseña inválida" })
     .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
-  username: z.string(),
+  username: z
+    .string(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
@@ -149,9 +157,9 @@ export const RegisterPage = () => {
         <title>Registrarse</title>
       </Helmet>
 
-      <div className=" h-auto py-2 px-10 md:px-20 lg:px-36 ">
+      <div className=" h-auto md:py-2  md:px-20 lg:px-28 ">
         <div className=" h-full flex gap-14">
-          <div className="bg-slate-600 h-full w-full flex-1  hidden lg:flex">
+          <div className="bg-slate-600 h-auto w-full flex-1  hidden lg:flex">
             <img src={personaGestion} className="object-cover w-full" />
           </div>
 
@@ -163,7 +171,7 @@ export const RegisterPage = () => {
                     <img src="/Ezcommerce-logo-light.png" className="h-16" />
                   </div>
                   <p className="text-secondaryLight text-center text-sm font-semibold">
-                    Crear tu cuenta
+                    Crea tu cuenta
                   </p>
                   <p className="text-secondaryLight text-center text-sm">
                     Llena tus datos en el siguiente formulario
@@ -173,7 +181,7 @@ export const RegisterPage = () => {
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="space-y-4 mt-6"
                   >
                     <FormField
                       name="nombres"
@@ -364,7 +372,7 @@ export const RegisterPage = () => {
                 </Form>
               </div>
 
-              <div className="bg-terciaryDark flex flex-col text-center py-2">
+              <div className="bg-terciaryDark flex flex-col text-center py-4">
                 <p>
                   ¿Ya tienes cuenta?{" "}
                   <Link to="/login">
