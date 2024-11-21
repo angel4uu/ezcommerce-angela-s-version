@@ -11,15 +11,15 @@ interface PlanCardProps{
 
 export const PlanCard = ({planCard}:PlanCardProps) => {
   const navigate = useNavigate();
-  const { marca, plan, setGratisModal, setPlanSeleccionado } = useTrademark();
+  const { marca, plan, setGratisModal} = useTrademark();
 
   function handleSeleccionarPlan() {
     if (planCard.nombre != "plan gratuito" && marca) {
-      setPlanSeleccionado(planCard);
+      localStorage.setItem("planSeleccionado", JSON.stringify(planCard));
       navigate("/pay-plan");
       toast.info("Usted cuenta con una marca previamente registrada");
     } else if (planCard.nombre != "plan gratuito" && !marca) {
-      setPlanSeleccionado(planCard);
+      localStorage.setItem("planSeleccionado", JSON.stringify(planCard));
       navigate("/register-trademark");
     } else {
       setGratisModal(true);

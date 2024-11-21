@@ -12,8 +12,6 @@ interface TrademarkContextType {
   setMarca: React.Dispatch<React.SetStateAction<Marca | null>>;
   membresia: Membresia | null;
   plan: Plan | null;
-  planSeleccionado: Plan | null;
-  setPlanSeleccionado: React.Dispatch<React.SetStateAction<Plan | null>>;
   gratisModal: boolean;
   setGratisModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -27,14 +25,18 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
   const [membresia, setMembresia] = useState<Membresia | null>(null);
   const [plan, setPlan] = useState<Plan | null>(null);
 
-  const [planSeleccionado, setPlanSeleccionado] = useState<Plan | null>(null);
   const [gratisModal, setGratisModal] = useState<boolean>(false);
   const { authState } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       
-      if (!authState.userId) return;
+      if (!authState.userId){
+        setMarca(null);
+        setMembresia(null);
+        setPlan(null);
+        return;
+      }
       try {
         const marcaResponse = await getMarcaByUsuario(authState.userId);
         const fetchedMarca = marcaResponse?.data?.results?.[0] as Marca;
@@ -56,7 +58,7 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchData();
-  }, []);
+  }, [authState.userId]);
 
   return (
     <TrademarkContext.Provider
@@ -65,8 +67,6 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
         setMarca,
         membresia,
         plan,
-        planSeleccionado,
-        setPlanSeleccionado,
         gratisModal,
         setGratisModal,
       }}
