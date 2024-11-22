@@ -24,7 +24,10 @@ const formSchema = z.object({
   username: z
     .string({ message: "Email inválido" })
     .email({ message: "Email inválido" })
-    .max(50, { message: "Email debe tener como máximo 50 carácteres" }),
+    .max(254, { message: "Email debe tener como máximo 254 caracteres" })
+    .refine((email) => email.endsWith("@unmsm.edu.pe"), {
+      message: "El email debe terminar con @unmsm.edu.pe",
+    }),
   password: z
     .string({ message: "Contraseña inválida" })
     .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
@@ -64,13 +67,13 @@ export const LoginPage = () => {
         <title>Login</title>
       </Helmet>
 
-      <div className=" h-screen py-10 px-10 md:px-20 lg:px-36 ">
+      <div className=" h-screen md:py-10  md:px-20 lg:px-36 ">
         <div className=" h-full flex gap-10">
           <div className="bg-slate-600 h-full w-full flex-1  hidden lg:flex">
             <img src={personaComputadora} className="object-cover w-full" />
           </div>
 
-          <div className="flex-1 py-8 h-full">
+          <div className="flex-1 md:py-8 h-full">
             <div className="bg-secondaryLightOpacity p-10 h-full flex flex-col justify-between">
               <div className="bg-white h-full py-6 px-12 flex flex-col">
                 <div className="flex flex-col">

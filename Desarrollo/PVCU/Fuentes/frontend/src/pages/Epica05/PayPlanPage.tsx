@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
 import qr from "@/assets/qr_yape_devsla.png";
 import { useNavigate } from "react-router";
-import { useTrademark } from "@/hooks/useTrademark";
+import { Plan } from "@/types";
 
 export const PayPlanPage = () => {
   const navigate = useNavigate();
-  const {planSeleccionado}=useTrademark();
+  const planSeleccionado:Plan  | null = JSON.parse(localStorage.getItem("planSeleccionado") || "null");
 
   return (
     <>
