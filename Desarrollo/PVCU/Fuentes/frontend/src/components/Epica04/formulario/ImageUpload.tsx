@@ -31,7 +31,7 @@ const SortableImage = ({ image }: { image: UploadedImage }) => {
       {...attributes}
       {...listeners}
     >
-      <img src={image.url} alt="Uploaded product" className="w-full h-full object-cover" />
+      <img src={image.preview} alt="Uploaded product" className="w-full h-full object-cover" />
     </div>
   );
 };
@@ -60,7 +60,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPreview(image.url);
+                  onPreview(image.preview);
                 }}
                 className="p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors pointer-events-auto"
               >

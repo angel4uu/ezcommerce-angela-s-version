@@ -4,20 +4,19 @@ import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
 import { createArticulo, Articulo, updateArticulo } from "../../../api/apiArticulos";
+import { createImage } from "../../../api/apiImages";
+import { getFileURL } from "../../../utils/helpers";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
 import { useEffect, useState } from "react";
 import { LoadUsuarios } from "../../../helpers/getUser";
 
-
 // Esquema de validación de Zod
-
-
 const formSchema = z.object({
-  nombre : z.string().min(1, { message: "Este campo es requerido" }), 
+  nombre: z.string().min(1, { message: "Este campo es requerido" }),
   precio: z.coerce.number().min(0, { message: "El precio debe ser un número no negativo" }),
   stock: z.coerce.number().min(1, { message: "El stock debe ser un número no negativo" }),
-  descripcion: z.string().min(10, { message: "Este campo es requerido con un minimo de 10 caracteres" }), 
+  descripcion: z.string().min(10, { message: "Este campo es requerido con un mínimo de 10 caracteres" }),
   etiquetas: z.array(z.number()).refine((value) => value.some((item) => item), {
     message: "Selecciona al menos una etiqueta",
   }),
@@ -25,14 +24,16 @@ const formSchema = z.object({
   is_marca: z.boolean().default(false),
 });
 
-
-
 interface UseProductFormProps {
   images: UploadedImage[];
   setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
 }
 
-export const useProductForm = ({ images, setImages, product }: UseProductFormProps & { product?: Articulo }) => {
+export const useProductForm = ({
+  images,
+  setImages,
+  product,
+}: UseProductFormProps & { product?: Articulo }) => {
   const navigate = useNavigate();
   const { authState } = useAuth();
   const [catalogos, setCatalogos] = useState<Array<{
@@ -50,7 +51,6 @@ export const useProductForm = ({ images, setImages, product }: UseProductFormPro
       LoadUsuarios(authState.userId).then((data) => {
         if (data) {
           setIsMarca(data.tiene_marca);
-          console.log("Tiene marca:", data.tiene_marca);
         } else {
           console.error("No se encontró información del usuario.");
         }
@@ -104,35 +104,46 @@ export const useProductForm = ({ images, setImages, product }: UseProductFormPro
         id_marca: selectedCatalogo.id_marca ?? undefined,
       };
 
-      console.log("Enviando datos:", data);
+      console.log("Enviando datos del producto:", data);
 
-      // Si existe un `product`, es una actualización, de lo contrario, es creación
-      let response;
+      let productId: number;
+
+      // Si existe un `product`, es una actualización; de lo contrario, es creación
       if (product) {
-        // Actualizar artículo
-        console.log("Actualizando artículo:", product.id);
         if (product.id !== undefined) {
-          response = await updateArticulo(product.id, data);
+          const response = await updateArticulo(product.id, data);
+          productId = response.data.id;
+          console.log("Producto actualizado exitosamente:", response.data);
         } else {
           console.error("El ID del producto es indefinido.");
           return;
         }
-        console.log("Artículo actualizado exitosamente:", response.data);
       } else {
-        // Crear artículo
-        response = await createArticulo(data);
-        console.log("Artículo creado exitosamente:", response.data);
+        const response = await createArticulo(data);
+        productId = response.data.id;
+        console.log("Producto creado exitosamente:", response.data);
       }
 
-      // Resetear el formulario y limpiar imágenes
+      // Subir imágenes a Firebase y registrar sus URLs en el backend
+      for (const image of images) {
+        const storageDir = `product_image/${productId}`;
+        const url = await getFileURL(image.file, storageDir); // Subir imagen a Firebase
+        if (url) {
+          await createImage({ id_articulo: productId, url }); // Registrar URL en el backend
+        } else {
+          console.error("URL de la imagen es nula.");
+        }
+        console.log("Imagen registrada en el backend:", url);
+      }
+
+      // Resetear formulario y estado de imágenes
       form.reset();
       setImages([]);
       navigate("/my-published-products");
     } catch (error) {
-      console.error("Error al procesar el artículo:", error);
+      console.error("Error al guardar el producto:", error);
     }
   };
 
   return { form, onSubmit, isMarca };
 };
-
