@@ -282,7 +282,7 @@ export const SearchPage = () => {
               <ProductCard key={p.id} id={p.id} name={p.nombre} price={p.precio} qualification={4} img={''} />
             )) : null}
           </div>
-          <div className='mt-auto flex flex-row justify-between mt-4 '>
+          <div className='mt-auto flex flex-row justify-between'>
             <div className='flex'>
               <div className='mr-3 pt-1'>
                 <h3 className="text-lg font-semibold mb-2">Items por página:</h3>
