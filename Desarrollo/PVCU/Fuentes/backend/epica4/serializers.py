@@ -22,6 +22,8 @@ class CatalogoSerializer(serializers.ModelSerializer):
     
     def get_nombre_marca(self, obj):
         return obj.id_catalogo.id_marca.nombre if obj.id_catalogo.id_marca else None
+    
+    
 
 class ArticuloSerializer(serializers.ModelSerializer):    
     id_catalogo = serializers.PrimaryKeyRelatedField(queryset=Catalogo.objects.all())  # Directamente relacionado
@@ -66,3 +68,34 @@ class ImagenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen
         fields = '__all__'
+
+    def create(self, validated_data):
+        articulo_id = validated_data.pop('id_articulo')['id']
+        
+        try:
+            from .models import Articulo  
+            articulo = Articulo.objects.get(id=articulo_id)            
+            imagen = Imagen.objects.create(
+                id_articulo=articulo,
+                **validated_data
+            )
+            return imagen
+            
+        except Articulo.DoesNotExist:
+            raise serializers.ValidationError({"id_articulo": "El artículo especificado no existe"})
+    
+    def update(self, instance, validated_data):
+        if 'id_articulo' in validated_data:
+            articulo_id = validated_data.pop('id_articulo')['id']
+            try:
+                from .models import Articulo
+                articulo = Articulo.objects.get(id=articulo_id)
+                instance.id_articulo = articulo
+            except Articulo.DoesNotExist:
+                raise serializers.ValidationError({"id_articulo": "El artículo especificado no existe"})
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
