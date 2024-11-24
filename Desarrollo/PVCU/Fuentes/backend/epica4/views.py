@@ -175,7 +175,7 @@ class ImagenViewSet(viewsets.ModelViewSet):
     queryset = Imagen.objects.all()
     serializer_class = ImagenSerializer
     filterset_fields = '__all__'
-
+    
     def get_permissions(self):
         """
         Asigna permisos dependiendo del método HTTP.
@@ -187,4 +187,4 @@ class ImagenViewSet(viewsets.ModelViewSet):
 
         return [permission() for permission in permission_classes]
 
-
+    
