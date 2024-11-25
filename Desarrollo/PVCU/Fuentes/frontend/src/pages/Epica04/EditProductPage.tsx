@@ -1,30 +1,41 @@
-import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
-import { ProductForm } from '../../components/Epica04/ProductForm';
-import { useEffect, useState } from 'react';
-import { getArticulo } from '../../api/apiArticulos';
-import { Articulo as a } from '../../api/apiArticulos';
+import { Helmet } from "react-helmet-async";
+import { useParams } from "react-router-dom";
+import { ProductForm } from "../../components/Epica04/ProductForm";
+import { useEffect, useState } from "react";
+import { getArticulo } from "../../api/apiArticulos";
+import { LoadImageMajor } from "../../helpers/getImageMajor"; // Importar el helper
+import { UploadedImage } from "../../pages/Epica04/hooks/useImageUpload"; // Tipo para imágenes
+import { Articulo as a } from "../../api/apiArticulos";
 
 export const EditProductPage = () => {
   const { productId } = useParams<{ productId: string }>();
   const [productToEdit, setProductToEdit] = useState<a>();
+  const [productImages, setProductImages] = useState<UploadedImage[]>([]); // Estado para las imágenes
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await getArticulo(Number(productId));
-        setProductToEdit(response.data); // Suponiendo que `response.data` contiene el producto
+        // Obtener el producto
+        const productResponse = await getArticulo(Number(productId));
+        setProductToEdit(productResponse.data);
+
+        // Obtener las imágenes asociadas al producto utilizando el helper
+        const images = await LoadImageMajor(Number(productId));
+        const transformedImages = images.map((img: any) => ({
+          id: img.id.toString(), // ID del backend
+          file: null, // No tenemos el archivo original, solo la URL
+          preview: img.url, // URL de la imagen
+        }));
+        setProductImages(transformedImages); // Actualizar el estado con las imágenes cargadas
       } catch (error) {
-        console.error('Error al obtener el producto:', error);
+        console.error("Error al cargar los datos del producto:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (productId) {
-      fetchProduct();
-    }
+    if (productId) fetchProductData();
   }, [productId]);
 
   if (loading) {
@@ -40,7 +51,7 @@ export const EditProductPage = () => {
       <Helmet>
         <title>Editar {productToEdit.nombre}</title>
       </Helmet>
-      <ProductForm product={productToEdit} />
+      <ProductForm product={productToEdit} initialImages={productImages} />
     </>
   );
 };

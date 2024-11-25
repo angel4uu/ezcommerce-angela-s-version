@@ -1,4 +1,4 @@
-import { useImageUpload } from "../../pages/Epica04/hooks/useImageUpload";
+import { UploadedImage, useImageUpload } from "../../pages/Epica04/hooks/useImageUpload";
 import { useProductForm } from "../../pages/Epica04/hooks/useProductForm";
 import { ImageUpload } from "./formulario/ImageUpload";
 import { ImagePreviewModal } from "./formulario/ImagePreviewModal";
@@ -13,7 +13,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Switch } from "../ui/switch";
 import { Articulo } from "../../api/apiArticulos";
 
-export const ProductForm = ({ product }: {product?:Articulo}) => {
+export const ProductForm = ({ product, initialImages }: { product?: Articulo; initialImages?: UploadedImage[] }) => {
   // Hook para manejar la subida y gestión de imágenes
   const { images, setImages, handleFileUpload, removeImage, handleDragEnd } = useImageUpload(5);
   // Hook para manejar el formulario de producto
@@ -21,6 +21,12 @@ export const ProductForm = ({ product }: {product?:Articulo}) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [etiquetas, setEtiquetas] = useState<{ id: number; nombre: string }[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (initialImages) {
+      setImages(initialImages);
+    }
+  }, [initialImages, setImages]);
 
   useEffect(() => {
     LoadEtiquetas().then((data) => setEtiquetas(data));
