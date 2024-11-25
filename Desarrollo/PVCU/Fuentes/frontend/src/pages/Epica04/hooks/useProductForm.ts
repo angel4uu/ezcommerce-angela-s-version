@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
 import { useEffect, useState } from "react";
 import { LoadUsuarios } from "../../../helpers/getUser";
+import { updateImage } from "../../../api/apiImages";
 
 // Esquema de validación de Zod
 const formSchema = z.object({
@@ -20,7 +21,7 @@ const formSchema = z.object({
   etiquetas: z.array(z.number()).refine((value) => value.some((item) => item), {
     message: "Selecciona al menos una etiqueta",
   }),
-  id_marca: z.number().optional(),
+  id_marca: z.number().nullable().optional(),
   is_marca: z.boolean().default(false),
 });
 
@@ -28,6 +29,7 @@ interface UseProductFormProps {
   images: UploadedImage[];
   setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>;
 }
+
 
 export const useProductForm = ({
   images,
@@ -45,7 +47,6 @@ export const useProductForm = ({
   }>>([]);
   const [isMarca, setIsMarca] = useState(false);
 
-  // Cargar información del usuario para verificar si tiene marca
   useEffect(() => {
     if (authState.userId !== null) {
       LoadUsuarios(authState.userId).then((data) => {
@@ -58,7 +59,6 @@ export const useProductForm = ({
     }
   }, [authState.userId]);
 
-  // Cargar los catálogos del usuario
   useEffect(() => {
     if (authState.userId !== null) {
       LoadCatalogos(authState.userId).then((data) => {
@@ -71,7 +71,6 @@ export const useProductForm = ({
     }
   }, [authState.userId]);
 
-  // Establecer los valores por defecto del formulario (si existe un producto)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,70 +79,72 @@ export const useProductForm = ({
       precio: product?.precio || 0,
       stock: product?.stock || 1,
       etiquetas: product?.etiquetas || [],
-      id_marca: product?.id_marca,
+      id_marca: product?.id_marca ?? null,
       is_marca: product?.id_marca ? true : false,
     },
   });
 
+  const processImages = async (images: UploadedImage[], productId: number) => {
+    for (const image of images) {
+      if (image.file) {
+        // Nueva imagen: Subir a Firebase y registrar en el backend
+        try {
+          const storageDir = `product_image/${productId}`;
+          const url = await getFileURL(image.file, storageDir);
+          if (url) {
+            await createImage({ id_articulo: productId, url });
+            console.log(`Nueva imagen registrada: ${url}`);
+          } else {
+            throw new Error("No se pudo obtener la URL de la imagen.");
+          }
+        } catch (error) {
+          console.error("Error al subir nueva imagen:", error);
+          throw new Error("Error al subir nueva imagen.");
+        }
+      } else {
+        // Imagen existente: actualizar en el backend
+        try {
+          await updateImage(Number(image.id), { id_articulo: productId, url: image.preview });
+          console.log(`Imagen existente actualizada: ${image.preview}`);
+        } catch (error) {
+          console.error("Error al actualizar imagen existente:", error);
+          throw new Error("Error al actualizar imagen existente.");
+        }
+      }
+    }
+  };
+ console.log("hola")
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("me active");
     try {
-      // Determinar el catálogo según el estado del switch
+      console.log("Enviando formulario...");
       const selectedCatalogo = values.is_marca
         ? catalogos.find((catalogo) => catalogo.id_marca !== null)
         : catalogos.find((catalogo) => catalogo.id_marca === null);
 
-      if (!selectedCatalogo) {
-        console.error("No se encontró un catálogo adecuado.");
-        return;
-      }
+      if (!selectedCatalogo) throw new Error("No se encontró un catálogo adecuado.");
 
-      // Construir los datos a enviar
-      const data: Articulo = {
+      const productData: Articulo = {
         ...values,
         id_catalogo: selectedCatalogo.id,
         id_marca: selectedCatalogo.id_marca ?? undefined,
       };
 
-      console.log("Enviando datos del producto:", data);
-
       let productId: number;
 
-      // Si existe un `product`, es una actualización; de lo contrario, es creación
       if (product) {
-        if (product.id !== undefined) {
-          const response = await updateArticulo(product.id, data);
-          productId = response.data.id;
-          console.log("Producto actualizado exitosamente:", response.data);
-        } else {
-          console.error("El ID del producto es indefinido.");
-          return;
-        }
-      } else {
-        const response = await createArticulo(data);
+        const response = await updateArticulo(product.id!, productData);
         productId = response.data.id;
-        console.log("Producto creado exitosamente:", response.data);
+      } else {
+        const response = await createArticulo(productData);
+        productId = response.data.id;
       }
 
-      // Subir imágenes a Firebase y registrar sus URLs en el backend
-      for (const image of images) {
-        const storageDir = `product_image/${productId}`;
-        const url = await getFileURL(image.file, storageDir); // Subir imagen a Firebase
-        if (url) {
-          await createImage({ id_articulo: productId, url }); // Registrar URL en el backend
-        } else {
-          console.error("URL de la imagen es nula.");
-        }
-        console.log("Imagen registrada en el backend:", url);
-      }
-
-      // Resetear formulario y estado de imágenes
-      form.reset();
-      setImages([]);
+      await processImages(images, productId);
       navigate("/my-published-products");
     } catch (error) {
       console.error("Error al guardar el producto:", error);
     }
   };
-
   return { form, onSubmit, isMarca };
 };

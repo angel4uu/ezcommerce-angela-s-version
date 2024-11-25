@@ -37,6 +37,7 @@ export const ProductForm = ({ product, initialImages }: { product?: Articulo; in
     setImages([]);  
     navigate("/my-published-products");
   };
+  const handleSubmitWrapper = form.handleSubmit(onSubmit);
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-8 font-sans">
@@ -61,7 +62,11 @@ export const ProductForm = ({ product, initialImages }: { product?: Articulo; in
 
       {/* Formulario de producto */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form  onSubmit={(e) => {
+        console.log("Formulario enviado");
+        console.log("Errores del formulario:", form.formState.errors);
+        handleSubmitWrapper(e);
+      }} className="space-y-6">
           <FormField
             control={form.control}
             name="nombre"
