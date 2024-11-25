@@ -16,7 +16,7 @@ import { useTrademark } from '@/hooks/useTrademark';
 import { useEffect, useState } from 'react';
 import { Articulo, getArticulos } from '../../api/apiArticulos';
 import { EscuelaProfesional, Usuario } from '../../types';
-import { getEscuelas, usuariosApi } from '../../api/apiUsuarios';
+import { escuelasService, usuariosApi } from '../../api/apiUsuarios';
 import { baseURL } from '../../api/api';
 
 
@@ -47,7 +47,7 @@ export const MainPage = () => {
         const articulos = await getArticulos()
         setProducts(articulos.data.results)
 
-        const escuelas = await getEscuelas()
+        const escuelas = await escuelasService.getEscuelas()
         setEscuelas(escuelas.data.results)
 
         const vendedores = await usuariosApi.get('/?tiene_marca=true')

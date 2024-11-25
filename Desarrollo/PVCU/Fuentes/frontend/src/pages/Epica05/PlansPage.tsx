@@ -4,7 +4,7 @@ import { Plan } from "@/types";
 import { GratisModal } from "../../components/Epica5/GratisModal";
 import { useLoaderData } from "react-router";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { getPlanes } from "@/api/apiMarcas";
+import { planesService } from "@/api/apiMarcas";
 
 const beneficios_basicos = [
   "Publica tus productos para llegar a más clientes potenciales.",
@@ -39,7 +39,7 @@ interface LoaderData {
 
 export async function loader(): Promise<LoaderData> {
   try {
-    const planesResponse = await getPlanes();
+    const planesResponse = await planesService.getPlanes();
     const planes = planesResponse.data.results as Plan[];
 
     planes.forEach((plan: Plan) => {

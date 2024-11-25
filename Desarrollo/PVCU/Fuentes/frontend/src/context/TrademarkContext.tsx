@@ -1,9 +1,9 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
 import { Marca, Plan, Membresia } from "@/types";
 import {
-  getMembresiaByMarca,
-  getPlan,
-  getMarcaByUsuario,
+  membresiasService,
+  planesService,
+  marcasService,
 } from "@/api/apiMarcas";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -38,17 +38,17 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const marcaResponse = await getMarcaByUsuario(authState.userId);
+        const marcaResponse = await marcasService.getMarcaByUsuario(authState.userId);
         const fetchedMarca = marcaResponse?.data?.results?.[0] as Marca;
         if (!fetchedMarca) return;
         setMarca(fetchedMarca);
 
-        const membresiaResponse = await getMembresiaByMarca(fetchedMarca.id!);
+        const membresiaResponse = await membresiasService.getMembresiaByMarca(fetchedMarca.id!);
         const fetchedMembresia = membresiaResponse?.data?.results?.[0] as Membresia;
         if (!fetchedMembresia) return;
         setMembresia(fetchedMembresia);
 
-        const planResponse = await getPlan(fetchedMembresia.id_plan);
+        const planResponse = await planesService.getPlan(fetchedMembresia.id_plan);
         const fetchedPlan = planResponse?.data as Plan;
         if (!fetchedPlan) return;
         setPlan(fetchedPlan);
