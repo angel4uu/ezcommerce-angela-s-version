@@ -24,7 +24,7 @@ import {
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUsuario, getEscuelas } from "@/api/apiUsuarios";
+import { createUsuario, escuelasService } from "@/api/apiUsuarios";
 import { EscuelaProfesional, APIResponse } from "@/types";
 
 const formSchema = z.object({
@@ -90,7 +90,7 @@ interface LoaderData {
 
 export async function loader(): Promise<LoaderData> {
   try {
-    const response: AxiosResponse<APIResponse> = await getEscuelas();
+    const response: AxiosResponse<APIResponse> = await escuelasService.getEscuelas();
     const escuelasData = response.data.results;
     return { escuelasData };
   } catch (error) {

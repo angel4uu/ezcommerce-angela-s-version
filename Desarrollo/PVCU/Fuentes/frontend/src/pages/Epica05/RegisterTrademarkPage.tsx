@@ -1,4 +1,4 @@
-import { createMarca } from "@/api/apiMarcas";
+import { marcasService } from "@/api/apiMarcas";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,7 +13,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTrademark } from "@/hooks/useTrademark";
 import { getFileURL } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AwardIcon } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -77,7 +76,7 @@ export const RegisterTrademark = () => {
     //Post marca
     try{
       console.log(updatedValues);
-      const response=await createMarca(updatedValues);
+      const response=await marcasService.createMarca(updatedValues);
       console.log("response",response);
     }
     catch(error){

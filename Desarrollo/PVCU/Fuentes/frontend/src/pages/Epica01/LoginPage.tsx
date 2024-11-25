@@ -24,10 +24,7 @@ const formSchema = z.object({
   username: z
     .string({ message: "Email inválido" })
     .email({ message: "Email inválido" })
-    .max(254, { message: "Email debe tener como máximo 254 caracteres" })
-    .refine((email) => email.endsWith("@unmsm.edu.pe"), {
-      message: "El email debe terminar con @unmsm.edu.pe",
-    }),
+    .max(254, { message: "Email debe tener como máximo 254 caracteres" }),
   password: z
     .string({ message: "Contraseña inválida" })
     .min(6, { message: "Contraseña debe tener como mínimo 6 carácteres" }),
