@@ -1,7 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 
 // Epicas
-import { LoginPage, RegisterPage, loader as registerLoader } from "../pages/Epica01";
+import {
+  LoginPage,
+  RegisterPage,
+  loader as registerLoader,
+} from "../pages/Epica01";
 import { ProfileBuyerPage } from "../pages/Epica02";
 import { MainPage, SearchPage, SearchSellers } from "../pages/Epica03";
 import {
@@ -40,7 +44,7 @@ const routes = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
-    loader:registerLoader,
+    loader: registerLoader,
   },
   {
     element: <Layout />,
@@ -57,12 +61,12 @@ const routes = createBrowserRouter([
         // loader:
       },
       {
-        path:"/sellers",
-        element:<SearchSellers />
+        path: "/sellers",
+        element: <SearchSellers />,
       },
-      { 
-        path:"/contact",
-        element:<ContactPage />
+      {
+        path: "/contact",
+        element: <ContactPage />,
       },
       {
         path: "/profile-buyer",
@@ -168,7 +172,11 @@ const routes = createBrowserRouter([
       },
       {
         path: "/purchase-management",
-        element: <PurchaseManagementPage />,
+        element: (
+          <PrivateRoute>
+            <PurchaseManagementPage />
+          </PrivateRoute>
+        ),
         children: [
           {
             path: "purchase-history",
@@ -182,11 +190,19 @@ const routes = createBrowserRouter([
       },
       {
         path: "/chat",
-        element: <Chat></Chat>,
+        element: (
+          <PrivateRoute>
+            <Chat></Chat>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/purchases-pay",
-        element: <PendingPurchasePay></PendingPurchasePay>,
+        element: (
+          <PrivateRoute>
+            <PendingPurchasePay></PendingPurchasePay>
+          </PrivateRoute>
+        ),
       },
     ],
   },
