@@ -81,7 +81,7 @@ export const categories = [
       id:6,    
       image: TestImage,
       title: 'Insumos académicos',
-      description: 'Insumos y materiales que se podrían necesitar a lo largo de la carrera universitaria.',
+      description: 'Materiales esenciales para toda la carrera universitaria.',
       horiz:true
     },
     {
