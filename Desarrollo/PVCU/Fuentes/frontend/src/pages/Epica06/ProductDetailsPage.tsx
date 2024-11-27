@@ -35,8 +35,9 @@ import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { getArticulo, Articulo, getArticulos } from "@/api/apiArticulos";
 import { Link } from "react-router-dom";
+import { LoadImageMajor } from "@/helpers/getImageMajor";
 
-interface IProductDetailProp {
+/*interface IProductDetailProp {
   id: number;
   name: string;
   price: number;
@@ -45,8 +46,8 @@ interface IProductDetailProp {
   img: string;
   brand: string;
   qualification: number;
-}
-
+}*/
+/*
 const products: IProductDetailProp[] = [
   {
     id: 1,
@@ -136,7 +137,11 @@ const products: IProductDetailProp[] = [
     brand: "WearableTech",
     qualification: 4.2,
   },
-];
+];*/
+type Image = {
+  id: number;
+  url: string;
+};
 
 export function ProductDetailsPage() {
   const { productId } = useParams<{ productId: string }>();
@@ -144,6 +149,18 @@ export function ProductDetailsPage() {
   const [articulo, setArticulo] = useState<Articulo | null>(null);
   const [productos, setProductos] = useState<Articulo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [images, setImages] = useState<string[]>([]);
+
+  const fetchImage = async () => {
+    try {
+      const response = await LoadImageMajor(Number(productId));
+      setImages(response.map((img: Image) => img.url));
+      //console.log("Imagenes: ", response);
+    } catch (error) {
+      console.error(error);
+      setImages([]);
+    }
+  };
 
   useEffect(() => {
     const fetchArticulo = async (id: number) => {
@@ -166,6 +183,7 @@ export function ProductDetailsPage() {
 
     if (productId) {
       fetchArticulo(Number(productId));
+      fetchImage();
     }
   }, [productId]);
 
@@ -250,21 +268,21 @@ export function ProductDetailsPage() {
               <CardContent className="p-0">
                 <div>
                   <img
-                    src={`${products[0].img}`}
-                    alt="Sony Headphones"
+                    src={`${images[0]}`}
+                    alt={`${articulo.nombre}`}
                     className="rounded-lg w-full max-w-sm h-auto scale-90 self-center mix-blend-multiply "
                   />
                 </div>
               </CardContent>
             </Card>
             <div className="grid grid-cols-4 gap-2 w-full">
-              {[...Array(4)].map((_, i) => (
-                <Card key={i} className="flex justify-center items-center">
+              {images.slice(1).map((url, id) => (
+                <Card key={id} className="flex justify-center items-center">
                   <CardContent className="p-0">
-                    <div className="aspect-square relative">
+                    <div className="flex justify-center items-center aspect-square relative">
                       <img
-                        src="https://www.lacuracao.pe/media/catalog/product/w/h/wh-ch520-bz_1.jpg?quality=80&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700"
-                        alt={`Thumbnail ${i + 1}`}
+                        src={url ?? "/placeholder..svg"}
+                        alt={`Image ${id + 1}`}
                         className="rounded-md scale-90 w-full mix-blend-multiply "
                       />
                     </div>
@@ -356,23 +374,20 @@ export function ProductDetailsPage() {
             >
               <CarouselContent className="-ml-1">
                 {productos.map((product) => (
-                  <>
-                    <CarouselItem
-                      key={product.id}
-                      className="basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4"
-                    >
-                      <ProductCard
-                        key={product.id}
-                        id={product.id}
-                        name={product.nombre}
-                        price={product.precio}
-                        qualification={4}
-                        img={
-                          "https://www.az-delivery.uk/cdn/shop/products/esp32-nodemcu-module-wlan-wifi-development-board-mit-cp2102-nachfolgermodell-zum-esp8266-kompatibel-mit-arduino-872375_grande.jpg?v=1679400491"
-                        }
-                      />
-                    </CarouselItem>
-                  </>
+                  <CarouselItem
+                    key={product.id}
+                    className="basis-1/1 lg:basis-1/2 xl:basis-1/3 2xl:basis-1/4"
+                  >
+                    <ProductCard
+                      id={product.id ?? 0}
+                      name={product.nombre}
+                      price={product.precio}
+                      qualification={4}
+                      img={
+                        "https://www.az-delivery.uk/cdn/shop/products/esp32-nodemcu-module-wlan-wifi-development-board-mit-cp2102-nachfolgermodell-zum-esp8266-kompatibel-mit-arduino-872375_grande.jpg?v=1679400491"
+                      }
+                    />
+                  </CarouselItem>
                 ))}
               </CarouselContent>
               <div className="hidden md:block ">

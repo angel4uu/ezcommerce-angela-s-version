@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 //import { baseURL } from "@/api/api";
 
 const datos = [
@@ -179,6 +180,9 @@ export function PendingPurchasePay() {
 
   return (
     <div className="my-4 mb-12">
+      <Helmet>
+        <title>Proceso de compra</title>
+      </Helmet>
       <div className="w-full flex justify-between">
         <h3 className="font-bold text-xl text-terciaryLight">
           Compras pendientes
