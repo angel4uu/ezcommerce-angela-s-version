@@ -10,12 +10,17 @@ interface CardShoppingCartProps {
 }
 
 export const CardShoppingCart: React.FC<CardShoppingCartProps> = ({ product }) => {
-  const { removeItem } = useCartContext();
-  const [quantity, setQuantity] = useState(1); // Manejar cantidad localmente
+  const { removeItem, updateItemQuantity } = useCartContext();
 
-  const incrementQuantity = () => setQuantity((prev) => prev + 1);
-  const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
+  const handleIncrement = () => {
+    updateItemQuantity(product.productTitle, product.quantity + 1);
+  };
 
+  const handleDecrement = () => {
+    if (product.quantity > 1) {
+      updateItemQuantity(product.productTitle, product.quantity - 1);
+    }
+  };
   return (
     <Card>
       <CardContent className="p-0 flex">
@@ -49,22 +54,22 @@ export const CardShoppingCart: React.FC<CardShoppingCartProps> = ({ product }) =
           </div>
           <div className="flex justify-between items-center">
             <p className="text-xl font-semibold items-center">
-              S/ {(product.productPrice * quantity).toFixed(2)}
+              S/ {(product.productPrice * product.quantity).toFixed(2)}
             </p>
             <div className="flex items-center justify-around gap-4">
               <Button
                 variant="counter"
                 size="icon"
-                onClick={decrementQuantity}
+                onClick={handleDecrement}
                 className="h-8 w-8"
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="text-xl font-semibold px-3">{quantity}</span>
+              <span className="text-xl font-semibold px-3">{product.quantity}</span>
               <Button
                 variant="counter"
                 size="icon"
-                onClick={incrementQuantity}
+                onClick={handleIncrement}
                 className="h-8 w-8"
               >
                 <Plus className="h-4 w-4" />

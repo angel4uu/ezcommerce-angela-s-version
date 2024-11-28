@@ -37,6 +37,7 @@ import { getArticulo, Articulo, getArticulos } from "@/api/apiArticulos";
 import { Link } from "react-router-dom";
 import { LoadImageMajor } from "@/helpers/getImageMajor";
 import { useCartContext } from "../../context/CartContext";
+import { useFavouritesContext } from "@/context/FavouritesContext";
 
 type Image = {
   id: number;
@@ -52,6 +53,8 @@ export function ProductDetailsPage() {
   const [images, setImages] = useState<string[]>([]);
 
   const { addItem } = useCartContext();
+  const { favourites, toggleFavourite } = useFavouritesContext();
+  
 
   const fetchImage = async () => {
     try {
@@ -103,6 +106,14 @@ export function ProductDetailsPage() {
       </div>
     );
   }
+
+  const handleAddToCart = () => {
+    if (articulo) {
+      addItem(articulo.id, quantity); // Agregar el producto con la cantidad seleccionada
+    }
+  };
+
+  const isFavourite = favourites.includes(articulo.id);
 
   const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex gap-0.5">
@@ -248,11 +259,16 @@ export function ProductDetailsPage() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-5 text-primaryLight text-sm md:text-[16px]" onClick={() => addItem(Number(productId))}>
+                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-5 text-primaryLight text-sm md:text-[16px]" onClick={handleAddToCart}>
                   <ShoppingCart className="mr-2 h-4 w-4" /> Añadir al carrito
                 </Button>
-                <Button variant="outline" size="icon" className="p-5 md:p-5">
-                  <Heart className="h-4 w-4 border-secondaryLight" />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`p-5 md:p-5 ${isFavourite ? "fill-primary" : ""}`}
+                  onClick={() => toggleFavourite(articulo.id)}
+                >
+                  <Heart className={`h-4 w-4 ${isFavourite ? "text-red-500" : ""}`} />
                 </Button>
               </div>
             </div>

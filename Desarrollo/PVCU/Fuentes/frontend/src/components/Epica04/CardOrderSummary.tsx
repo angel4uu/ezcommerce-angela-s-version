@@ -6,8 +6,8 @@ import { useCartContext } from "../../context/CartContext";
 export const CardOrderSummary = () => {
   const { items } = useCartContext();
 
-  const totalItems = items.length;
-  const totalPrice = items.reduce((sum, item) => sum + item.productPrice, 0);
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
 
   if (totalItems === 0) {
     return null;
