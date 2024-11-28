@@ -22,7 +22,7 @@ const beneficios_marcas = (espacios_extra: number) => {
   }
   return nuevos_beneficios;
 };
-const planGratuito: Plan = {
+export const planGratuito: Plan = {
   id: 0,
   nombre:"plan gratuito",
   descripcion: "Acceso a funcionalidades básicas.",
