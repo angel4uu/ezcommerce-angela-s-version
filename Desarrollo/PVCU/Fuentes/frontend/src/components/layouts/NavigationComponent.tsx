@@ -5,7 +5,6 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 
-import { MapPin } from "lucide-react";
 
 import { SheetComponent } from "./SheetComponent";
 import { Button } from "../ui/button";

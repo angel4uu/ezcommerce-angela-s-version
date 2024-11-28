@@ -6,7 +6,7 @@ import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
-import { useCart } from "../../hooks/useCart";
+import { useCartContext } from "../../context/CartContext";
 const icons = [
   { component: <Bell size={28} className="text-secondaryLight" />, link: "/chat" },
   {
@@ -20,9 +20,9 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { items } = useCart(); // Obtener productos del carrito
+  const { items } = useCartContext(); // Obtener productos del carrito
 
-  const totalItems = items.length;
+
 
   
 
@@ -78,7 +78,7 @@ export const Navbar = () => {
               <Button variant="ghost" size="icon">
                 <NavLink to="/shopping-cart" className="flex justify-center items-center gap-1">
                   <ShoppingCart size={28} className="text-secondaryLight" />
-                  <span>{totalItems}</span>
+                  <span>{items.length}</span>
                 </NavLink>
               </Button>
               <MenuAccount />

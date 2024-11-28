@@ -5,6 +5,7 @@ import {AuthProvider} from "./context/AuthContext";
 import { TrademarkProvider } from "./context/TrademarkContext";
 import { EtiquetasProvider } from "./context/EtiquetasContext";
 import { FavouritesProvider } from "./context/FavouritesContext";
+import { CartProvider } from "./context/CartContext";
 
 
 
@@ -15,8 +16,10 @@ export const EzCommercerApp = () => {
       <EtiquetasProvider>
         <AuthProvider>
           <TrademarkProvider>
-            <FavouritesProvider>        
-              <RouterProvider router={routes} />
+            <FavouritesProvider>
+              <CartProvider>
+                <RouterProvider router={routes} />
+              </CartProvider>       
             </FavouritesProvider>
           </TrademarkProvider> 
         </AuthProvider>

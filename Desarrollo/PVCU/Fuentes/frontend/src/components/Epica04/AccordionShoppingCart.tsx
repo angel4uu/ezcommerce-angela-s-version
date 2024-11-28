@@ -1,41 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CardShoppingCart } from "./CardShoppingCart";
 import { ProductCart } from "../../helpers/getProducCart";
-import { useCart } from "../../hooks/useCart";
+import { useCartContext } from "../../context/CartContext";
 
 export const AccordionShoppingCart = () => {
-  const { items } = useCart(); // Obtener productos del carrito
+  const { items } = useCartContext();
   const [groupedProducts, setGroupedProducts] = useState<Record<string, ProductCart[]>>({});
 
-  // Función para agrupar productos por vendedor
   const groupBySeller = (products: ProductCart[]): Record<string, ProductCart[]> => {
-    return products.reduce((acc, product) => {
+    return products.reduce((acc: Record<string, ProductCart[]>, product) => {
       const seller = product.ownerProduct || "Vendedor desconocido";
       if (!acc[seller]) acc[seller] = [];
       acc[seller].push(product);
       return acc;
-    }, {} as Record<string, ProductCart[]>);
+    }, {});
   };
 
   useEffect(() => {
-    if (!items.length) {
-      setGroupedProducts({}); // Limpiar agrupación si no hay productos
-      return;
-    }
-
-    const newGroupedProducts = groupBySeller(items);
-
-    // Evitar actualizaciones innecesarias
-    if (JSON.stringify(groupedProducts) !== JSON.stringify(newGroupedProducts)) {
-      setGroupedProducts(newGroupedProducts);
-    }
-  }, [items, groupedProducts]);
+    setGroupedProducts(groupBySeller(items));
+  }, [items]);
 
   if (!items.length) {
     return <p className="text-gray-500 text-center">Tu carrito está vacío.</p>;

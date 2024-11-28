@@ -2,7 +2,7 @@ import { Star, Heart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { useCart } from "../../hooks/useCart";
+import { useCartContext } from "../../context/CartContext";
 import { useFavouritesContext } from "../../context/FavouritesContext";
 
 export interface IProductCardProps {
@@ -24,7 +24,8 @@ export const ProductCard = ({
 }: IProductCardProps) => {
   const navigate = useNavigate();
   const goToProduct = () => navigate(`/product/${id}`);
-  const { addItem } = useCart();
+
+  const { addItem } = useCartContext(); // Cambiado a `useCartContext`
   const { favourites, toggleFavourite } = useFavouritesContext();
 
   const isFavourite = favourites.includes(id);
@@ -36,7 +37,7 @@ export const ProductCard = ({
           className="absolute top-4 right-4 z-10"
           onClick={(e) => {
             e.stopPropagation();
-            toggleFavourite(id);
+            toggleFavourite(id); // Manejo de favoritos
           }}
         >
           <Heart
@@ -73,8 +74,8 @@ export const ProductCard = ({
         <Button
           variant="edit"
           onClick={(e) => {
-            e.stopPropagation();
-            addItem(id);
+            e.stopPropagation(); // Evitar navegación al producto
+            addItem(id); // Llamar al método `addItem` desde el contexto
           }}
         >
           Agregar

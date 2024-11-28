@@ -1,16 +1,16 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCart } from "../../hooks/useCart";
+import { useCartContext } from "../../context/CartContext";
 
 export const CardOrderSummary = () => {
-  const { items } = useCart(); // Obtener productos del carrito
+  const { items } = useCartContext();
 
   const totalItems = items.length;
   const totalPrice = items.reduce((sum, item) => sum + item.productPrice, 0);
 
-  if (!totalItems) {
-    return null; // No mostrar si el carrito está vacío
+  if (totalItems === 0) {
+    return null;
   }
 
   return (
@@ -19,7 +19,7 @@ export const CardOrderSummary = () => {
         <CardTitle className="text-xl font-sans text-terciaryLight">Orden total</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 px-0 mt-3 text-base font-sans">
-        <div className="flex justify-between items-center ">
+        <div className="flex justify-between items-center">
           <span>Productos</span>
           <span>{totalItems}</span>
         </div>
