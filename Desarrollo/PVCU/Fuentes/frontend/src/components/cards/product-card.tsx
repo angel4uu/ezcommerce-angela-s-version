@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useNavigate } from "react-router"
+import { useCart } from "../../hooks/useCart";
 
 export interface IProductCardProps {
     id: number,
@@ -25,11 +26,11 @@ export const ProductCard = ({
         brand
     }: IProductCardProps) => {
 
-        const [isAdded, setAdd ] = useState(false)
-        const [quantity, setQuantity] = useState(0)
         const [isFavourite, setIsFavourite] = useState(initialIsFavourite)
         const navigate = useNavigate()
         const goToProduct = () => navigate(`/product/${id}`)
+
+        const { addItem } = useCart()
   return (
     <Card className="w-52 p-3 overflow-hidden relative cursor-pointer transition transform hover:scale-101 hover:shadow-lg"
         
@@ -76,41 +77,15 @@ export const ProductCard = ({
         </div>
       </CardContent>
       <CardFooter className="p-0">
-      {!isAdded || quantity === 0 ? 
-                    <Button 
-                        variant="edit" 
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setAdd(true);
-                            setQuantity(quantity + 1);
-                        }}
-                    >
-                        Agregar
-                    </Button> :
-                    <div className="flex w-full justify-between">
-                        <Button 
-                            variant="outline" 
-                            className="font-bold"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                quantity > 0 ? setQuantity(quantity - 1) : null;
-                            }}
-                        >
-                            -
-                        </Button>
-                        <p className="pt-1 font-bold">{quantity}</p>
-                        <Button 
-                            variant="outline" 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setQuantity(quantity + 1);
-                            }}
-                            className="font-bold"
-                        >
-                            +
-                        </Button>
-                    </div>
-                }            
+        <Button 
+            variant="edit" 
+            onClick={(e) => {
+                e.stopPropagation();
+                addItem(id);
+            }}
+        >
+            Agregar p
+        </Button>          
       </CardFooter>
     </Card>
   )
