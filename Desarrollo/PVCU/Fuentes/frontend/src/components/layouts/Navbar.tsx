@@ -2,21 +2,16 @@ import { Bell, Heart, Search, ShoppingCart } from "lucide-react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MenuFaculties } from "./MenuFaculties";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
-
+import { useCart } from "../../hooks/useCart";
 const icons = [
-  { component: <Bell size={28} className="text-secondaryLight" />, link: "/" },
+  { component: <Bell size={28} className="text-secondaryLight" />, link: "/chat" },
   {
     component: <Heart size={28} className="text-secondaryLight" />,
     link: "/favourites",
-  },
-  {
-    component: <ShoppingCart size={28} className="text-secondaryLight" />,
-    link: "/shopping-cart",
   },
 ];
 
@@ -24,6 +19,12 @@ export const Navbar = () => {
   const { authState } = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { items } = useCart(); // Obtener productos del carrito
+
+  const totalItems = items.length;
+
+  
 
   const handleSearch = () => {
     if (searchTerm) {
@@ -50,13 +51,13 @@ export const Navbar = () => {
         {/* Barra de búsqueda y menú */}
         <div className="order-last mt-4 w-full flex flex-grow lg:order-none lg:mt-0 lg:w-auto">
           <div className="relative w-full">
-          <Input
+            <Input
               className="pr-10"
               placeholder="Buscar productos"
               type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()} 
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
             <Search
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-terciaryLight"
@@ -74,6 +75,12 @@ export const Navbar = () => {
                   <NavLink to={icon.link}>{icon.component}</NavLink>
                 </Button>
               ))}
+              <Button variant="ghost" size="icon">
+                <NavLink to="/shopping-cart" className="flex justify-center items-center gap-1">
+                  <ShoppingCart size={28} className="text-secondaryLight" />
+                  <span>{totalItems}</span>
+                </NavLink>
+              </Button>
               <MenuAccount />
             </>
           ) : (

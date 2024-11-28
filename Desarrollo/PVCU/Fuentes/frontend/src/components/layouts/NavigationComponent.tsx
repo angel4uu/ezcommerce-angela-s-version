@@ -15,7 +15,7 @@ import { useNavigate } from "react-router";
 const navigationItems = [
   { item: 'Venta', link: '/products-management' },
   { item: 'Vendedores estudiantiles', link: '/sellers' },
-  { item: 'Chat', link: '#' },
+  { item: 'Chat', link: '/chat' },
 ];
 
 export const NavigationComponent = () => {
