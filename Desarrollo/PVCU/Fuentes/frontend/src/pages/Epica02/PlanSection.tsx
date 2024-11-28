@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useTrademark } from "@/hooks/useTrademark";
 import { CircleCheck } from "lucide-react";
 import { useNavigate } from "react-router";
+import { planGratuito } from "../Epica05";
 
 export const PlanSection = () => {
   const {plan, setGratisModal}=useTrademark();
@@ -16,18 +17,18 @@ export const PlanSection = () => {
             <div>
               <span className="font-semibold">Plan</span>
               <br />
-              <span className="font-black text-xl capitalize">{plan.tipo}</span>
+              <span className="font-black text-xl capitalize">{plan?plan.nombre:planGratuito.nombre}</span>
             </div>
             <div>
               <span className="font-semibold">Pago</span>
               <br />
-              <span className="font-black text-xl">S/{plan.precio}.00 <span className="text-sm font-medium">por {plan.duracion}</span></span>
+              <span className="font-black text-xl">S/{plan?plan.precio:planGratuito.precio}.00 {plan&&<span className="text-sm font-medium">por {plan.duracion}</span>}</span>
             </div>
           </div>
           <div className="pt-7">
             <p className="font-semibold">Beneficios</p>
             <ul>
-              {plan.beneficios.map((beneficio)=>(<li className="flex gap-2 items-center">
+              {plan?plan.beneficios:planGratuito.beneficios!.map((beneficio)=>(<li className="flex gap-2 items-center">
                 <CircleCheck size={13} color="green" />
                 <div>{beneficio}</div>
               </li>))}
@@ -36,7 +37,7 @@ export const PlanSection = () => {
         </div>
 
         <div className="flex gap-2 justify-end mt-5 md:mt-0">
-          <Button disabled={plan.tipo=="gratuito"} onClick={()=>setGratisModal(true)}className="bg-secondaryLight hover:bg-secondaryLightHovered">Cancelar suscripción</Button>
+          <Button disabled={!plan} onClick={()=>setGratisModal(true)}className="bg-secondaryLight hover:bg-secondaryLightHovered">Cancelar suscripción</Button>
           <Button onClick={()=>navigate("/plans")}className="bg-secondaryLight hover:bg-secondaryLightHovered">Actualizar plan</Button>
         </div>
       </div>
