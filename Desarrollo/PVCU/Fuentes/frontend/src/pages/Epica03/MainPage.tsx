@@ -17,8 +17,6 @@ import { useEffect, useState } from 'react';
 import { Articulo, getArticulos } from '../../api/apiArticulos';
 import { EscuelaProfesional, Usuario } from '../../types';
 import { escuelasService, usuariosApi } from '../../api/apiUsuarios';
-import { baseURL } from '../../api/api';
-
 
 
 export const MainPage = () => {
@@ -50,7 +48,7 @@ export const MainPage = () => {
         const escuelas = await escuelasService.getEscuelas()
         setEscuelas(escuelas.data.results)
 
-        const vendedores = await usuariosApi.get('/?tiene_marca=true')
+        const vendedores = await usuariosApi.get('?es_vendedor=true')
         setSellers(vendedores.data.results)
 
       } catch (error) {
@@ -144,16 +142,13 @@ export const MainPage = () => {
             }} >
               <CarouselContent className='mb-24 mx-2'>
                 {
-                  distinguishedSellers.map((seller, index) => (
+                  sellers.map((seller, index) => (
                     <>
                       <CarouselItem key={`ci-${index}`} className='basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/5'>
                         <SellersCard
                           key={`sc-${index}`}
-                          id={seller.id}
-                          name={seller.name}
-                          description={seller.description}
-                          imageAlt={seller.imageAlt}
-                          imageSrc={seller.imageSrc}
+                          id={seller.id?.toString()||index.toString()}
+                          name={`${seller.nombres} ${seller.apellido_p}`}
                         />
                       </CarouselItem>
                     </>

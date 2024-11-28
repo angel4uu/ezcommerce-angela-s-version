@@ -7,6 +7,8 @@ import { Search } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import axios from 'axios'
 import { Facultad, getAllFacultades } from '../../api/apiFacultades';
+import { SellersCard } from '../../components/cards';
+import { Usuario } from '../../types';
 
 
 
@@ -18,13 +20,13 @@ export const SearchSellers = () => {
 
   const handleSearch = () => {
     if (sellerName) {
-      navigate(`/sellers?nombre=${encodeURIComponent(sellerName)}`);
+      navigate(`/sellers?nombres=${encodeURIComponent(sellerName)}`);
     } else {
-      navigate("/sellers"); 
+      navigate("/sellers");
     }
   };
 
-  const [items, setItems] = useState<[]>([]);
+  const [items, setItems] = useState<Usuario[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -49,39 +51,39 @@ export const SearchSellers = () => {
   }, [])
 
   const displayedFacultades = showAll ? facultades : facultades.slice(0, 10);
-  
+
   const defaultFilters = {
     name: "",
     facultades: [] as string[],
   };
   const [filters, setFilters] = useState(defaultFilters);
-  
-  const apiUrl = "http://localhost:8000/usuarios/?tiene_marca=true";
-  
+
+  const apiUrl = "http://localhost:8000/usuarios/?es_vendedor=true";
+
   // Cambiar página
   const handlePageChange = (page: number) => {
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("page", page.toString());
     navigate(`?${searchParams.toString()}`);
   };
-  
+
   // Cambiar elementos por página
   const handleLimitChange = (newLimit: number) => {
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set("page", "1"); 
+    searchParams.set("page", "1");
     searchParams.set("limit", newLimit.toString());
-    
+
     navigate(`?${searchParams.toString()}`);
     setItemsPerPage(newLimit);
   };
-  
+
   // Limpiar filtros
   const handleClearFilters = () => {
     setFilters(defaultFilters);
     setCurrentPage(1);
     navigate("?");
   };
-  
+
   // Manejar cambios en los filtros
   const handleCheckboxChange = (value: string) => {
     setFilters((prevFilters) => {
@@ -89,32 +91,32 @@ export const SearchSellers = () => {
       updated.facultades = prevFilters.facultades.includes(value)
         ? prevFilters.facultades.filter((item) => item !== value)
         : [...prevFilters.facultades, value];
-  
+
       const searchParams = new URLSearchParams(location.search);
       searchParams.delete("facultades");
       updated.facultades.forEach((fac) => searchParams.append("facultades", fac));
       searchParams.set("page", "1"); // Reinicia a la primera página
       navigate(`?${searchParams.toString()}`);
-  
+
       return updated;
     });
   };
-  
-   // Construcción de la URL de la API
-   const constructApiUrl = () => {
+
+  // Construcción de la URL de la API
+  const constructApiUrl = () => {
     const queryParams = new URLSearchParams();
-  
+
     if (currentPage > 1) queryParams.append("page", currentPage.toString());
     queryParams.append("limit", itemsPerPage.toString());
-  
-    if (filters.name) queryParams.append("nombre", filters.name);
+
+    if (filters.name) queryParams.append("nombres", filters.name);
     if (filters.facultades.length > 0) {
       queryParams.append("facultades", filters.facultades.join(","));
     }
-  
+
     return `${apiUrl}?${queryParams.toString()}`;
   };
-  
+
   // Actualización de datos desde la API
   const fetchData = async () => {
     try {
@@ -123,28 +125,28 @@ export const SearchSellers = () => {
       setTotalPages(Math.ceil(response.data.count / itemsPerPage));
     } catch (error) {
       console.error("Error al obtener los datos:", error);
-    } 
+    }
   };
-  
+
   // Actualizar URL con filtros actuales
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-  
-    const name = searchParams.get("nombre") || "";
+
+    const name = searchParams.get("nombres") || "";
     const facultades = searchParams.getAll("facultades");
     const pageFromUrl = Number(searchParams.get("page") || "1");
     const limitFromUrl = Number(searchParams.get("limit") || "10");
-  
+
     const newFilters = {
       name,
       facultades,
     };
-  
+
     // Actualiza los estados con los valores desde la URL
     setFilters(newFilters);
     setCurrentPage(pageFromUrl > 0 ? pageFromUrl : 1);
     setItemsPerPage(limitFromUrl);
-  
+
     // Marca como inicializado
     setIsInitialized(true);
   }, [location.search]);
@@ -156,40 +158,40 @@ export const SearchSellers = () => {
     }
   }, [isInitialized, filters, currentPage, itemsPerPage]);
 
-  return(
+  return (
     <>
       <Helmet>
         <title>Vendedores - EzCommerce</title>
       </Helmet>
       <section className="w-full mx-auto mt-8">
-      <div className="bg-gradient-to-b from-[#00366926] to-white rounded-lg px-6 pt-8 pb-2 space-y-6">
-        <div className="space-y-2 text-center">
-          <h2 className="text-2xl md:text-3xl font-semibold text-secondaryLight">
-            Vendedores estudiantiles
-          </h2>
-          <p className="text-slate-600">
-            Descubre los productos que ofrecen estos estudiantes.
-          </p>
-          <p className="text-slate-600">
-            Apoya a los universitarios emprendedores mientras impulsas sus sueños y
-            proyectos.
-          </p>
+        <div className="bg-gradient-to-b from-[#00366926] to-white rounded-lg px-6 pt-8 pb-2 space-y-6">
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl md:text-3xl font-semibold text-secondaryLight">
+              Vendedores estudiantiles
+            </h2>
+            <p className="text-slate-600">
+              Descubre los productos que ofrecen estos estudiantes.
+            </p>
+            <p className="text-slate-600">
+              Apoya a los universitarios emprendedores mientras impulsas sus sueños y
+              proyectos.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
-    <div className='w-full mx-auto px-6  mt-10 mb-8'>
+      </section>
+      <div className='w-full mx-auto px-6  mt-10 mb-8'>
         <div className="relative max-w-4xl  mx-auto ">
-            <Input
+          <Input
             className="pr-9 bg-slate-50"
             placeholder="Buscar..."
             type="search"
             value={sellerName}
             onChange={(e) => setSellerName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()} 
-            />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
         </div>
-    </div>
+      </div>
       <div className="w-full gap-4 flex flex-row min-h-96 mt-4 mb-10 ">
         <div className="w-[300px] border rounded border-slate-300 p-8">
           <h3 className="font-bold text-xl text-secondaryLight mb-4">Filtros</h3>
@@ -218,19 +220,29 @@ export const SearchSellers = () => {
               </button>
             )}
           </div>
-            
-            <div className='flex flex-row gap-4 justify-center'>
-              <button
-                onClick={handleClearFilters}
-                className='mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg'
-              >
-                Limpiar filtro
-              </button>
-            </div>
-          </div>
-        <div className="flex flex-col grow border rounded border-slate-300 p-4">
-          <div className='grow'>
 
+          <div className='flex flex-row gap-4 justify-center'>
+            <button
+              onClick={handleClearFilters}
+              className='mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg'
+            >
+              Limpiar filtro
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col grow border rounded border-slate-300 p-4">
+          <div className='flex flex-row justify-between mb-4'>
+            <div>
+              {filters.name && (
+                <h3>{items ? items.length : 0} resultados para "{filters.name}"</h3>
+              )}
+            </div>
+
+          </div>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6 p-4'>
+            {items ? items.map((p) => (
+              <SellersCard key={p.id} id={p.id?.toString()||"1"} name={`${p.nombres} ${p.apellido_p}`}  />
+            )) : null}
           </div>
           <div className='flex flex-row justify-between mt-4 '>
             <div className='flex'>
@@ -267,7 +279,7 @@ export const SearchSellers = () => {
             </div>
           </div>
         </div>
-    </div>
+      </div>
     </>
   )
 };
