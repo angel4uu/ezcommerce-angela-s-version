@@ -1,17 +1,15 @@
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCart } from "../../hooks/useCart";
 
 export const CardOrderSummary = () => {
-  const { items } = useCart();
+  const { items } = useCart(); // Obtener productos del carrito
 
-  const totalItems = items.reduce((sum, item) => sum + item.cantidadProduct, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + item.productPrice * item.cantidadProduct,
-    0
-  );
+  const totalItems = items.length;
+  const totalPrice = items.reduce((sum, item) => sum + item.productPrice, 0);
 
-  if (!items.length) {
+  if (!totalItems) {
     return null; // No mostrar si el carrito está vacío
   }
 

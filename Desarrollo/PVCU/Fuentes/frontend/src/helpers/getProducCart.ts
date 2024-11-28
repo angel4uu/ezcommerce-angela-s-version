@@ -10,7 +10,6 @@ export interface ProductCart {
   productDescription: string;
   productUrl: string;
   productRating: number;
-  cantidadProduct: number; 
 }
 
 export const getProductCart = async (id: number): Promise<ProductCart> => {
@@ -70,8 +69,7 @@ export const getProductCart = async (id: number): Promise<ProductCart> => {
       productPrice: product.precio,
       productDescription: product.descripcion,
       productUrl: imageUrl,
-      productRating: 4, 
-      cantidadProduct: 1,
+      productRating: 4, // Rating estático por ahora
     };
   } catch (error) {
     console.error("Error al obtener el ProductCart:", error);
