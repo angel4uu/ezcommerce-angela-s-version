@@ -23,7 +23,8 @@ import { Link } from "react-router-dom";
 import { AvatarComponent } from "./AvatarComponent";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-
+import { getUsuarios } from "../../api/apiUsuarios";
+import { useEffect, useState } from "react";
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-gray-300 p-1.5 rounded-full">{children}</div>
 );
@@ -35,13 +36,13 @@ const options = [
     link: "/profile-buyer",
   },
   {
-    icon: <Megaphone className="h-4 w-4 text-black" />,
-    text: "Publicar anuncio",
-    link: "#",
+    icon: <Calendar className="h-4 w-4 text-black" />,
+    text: "Gestión de compras",
+    link: "/purchase-management",
   },
   {
-    icon: <Calendar className="h-4 w-4 text-black" />,
-    text: "Publicar evento",
+    icon: <Megaphone className="h-4 w-4 text-black" />,
+    text: "Publicar anuncio",
     link: "#",
   },
   {
@@ -51,7 +52,7 @@ const options = [
   },
   {
     icon: <HelpCircle className="h-4 w-4 text-black" />,
-    text: "Reportar problema",
+    text: "Ayuda y soporte tecnico",
     link: "#",
   },
 ];
@@ -63,6 +64,17 @@ export const MenuAccount = () => {
     toast.success("Sesión terminada");
   }
   const { logout } = useAuth();
+
+  const [user, setUser] = useState<{ nombres: string; apellido_p: string; apellido_m: string } | null>(null);
+
+  useEffect(() => {
+    if (authState.userId) {
+      getUsuarios(authState.userId).then((response) => {
+        setUser(response.data);
+      });
+    }
+  }, [authState.userId]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -74,9 +86,9 @@ export const MenuAccount = () => {
         <DropdownMenuLabel className="flex items-center p-2">
           <AvatarComponent />
           <p className="text-sm font-semibold ml-6">
-            Juan Gutierrez
+            {user?.nombres} {user?.apellido_p} 
             <br />
-            Alvarado
+            {user?.apellido_m}
           </p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
