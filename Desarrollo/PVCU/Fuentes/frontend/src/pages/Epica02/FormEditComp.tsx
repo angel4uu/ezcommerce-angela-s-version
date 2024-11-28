@@ -78,7 +78,7 @@ export function FormEditComp() {
           }
         );
         const dataEscuelas = await response.json();
-        setEscuelas(dataEscuelas);
+        setEscuelas(dataEscuelas.results);
       } catch (error) {}
     };
     fetchEscuelas();
