@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ProductCart, getProductCart } from "../helpers/getProducCart";
+import { toast } from "sonner"; // Importar el sistema de notificaciones
 
 interface CartContextType {
   items: ProductCart[];
@@ -21,13 +22,12 @@ export const useCartContext = (): CartContextType => {
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ProductCart[]>([]);
 
-  // Cargar los artículos del carrito desde el localStorage al inicializar
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
       const parsedCart = JSON.parse(storedCart);
       if (Array.isArray(parsedCart)) {
-        setItems(parsedCart); // Cargar datos válidos del localStorage
+        setItems(parsedCart);
       } else {
         console.warn("Datos corruptos en el localStorage, limpiando...");
         localStorage.removeItem("cart");
@@ -35,12 +35,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Sincronizar los cambios en el carrito con el localStorage
   useEffect(() => {
     if (items.length > 0) {
       localStorage.setItem("cart", JSON.stringify(items));
     } else {
-      localStorage.removeItem("cart"); // Limpiar el `localStorage` si no hay artículos
+      localStorage.removeItem("cart");
     }
   }, [items]);
 
@@ -48,26 +47,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const productCart = await getProductCart(id);
 
-      // Verificar duplicados
       if (!items.some((item) => item.productTitle === productCart.productTitle)) {
         setItems((prevItems) => [...prevItems, productCart]);
-        console.log("Producto agregado:", productCart);
+        toast.success(`${productCart.productTitle} se agregó al carrito.`);
       } else {
-        console.log("El producto ya está en el carrito.");
+        toast.warning(`${productCart.productTitle} ya está en el carrito.`);
       }
     } catch (error) {
       console.error("Error al agregar producto al carrito:", error);
+      toast.error("Ocurrió un error al agregar el producto.");
     }
   };
 
   const removeItem = (productTitle: string) => {
     setItems((prevItems) => prevItems.filter((item) => item.productTitle !== productTitle));
-    console.log("Producto eliminado:", productTitle);
+    toast.success(`${productTitle} se eliminó del carrito.`);
   };
 
   const clearCart = () => {
     setItems([]);
-    console.log("Carrito limpiado");
+    toast.info("Carrito vaciado.");
   };
 
   return (
