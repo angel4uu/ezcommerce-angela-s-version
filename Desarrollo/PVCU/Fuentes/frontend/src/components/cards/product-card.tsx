@@ -3,13 +3,12 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { useCart } from "../../hooks/useCart";
-import { useFavourites } from "../../hooks/useFavourites";
+import { useFavouritesContext } from "../../context/FavouritesContext";
 
 export interface IProductCardProps {
   id: number;
   name: string;
   price: number;
-  isFavourite?: boolean;
   img: string;
   brand?: string;
   qualification?: number;
@@ -19,16 +18,15 @@ export const ProductCard = ({
   id,
   name,
   price,
-  qualification,
   img,
   brand,
+  qualification,
 }: IProductCardProps) => {
   const navigate = useNavigate();
   const goToProduct = () => navigate(`/product/${id}`);
   const { addItem } = useCart();
+  const { favourites, toggleFavourite } = useFavouritesContext();
 
-  // Hook para gestionar favoritos
-  const { favourites, toggleFavourite } = useFavourites();
   const isFavourite = favourites.includes(id);
 
   return (
@@ -37,7 +35,7 @@ export const ProductCard = ({
         <div
           className="absolute top-4 right-4 z-10"
           onClick={(e) => {
-            e.stopPropagation(); // Evita que el click en el corazón dispare goToProduct
+            e.stopPropagation();
             toggleFavourite(id);
           }}
         >
@@ -57,13 +55,13 @@ export const ProductCard = ({
               <Star className="w-3 h-3 fill-white" />
               <span className="text-xs font-sans ml-1">{qualification}</span>
             </div>
-            {brand ? (
+            {brand && (
               <div className="flex items-center bg-[#4E53EE]/20 rounded-3xl max-w-[100px] ml-2 py-1 px-4">
                 <p className="text-[#4E53EE] text-xs font-sans overflow-hidden whitespace-nowrap text-clip">
                   {brand}
                 </p>
               </div>
-            ) : null}
+            )}
           </div>
           <h3 className="font-sans truncate font-bold text-secondaryLight text-base mb-1">
             {name}

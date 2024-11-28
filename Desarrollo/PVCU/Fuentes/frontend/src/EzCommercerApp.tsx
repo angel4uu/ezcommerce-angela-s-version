@@ -4,6 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import {AuthProvider} from "./context/AuthContext";
 import { TrademarkProvider } from "./context/TrademarkContext";
 import { EtiquetasProvider } from "./context/EtiquetasContext";
+import { FavouritesProvider } from "./context/FavouritesContext";
 
 
 
@@ -14,7 +15,9 @@ export const EzCommercerApp = () => {
       <EtiquetasProvider>
         <AuthProvider>
           <TrademarkProvider>
-            <RouterProvider router={routes} />
+            <FavouritesProvider>        
+              <RouterProvider router={routes} />
+            </FavouritesProvider>
           </TrademarkProvider> 
         </AuthProvider>
       </EtiquetasProvider>

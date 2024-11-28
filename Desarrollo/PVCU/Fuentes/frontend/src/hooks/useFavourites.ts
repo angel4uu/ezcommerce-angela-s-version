@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 
 export const useFavourites = () => {
   const [favourites, setFavourites] = useState<number[]>(() => {
-    // Leer favoritos desde localStorage
     const storedFavourites = localStorage.getItem("favourites");
     return storedFavourites ? JSON.parse(storedFavourites) : [];
   });
@@ -13,11 +12,15 @@ export const useFavourites = () => {
   }, [favourites]);
 
   const toggleFavourite = (productId: number) => {
-    setFavourites((prevFavourites) =>
-      prevFavourites.includes(productId)
-        ? prevFavourites.filter((id) => id !== productId) // Quitar de favoritos
-        : [...prevFavourites, productId] // Agregar a favoritos
-    );
+    setFavourites((prevFavourites) => {
+      if (prevFavourites.includes(productId)) {
+        // Si ya está en favoritos, lo quitamos
+        return prevFavourites.filter((id) => id !== productId);
+      } else {
+        // Si no está en favoritos, lo agregamos
+        return [...prevFavourites, productId];
+      }
+    });
   };
 
   return { favourites, toggleFavourite };

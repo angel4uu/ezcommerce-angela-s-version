@@ -1,12 +1,12 @@
 import { Helmet } from "react-helmet-async";
 import { ProductCard } from "../../components/cards/product-card";
-import { useFavourites } from "../../hooks/useFavourites";
+import { useFavouritesContext } from "../../context/FavouritesContext"; // Nuevo hook del contexto
 import { useState, useEffect } from "react";
 import { getArticulos, Articulo } from "../../api/apiArticulos";
 import { getAllImages } from "../../api/apiImages";
 
 export const FavouritesPage = () => {
-  const { favourites } = useFavourites();
+  const { favourites } = useFavouritesContext(); // Cambiado a usar el contexto
   const [products, setProducts] = useState<Articulo[]>([]);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export const FavouritesPage = () => {
     };
 
     fetchFavourites();
-  }, [favourites]);
+  }, [favourites]); // Dependencia en favourites
 
   return (
     <>
