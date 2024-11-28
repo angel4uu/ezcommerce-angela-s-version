@@ -9,6 +9,7 @@ import { EtiquetasContext } from '../../context/EtiquetasContext';
 import { ProductCard } from '../../components/cards/product-card';
 import { Articulo } from '../../api/apiArticulos';
 import { Facultad, getAllFacultades } from '../../api/apiFacultades';
+import { getAllImages } from '@/api/apiImages';
 
 
 export const SearchPage = () => {
@@ -70,12 +71,39 @@ export const SearchPage = () => {
     return `${apiUrl}?${queryParams.toString()}`;
   };
 
-  // Actualización de datos desde la API
+ 
   const fetchData = async () => {
     setLoadingPage(true);
     try {
+      
       const response = await axios.get(constructApiUrl());
-      setItems(response.data.results);
+      const articulos = response.data.results;
+  
+      const imagesResponse = await getAllImages();
+      const images = imagesResponse.data.results;
+ 
+      interface Image {
+        id_articulo: number;
+        url: string;
+      }
+
+      interface ImageMap {
+        [key: number]: string;
+      }
+
+      const imageMap: ImageMap = images.reduce((acc: ImageMap, img: Image) => {
+        if (!acc[img.id_articulo]) {
+          acc[img.id_articulo] = img.url; 
+        }
+        return acc;
+      }, {});
+  
+      const articulosConImagenes = articulos.map((articulo:Articulo) => ({
+        ...articulo,
+        imageUrl: imageMap[articulo.id] || null, 
+      }));
+  
+      setItems(articulosConImagenes); 
       setTotalPages(Math.ceil(response.data.count / itemsPerPage));
     } catch (error) {
       console.error("Error al obtener los datos:", error);
@@ -183,36 +211,52 @@ export const SearchPage = () => {
 
       <div className="w-full gap-4 flex flex-row min-h-96 my-10 ">
         <div className="w-[300px] border rounded border-slate-300 p-8">
-          <h3 className="font-bold text-xl text-secondaryLight mb-4">Filtros</h3>
+          <h3 className="font-bold text-xl text-secondaryLight mb-4">
+            Filtros
+          </h3>
 
           <div className="mb-4">
             <h3 className="font-bold text-xl">Categorias</h3>
-            {Array.isArray(etiquetasList) && etiquetasList.map((cat) => (
-              <div key={cat.id} className="flex items-center space-x-2 my-4">
-                <Checkbox
-                  id={cat.id.toString()}
-                  className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(cat.id, 'categorias')}
-                  checked={filters.categorias.includes(cat.id)}
-                />
-                <label htmlFor={cat.id.toString()} className="text-md font-medium leading-none">
-                  {cat.nombre}
-                </label>
-              </div>
-            ))}
+            {Array.isArray(etiquetasList) &&
+              etiquetasList.map((cat) => (
+                <div key={cat.id} className="flex items-center space-x-2 my-4">
+                  <Checkbox
+                    id={cat.id.toString()}
+                    className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
+                    onCheckedChange={() =>
+                      handleCheckboxChange(cat.id, "categorias")
+                    }
+                    checked={filters.categorias.includes(cat.id)}
+                  />
+                  <label
+                    htmlFor={cat.id.toString()}
+                    className="text-md font-medium leading-none"
+                  >
+                    {cat.nombre}
+                  </label>
+                </div>
+              ))}
           </div>
 
           <div className="mb-4">
             <h3 className="font-bold text-xl">Facultades</h3>
             {displayedFacultades.map((fac) => (
-              <div key={fac.codigo} className="flex items-center space-x-2 my-4">
+              <div
+                key={fac.codigo}
+                className="flex items-center space-x-2 my-4"
+              >
                 <Checkbox
                   id={fac.codigo.toString()}
                   className="w-[24px] h-[24px] rounded-lg border-2 border-secondaryLight data-[state=checked]:bg-secondaryLight"
-                  onCheckedChange={() => handleCheckboxChange(fac.siglas, 'facultades')}
+                  onCheckedChange={() =>
+                    handleCheckboxChange(fac.siglas, "facultades")
+                  }
                   checked={filters.facultades.includes(fac.siglas)}
                 />
-                <label htmlFor={fac.siglas} className="text-md font-medium leading-none">
+                <label
+                  htmlFor={fac.siglas}
+                  className="text-md font-medium leading-none"
+                >
                   {fac.siglas}
                 </label>
               </div>
@@ -222,7 +266,7 @@ export const SearchPage = () => {
                 onClick={() => setShowAll(!showAll)}
                 className="mt-4 text-secondaryLight font-medium "
               >
-                {showAll ? 'Mostrar menos' : 'Mostrar más'}
+                {showAll ? "Mostrar menos" : "Mostrar más"}
               </button>
             )}
           </div>
@@ -236,7 +280,9 @@ export const SearchPage = () => {
                 max={500}
                 step={1}
                 value={[filters.min]}
-                onValueChange={([value]) => setFilters((prev) => ({ ...prev, min: value }))}
+                onValueChange={([value]) =>
+                  setFilters((prev) => ({ ...prev, min: value }))
+                }
               />
             </div>
             <div>
@@ -246,29 +292,35 @@ export const SearchPage = () => {
                 max={500}
                 step={1}
                 value={[filters.max]}
-                onValueChange={([value]) => setFilters((prev) => ({ ...prev, max: Math.max(value, prev.min) }))}
+                onValueChange={([value]) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    max: Math.max(value, prev.min),
+                  }))
+                }
               />
             </div>
-            <div className='flex flex-row gap-4 justify-center'>
+            <div className="flex flex-row gap-4 justify-center">
               <button
                 onClick={handleClearFilters}
-                className='mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg'
+                className="mt-4 px-1 py-2 bg-red-500 text-sm text-white rounded-lg"
               >
                 Limpiar filtro
               </button>
             </div>
           </div>
-
         </div>
 
         <div className="flex flex-col grow border rounded border-slate-300 p-4">
-          <div className='flex flex-row justify-between mb-4'>
+          <div className="flex flex-row justify-between mb-4">
             <div>
               {filters.name && (
-                <h3>{items ? items.length : 0} resultados para "{filters.name}"</h3>
+                <h3>
+                  {items ? items.length : 0} resultados para "{filters.name}"
+                </h3>
               )}
             </div>
-            <div className='mr-8'>
+            <div className="mr-8">
               <PaginationComp
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -277,15 +329,25 @@ export const SearchPage = () => {
               />
             </div>
           </div>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-6 p-4'>
-            {items ? items.map((p) => (
-              <ProductCard key={p.id} id={p.id} name={p.nombre} price={p.precio} qualification={4} img={''} />
-            )) : null}
+          <div className="flex flex-wrap justify-center gap-4 p-4">
+            {items.map((p) => (
+              <ProductCard
+                key={p.id}
+                id={p.id}
+                name={p.nombre}
+                price={p.precio}
+                qualification={4} 
+                img={p.imageUrl || "default-image-url.jpg"} 
+              />
+            ))}
           </div>
-          <div className='mt-auto flex flex-row justify-between'>
-            <div className='flex'>
-              <div className='mr-3 pt-1'>
-                <h3 className="text-lg font-semibold mb-2">Items por página:</h3>
+
+          <div className="mt-auto flex flex-row justify-between">
+            <div className="flex">
+              <div className="mr-3 pt-1">
+                <h3 className="text-lg font-semibold mb-2">
+                  Items por página:
+                </h3>
               </div>
               <div className="flex items-center gap-4 mr-8">
                 <div className="relative">
@@ -307,7 +369,7 @@ export const SearchPage = () => {
                 </div>
               </div>
             </div>
-            <div className='mr-8 pt-1'>
+            <div className="mr-8 pt-1">
               <PaginationComp
                 currentPage={currentPage}
                 totalPages={totalPages}

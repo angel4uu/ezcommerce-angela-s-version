@@ -36,108 +36,9 @@ import { Progress } from "@/components/ui/progress";
 import { getArticulo, Articulo, getArticulos } from "@/api/apiArticulos";
 import { Link } from "react-router-dom";
 import { LoadImageMajor } from "@/helpers/getImageMajor";
+import { useCartContext } from "../../context/CartContext";
+import { useFavouritesContext } from "@/context/FavouritesContext";
 
-/*interface IProductDetailProp {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-  isFavourite: boolean;
-  img: string;
-  brand: string;
-  qualification: number;
-}*/
-/*
-const products: IProductDetailProp[] = [
-  {
-    id: 1,
-    name: "Smartphone X",
-    price: 499.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. Mauris euismod fermentum lacinia. Nulla nec est et justo iaculis vehicula. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "BrandX",
-    qualification: 4.5,
-  },
-  {
-    id: 2,
-    name: "Laptop Pro",
-    price: 1299.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. In elementum ullamcorper congue. Nulla condimentum, mi nec consectetur tristique, elit mauris pretium felis, non porttitor velit leo sit amet felis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "TechMaster",
-    qualification: 4.7,
-  },
-  {
-    id: 3,
-    name: "Wireless Earbuds",
-    price: 99.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. In elementum ullamcorper congue. Nulla condimentum, mi nec consectetur tristique, elit mauris pretium felis, non porttitor velit leo sit amet felis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "SoundMax",
-    qualification: 4.3,
-  },
-  {
-    id: 4,
-    name: "4K TV",
-    price: 799.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. In elementum ullamcorper congue. Nulla condimentum, mi nec consectetur tristique, elit mauris pretium felis, non porttitor velit leo sit amet felis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "UltraVision",
-    qualification: 4.6,
-  },
-  {
-    id: 5,
-    name: "Smartwatch Series 5",
-    price: 199.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "WearableTech",
-    qualification: 4.2,
-  },
-  {
-    id: 6,
-    name: "Smartwatch Series 5",
-    price: 199.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "WearableTech",
-    qualification: 4.2,
-  },
-  {
-    id: 7,
-    name: "Smartwatch Series 5",
-    price: 199.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. In elementum ullamcorper congue. Nulla condimentum, mi nec consectetur tristique, elit mauris pretium felis, non porttitor velit leo sit amet felis. Aenean tempus tempus condimentum. Cras rutrum magna est. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "WearableTech",
-    qualification: 4.2,
-  },
-  {
-    id: 8,
-    name: "Smartwatch Series 5",
-    price: 199.99,
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sapien lacus, tempor non magna nec, porta cursus mauris. Curabitur condimentum suscipit est in convallis. Mauris euismod fermentum lacinia. Nulla nec est et justo iaculis vehicula. ",
-    isFavourite: false,
-    img: "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaPE/17659332_1/w=800,h=800,fit=pad",
-    brand: "WearableTech",
-    qualification: 4.2,
-  },
-];*/
 type Image = {
   id: number;
   url: string;
@@ -150,6 +51,10 @@ export function ProductDetailsPage() {
   const [productos, setProductos] = useState<Articulo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<string[]>([]);
+
+  const { addItem } = useCartContext();
+  const { favourites, toggleFavourite } = useFavouritesContext();
+  
 
   const fetchImage = async () => {
     try {
@@ -201,6 +106,14 @@ export function ProductDetailsPage() {
       </div>
     );
   }
+
+  const handleAddToCart = () => {
+    if (articulo) {
+      addItem(articulo.id, quantity); // Agregar el producto con la cantidad seleccionada
+    }
+  };
+
+  const isFavourite = favourites.includes(articulo.id);
 
   const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex gap-0.5">
@@ -346,11 +259,16 @@ export function ProductDetailsPage() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-5 text-primaryLight text-sm md:text-[16px]">
+                <Button className="flex-1 bg-secondaryLight hover:bg-secondaryLight/80 py-5 text-primaryLight text-sm md:text-[16px]" onClick={handleAddToCart}>
                   <ShoppingCart className="mr-2 h-4 w-4" /> Añadir al carrito
                 </Button>
-                <Button variant="outline" size="icon" className="p-5 md:p-5">
-                  <Heart className="h-4 w-4 border-secondaryLight" />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`p-5 md:p-5 ${isFavourite ? "fill-primary" : ""}`}
+                  onClick={() => toggleFavourite(articulo.id)}
+                >
+                  <Heart className={`h-4 w-4 ${isFavourite ? "text-red-500" : ""}`} />
                 </Button>
               </div>
             </div>

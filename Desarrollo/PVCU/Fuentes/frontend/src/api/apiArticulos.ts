@@ -12,6 +12,7 @@ export interface Articulo {
   id_marca?: number;
   is_marca: boolean;
   id_catalogo: number;
+  imageUrl?: string;
 }
 
 const articulosApi = axios.create({

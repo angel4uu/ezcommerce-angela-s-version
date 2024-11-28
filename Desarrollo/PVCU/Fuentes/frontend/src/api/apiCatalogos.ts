@@ -9,3 +9,7 @@ const catalogosApi = axios.create({
 export const getCatalogoUser= (id_usuario:number) => {
     return catalogosApi.get(`/?id_usuario=${id_usuario}`);
 }
+
+export const getCatalogoById= (id:number) => {
+    return catalogosApi.get(`/${id}`);
+}
