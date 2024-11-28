@@ -1,14 +1,30 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getEtiquetas, Etiqueta } from "../../api/apiEtiquetas";
+import { useNavigate } from "react-router";
 
 export const SheetComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [etiquetas, setEtiquetas] = useState<Etiqueta[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  // Navegar a la categoría seleccionada
+  const goToCategory = (etiquetaId: number) => {
+    setIsOpen(false); // Cerrar el Sheet antes de navegar
+    navigate(`/search?etiquetas=${etiquetaId}`);
+  };
 
   useEffect(() => {
     const fetchEtiquetas = async () => {
@@ -55,7 +71,7 @@ export const SheetComponent = () => {
                   key={etiqueta.id}
                   variant="ghost"
                   className="w-full justify-start"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => goToCategory(etiqueta.id)}
                 >
                   {etiqueta.nombre}
                 </Button>
