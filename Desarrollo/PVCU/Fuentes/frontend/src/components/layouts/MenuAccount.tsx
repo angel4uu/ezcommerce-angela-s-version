@@ -31,11 +31,6 @@ const IconWrapper = ({ children }: { children: React.ReactNode }) => (
 
 const options = [
   {
-    icon: <User className="h-4 w-4 text-black" />,
-    text: "Perfil",
-    link: "/profile-buyer",
-  },
-  {
     icon: <Calendar className="h-4 w-4 text-black" />,
     text: "Gestión de compras",
     link: "/purchase-management",
@@ -48,7 +43,7 @@ const options = [
   {
     icon: <Settings className="h-4 w-4 text-black" />,
     text: "Configuración",
-    link: "#",
+    link: "/profile-buyer",
   },
   {
     icon: <HelpCircle className="h-4 w-4 text-black" />,
