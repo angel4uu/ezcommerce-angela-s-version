@@ -49,7 +49,6 @@ export const Navbar = () => {
 
         {/* Barra de búsqueda y menú */}
         <div className="order-last mt-4 w-full flex flex-grow lg:order-none lg:mt-0 lg:w-auto">
-          <MenuFaculties />
           <div className="relative w-full">
           <Input
               className="pr-10"

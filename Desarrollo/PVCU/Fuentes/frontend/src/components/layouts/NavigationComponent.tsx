@@ -37,14 +37,6 @@ export const NavigationComponent = () => {
           <NavigationMenuItem>
             <SheetComponent />
           </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href="#">
-              <Button variant="link">
-                <MapPin size={20} className="mr-2" />
-                Ingresa tu ubicación
-              </Button>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
           {navigationItems.map((item, index) => (
             <NavigationMenuItem key={index}>
               <Button
