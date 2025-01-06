@@ -38,7 +38,7 @@ class Usuario(AbstractBaseUser):
         message='El username puede contener letras, números y los caracteres @/./+/-/_%',
         code='invalid_username'
     )
-    id_escuela = models.ForeignKey(EscuelaProfesional, on_delete = models.CASCADE, verbose_name = "Escuela Profesional")
+    id_escuela = models.ForeignKey(EscuelaProfesional, on_delete = models.CASCADE, verbose_name = "Escuela Profesional",null=True)
     username = models.CharField("Nombre de usuario", max_length = 100, unique = True)
     email = models.EmailField("Correo electrónico", max_length = 254, unique = True)
     nombres = models.CharField("Nombres", max_length = 200)
