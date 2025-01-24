@@ -7,15 +7,18 @@ import { PaginationComp } from '../../components/Epica03/paginationComponent';
 import axios from 'axios'
 import { EtiquetasContext } from '../../context/EtiquetasContext';
 import { ProductCard } from '../../components/cards/product-card';
-import { Articulo } from '../../api/apiArticulos';
-import { Facultad, getAllFacultades } from '../../api/apiFacultades';
-import { getAllImages } from '@/api/apiImages';
+import { Articulo, Facultad } from '../../types';
+import { facultadesService} from '../../api/apiFacultades';
+import { imagesService } from '@/api/apiImages';
+import { useAuth } from '@/hooks/useAuth';
 
 
 export const SearchPage = () => {
   const { etiquetasList, setLoadingPage } = useContext(EtiquetasContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const {authState}=useAuth();
+  
 
   const [items, setItems] = useState<Articulo[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,8 +31,8 @@ export const SearchPage = () => {
   useEffect(() => {
     const fetchFacus = async () => {
       try {
-        const data1 = await getAllFacultades(1)
-        const data2 = await getAllFacultades(2)
+        const data1 = await facultadesService.getAllFacultades(1)
+        const data2 = await facultadesService.getAllFacultades(2)
         const facultadesT = [...data1.data.results, ...data2.data.results]
 
         setFacultades(facultadesT)
@@ -79,7 +82,7 @@ export const SearchPage = () => {
       const response = await axios.get(constructApiUrl());
       const articulos = response.data.results;
   
-      const imagesResponse = await getAllImages();
+      const imagesResponse = await imagesService.getAllImages(authState.accessToken);
       const images = imagesResponse.data.results;
  
       interface Image {

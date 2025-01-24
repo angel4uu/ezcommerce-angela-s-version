@@ -33,11 +33,13 @@ import { ProductCard } from "@/components/cards/product-card";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
-import { getArticulo, Articulo, getArticulos } from "@/api/apiArticulos";
+import { articulosService } from "@/api/apiArticulos";
+import { Articulo } from "@/types";
 import { Link } from "react-router-dom";
 import { LoadImageMajor } from "@/helpers/getImageMajor";
 import { useCartContext } from "../../context/CartContext";
 import { useFavouritesContext } from "@/context/FavouritesContext";
+import { useAuth } from "@/hooks/useAuth";
 
 type Image = {
   id: number;
@@ -54,6 +56,7 @@ export function ProductDetailsPage() {
 
   const { addItem } = useCartContext();
   const { favourites, toggleFavourite } = useFavouritesContext();
+  const {authState} = useAuth();
   
 
   const fetchImage = async () => {
@@ -71,10 +74,10 @@ export function ProductDetailsPage() {
     const fetchArticulo = async (id: number) => {
       setIsLoading(true);
       try {
-        const response = await getArticulo(id);
+        const response = await articulosService.getArticulo(id,authState.accessToken);
         setArticulo(response.data);
 
-        const responseProductos = await getArticulos();
+        const responseProductos = await articulosService.getArticulos(authState.accessToken);
         setProductos(responseProductos.data.results);
 
         console.log(response.data);
