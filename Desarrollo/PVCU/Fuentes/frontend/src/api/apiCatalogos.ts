@@ -1,15 +1,13 @@
-import axios from 'axios';
-export const baseURL='http://localhost:8000/catalogos';
+import { AxiosService, baseURL } from './api';
 
+class CatalogosService extends AxiosService {
+  getCatalogoUser = (id_usuario: number) => {
+    return this.instance.get(`/?id_usuario=${id_usuario}`);
+  };
 
-const catalogosApi = axios.create({
-    baseURL: `${baseURL}` 
-});
-
-export const getCatalogoUser= (id_usuario:number) => {
-    return catalogosApi.get(`/?id_usuario=${id_usuario}`);
+  getCatalogoById = (id: number) => {
+    return this.instance.get(`/${id}`);
+  };
 }
 
-export const getCatalogoById= (id:number) => {
-    return catalogosApi.get(`/${id}`);
-}
+export const catalogosService = new CatalogosService(`${baseURL}/catalogos`);

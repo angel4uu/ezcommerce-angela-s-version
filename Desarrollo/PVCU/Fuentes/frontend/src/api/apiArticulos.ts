@@ -1,60 +1,37 @@
-import axios from 'axios';
+import { AxiosProtectedService, baseURL } from './api';
+import { Articulo } from '../types/types';
 
-export const baseURL = 'http://localhost:8000/articulos';
+class ArticulosService extends AxiosProtectedService {
+  getArticulos = (access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get('/');
+  };
 
-export interface Articulo {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  stock: number;
-  etiquetas: number[];
-  id_marca?: number;
-  is_marca: boolean;
-  id_catalogo: number;
-  imageUrl?: string;
+  createArticulo = (articulo: Articulo, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.post('/', articulo);
+  };
+
+  updateArticulo = (id: number, articulo: Articulo, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.put(`/${id}/`, articulo);
+  };
+
+  deleteArticulo = (id: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.delete(`/${id}/`);
+  };
+
+  getArticulo = (id: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get(`/${id}`);
+  };
+
+  getArticulosByUsuario = (usuarioId: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get(`/?id_catalogo__id_usuario=${usuarioId}`);
+  };
 }
 
-const articulosApi = axios.create({
-  baseURL: `${baseURL}`,
-});
-
-// Interceptor para agregar el token de acceso a las solicitudes
-articulosApi.interceptors.request.use((config) => {
-  const tokens = JSON.parse(localStorage.getItem("tokens") || "{}");
-  const accessToken = tokens?.access || null;
-  
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  } else {
-    console.log("No access token found");
-  }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
-
-export const getArticulos = () => {
-  return articulosApi.get('/');
-}
-
-export const createArticulo = (articulo: Articulo) => {
-  return articulosApi.post('/', articulo);
-};
-
-export const updateArticulo = (id: number, articulo: Articulo) => {
-  return articulosApi.put(`/${id}/`, articulo);
-}
-
-export const deleteArticulo = (id: number) => {
-  return articulosApi.delete(`/${id}/`);
-};
-
-export const getArticulo = (id: number) => {
-  return articulosApi.get(`/${id}`);
-}
-
-export const getArticulosByUsuario = (usuarioId: number) => {
-  return articulosApi.get(`/?id_catalogo__id_usuario=${usuarioId}`);
-};
+export const articulosService = new ArticulosService(`${baseURL}/articulos`);
 

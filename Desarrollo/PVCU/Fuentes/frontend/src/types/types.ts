@@ -53,3 +53,33 @@ export type AuthState ={
 export type APIResponse ={
   results: EscuelaProfesional[];               
 }
+
+export interface Articulo {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  stock: number;
+  etiquetas: number[];
+  id_marca?: number;
+  is_marca: boolean;
+  id_catalogo: number;
+  imageUrl?: string;
+}
+
+export interface Etiqueta{
+  id:number,
+  nombre:string,
+  descripcion:string,
+}
+
+export interface Facultad{
+  codigo:number,
+  nombre:string,
+  siglas:string,
+}
+
+export interface Image {
+  id_articulo: number,
+  url: string,
+}

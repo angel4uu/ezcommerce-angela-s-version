@@ -1,16 +1,9 @@
-import axios from 'axios';
-export const baseURL='http://localhost:8000/facultades';
+import { AxiosService, baseURL } from './api';
 
-export interface Facultad{
-    codigo:number,
-    nombre:string,
-    siglas:string,
+class FacultadesService extends AxiosService {
+  getAllFacultades = (page: number) => {
+    return this.instance.get(`/?page=${page}`);
+  };
 }
 
-const facultadesApi = axios.create({
-    baseURL: `${baseURL}` 
-});
-
-export const getAllFacultades = (page:number) => {
-    return facultadesApi.get( `/?page=${page}`);
-}
+export const facultadesService = new FacultadesService(`${baseURL}/facultades`);

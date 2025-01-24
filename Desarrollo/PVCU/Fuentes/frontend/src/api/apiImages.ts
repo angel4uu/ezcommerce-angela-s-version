@@ -1,47 +1,31 @@
-import axios from 'axios';
-import { baseURL } from './api';
+import { AxiosProtectedService, baseURL } from './api';
+import { Image } from '../types/types';
 
+class ImagesService extends AxiosProtectedService {
+  getAllImages = (access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get('/');
+  };
 
-interface Image {
-    id_articulo: number,
-    url: string,
+  getImage = (id: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get(`/?id_articulo=${id}`);
+  };
+
+  createImage = (image: Image, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.post('/', image);
+  };
+
+  updateImage = (id: number, image: Image, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.put(`/${id}/`, image);
+  };
+
+  deleteImage = (id: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.delete(`/${id}/`);
+  };
 }
 
-const imagesApi = axios.create({
-    baseURL: `${baseURL}/imagenes`
-});
-
-// Interceptor para agregar el token de acceso a las solicitudes
-imagesApi.interceptors.request.use((config) => {
-    const tokens = JSON.parse(localStorage.getItem("tokens") || "{}");
-    const accessToken = tokens?.access || null;
-    
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    } else {
-      console.log("No access token found");
-    }
-    return config;
-  }, (error) => {
-    return Promise.reject(error);
-});
-
-export const getAllImages = () => {
-    return imagesApi.get('/');
-}
-
-export const getImage = (id: number) => {
-    return imagesApi.get(`/?id_articulo=${id}`);
-}
-
-export const createImage = (image: Image) => {
-    return imagesApi.post('/', image);
-}
-
-export const updateImage = (id: number, image: Image) => {
-    return imagesApi.put(`/${id}/`, image);
-}
-
-export const deleteImage = (id: number) => {
-    return imagesApi.delete(`/${id}/`);
-}
+export const imagesService = new ImagesService(`${baseURL}/imagenes`);

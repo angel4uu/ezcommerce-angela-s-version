@@ -1,41 +1,25 @@
-import {Usuario } from '@/types';
-import axios from 'axios';
-import { AxiosService, baseURL } from './api';
+import { Usuario } from '@/types';
+import { AxiosProtectedService, baseURL, AxiosService } from './api';
 
-//Usuarios
-export const usuariosApi = axios.create({
-  baseURL: `${baseURL}/usuarios/` 
-});
+// Usuarios
+class UsuariosService extends AxiosProtectedService {
+  createUsuario = (usuario: Usuario) => {
+    return this.instance.post('/', usuario);
+  };
 
-// Interceptor para agregar el token de acceso a las solicitudes
-usuariosApi.interceptors.request.use((config) => {
-  const tokens = JSON.parse(localStorage.getItem("tokens") || "{}");
-  const accessToken = tokens?.access || null;
-  
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  } else {
-    console.log("No access token found");
-  }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
-
-export const createUsuario = (usuario:Usuario) => {
-  return usuariosApi.post('/', usuario);
-};
-
-export const getUsuarios = (userId:number) => {
-  return usuariosApi.get(`/${userId}`);
+  getUsuarios = (userId: number, access_token: string | null) => {
+    this.access_token = access_token;
+    return this.instance.get(`/${userId}`);
+  };
 }
+export const usuariosService = new UsuariosService(`${baseURL}/usuarios/`);
 
-//Escuelas
-class EscuelasService extends AxiosService{
+// Escuelas
+class EscuelasService extends AxiosService {
   getEscuelas = () => {
     return this.instance.get('/');
-  }
+  };
 }
-export const escuelasService=new EscuelasService(`${baseURL}/escuelasprofesionales/`);
+export const escuelasService = new EscuelasService(`${baseURL}/escuelasprofesionales/`);
 
 

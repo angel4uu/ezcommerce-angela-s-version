@@ -24,7 +24,7 @@ import {
 import { getFileURL } from "../../utils/helpers";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { createUsuario, escuelasService } from "@/api/apiUsuarios";
+import { usuariosService, escuelasService } from "@/api/apiUsuarios";
 import { EscuelaProfesional, APIResponse } from "@/types";
 
 const formSchema = z.object({
@@ -124,7 +124,7 @@ export const RegisterPage = () => {
     const fileInput = form.getValues("codigoqr");
     let updatedValues = { ...values };
 
-    //If qr, obtain url
+    // If qr, obtain url
     if (fileInput && fileInput[0]) {
       const selectedFile = fileInput[0];
       try {
@@ -138,11 +138,11 @@ export const RegisterPage = () => {
       updatedValues = { ...values, codigoqr: null };
     }
 
-    //Set username as email
+    // Set username as email
     updatedValues = { ...updatedValues, username: updatedValues.email };
 
     try {
-      await createUsuario(updatedValues);
+      await usuariosService.createUsuario(updatedValues);
       toast.success("Su cuenta fue registrada con éxito");
     } catch (error) {
       console.log(error);

@@ -23,7 +23,7 @@ import { Link } from "react-router-dom";
 import { AvatarComponent } from "./AvatarComponent";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { getUsuarios } from "../../api/apiUsuarios";
+import { usuariosService } from "../../api/apiUsuarios";
 import { useEffect, useState } from "react";
 const IconWrapper = ({ children }: { children: React.ReactNode }) => (
   <div className="bg-gray-300 p-1.5 rounded-full">{children}</div>
@@ -64,7 +64,8 @@ export const MenuAccount = () => {
 
   useEffect(() => {
     if (authState.userId) {
-      getUsuarios(authState.userId).then((response) => {
+      const access_token = authState.accessToken;
+      usuariosService.getUsuarios(authState.userId, access_token).then((response) => {
         setUser(response.data);
       });
     }

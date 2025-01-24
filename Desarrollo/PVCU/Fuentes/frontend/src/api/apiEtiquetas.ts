@@ -1,16 +1,9 @@
-import axios from 'axios';
-export const baseURL='http://localhost:8000/etiquetas';
+import { AxiosService, baseURL } from './api';
 
-export interface Etiqueta{
-    id:number,
-    nombre:string,
-    descripcion:string,
+class EtiquetasService extends AxiosService {
+  getEtiquetas = () => {
+    return this.instance.get('/');
+  };
 }
 
-const etiquetasApi = axios.create({
-    baseURL: `${baseURL}` 
-});
-
-export const getEtiquetas = () => {
-    return etiquetasApi.get('/');
-}
+export const etiquetasService = new EtiquetasService(`${baseURL}/etiquetas`);
