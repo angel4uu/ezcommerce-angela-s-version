@@ -74,7 +74,8 @@ urlpatterns = [
     path('api/token/', views_epica1.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', views_epica1.CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-
+    path('activate/<uidb64>/<token>/', views_epica1.ActivateAccountView.as_view(), name='activate_account'),
+    path('resend-activation-email/', views_epica1.ResendActivationEmailView.as_view(), name='resend_activation_email'),
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
