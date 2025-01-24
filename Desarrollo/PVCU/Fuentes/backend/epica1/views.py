@@ -19,12 +19,19 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from dotenv import load_dotenv
 import json
+import os
+import datetime
+
+load_dotenv()
+
 
 def send_activation_email(user):
     token = account_activation_token.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    activation_link = f"http://127.0.0.1:8000/activate/{uid}/{token}/"
+    domain = os.getenv("DOMAIN", "localhost:8000")
+    activation_link = f"{domain}/activate/{uid}/{token}/"
 
     subject = "Activate Your Account"
     message = f"Click the link to activate your Ezcommerce account: {activation_link}"
@@ -124,13 +131,20 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         # Create the response
         response = Response({"access": access_token}, status=status.HTTP_200_OK)
 
+        days_expire = 1
+        expires = datetime.datetime.strftime(
+            datetime.datetime.utcnow() + datetime.timedelta(days=days_expire), "%a, %d-%b-%Y %H:%M:%S GMT",
+        )
+
         # Set the refresh token in a secure, HttpOnly cookie
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
             httponly=True,    # Prevent access via JavaScript
-            secure=True,      # Use HTTPS only
-            samesite="Strict" # Prevent CSRF attacks
+            secure=False,      # Use HTTPS only(false for development)
+            samesite="Lax", # Prevent CSRF attacks(Lax for development)
+            path="/",          # Accesible from all paths
+            expires=expires          # Expire in 1 day
         )
 
         return response

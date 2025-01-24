@@ -76,7 +76,7 @@ export const RegisterTrademark = () => {
     //Post marca
     try{
       console.log(updatedValues);
-      const response=await marcasService.createMarca(updatedValues);
+      const response=await marcasService.createMarca(updatedValues,authState.accessToken);
       console.log("response",response);
     }
     catch(error){

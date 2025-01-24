@@ -38,7 +38,7 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const marcaResponse = await marcasService.getMarcaByUsuario(authState.userId);
+        const marcaResponse = await marcasService.getMarcaByUsuario(authState.userId, authState.accessToken);
         const fetchedMarca = marcaResponse?.data?.results?.[0] as Marca;
         if (!fetchedMarca) return;
         setMarca(fetchedMarca);

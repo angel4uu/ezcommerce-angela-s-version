@@ -1,6 +1,5 @@
 import { logout, refreshAccessToken } from "@/context/AuthContext";
-import { Tokens } from "@/types";
-import axios, { AxiosInstance} from "axios";
+import axios, { AxiosInstance } from "axios";
 export const baseURL = "http://localhost:8000";
 
 export class AxiosService {
@@ -9,11 +8,14 @@ export class AxiosService {
   constructor(baseURL: string) {
     this.instance = axios.create({
       baseURL,
+      withCredentials: true,
     });
   }
 }
 
 export class AxiosProtectedService extends AxiosService {
+  access_token: string | null = null;
+
   constructor(baseURL: string) {
     super(baseURL);
     this.addInterceptors();
@@ -21,10 +23,9 @@ export class AxiosProtectedService extends AxiosService {
 
   addInterceptors() {
     this.instance.interceptors.request.use((config) => {
-      const tokens: Tokens | null = JSON.parse(localStorage.getItem("tokens") || "null");
-      if (tokens?.access) {
-          config.headers.Authorization = `Bearer ${tokens.access}`;
-          console.log("request with auth header :)");
+      if (this.access_token) {
+        config.headers.Authorization = `Bearer ${this.access_token}`;
+        console.log("request with auth header :)");
       }
       return config;
     });
@@ -38,9 +39,10 @@ export class AxiosProtectedService extends AxiosService {
           originalRequest._retry = true;
 
           try {
-            const newTokens = await refreshAccessToken();
-            if (newTokens) {
-              originalRequest.headers.Authorization = `Bearer ${newTokens.access}`;
+            const access = await refreshAccessToken();
+            if (access) {
+              this.access_token = access;
+              originalRequest.headers.Authorization = `Bearer ${this.access_token}`;
               return this.instance(originalRequest);
             }
           } catch (refreshError) {

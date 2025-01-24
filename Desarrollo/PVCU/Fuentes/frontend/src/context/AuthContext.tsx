@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import axios from "axios";
-import { AuthState, Tokens, DecodedToken } from "@/types/types";
+import { AuthState,  DecodedToken } from "@/types/types";
 import { baseURL } from "@/api/api";
 
 interface AuthContextType {
@@ -13,52 +13,30 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-export let refreshAccessToken: () => Promise<Tokens | null>;
+export let refreshAccessToken: () => Promise<string | null>;
 export let logout: () => void;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authState, setAuthState] = useState<AuthState>(() => {
-    const tokens: Tokens | null = JSON.parse(
-      localStorage.getItem("tokens") || "null"
-    );
-    if (tokens) {
-      const { access } = tokens;
-      const decodedToken: DecodedToken = jwtDecode(access);
-      return { accessToken: access, userId: decodedToken.user_id };
-    }
-    return { accessToken: null, userId: null };
-  });
+  const [authState, setAuthState] = useState<AuthState>({ userId: null, accessToken: null });
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
     refreshAccessToken();
   }, []);
 
-  refreshAccessToken = async (): Promise<Tokens | null> => {
-    const tokens: Tokens | null = JSON.parse(
-      localStorage.getItem("tokens") || "null"
-    );
-    if (tokens?.refresh) {
-      try {
-        const response = await axios.post(`${baseURL}/api/token/refresh/`, {
-          refresh: tokens.refresh,
-        });
-        const newTokens = { ...tokens, access: response.data.access };
-        setTokens(newTokens);
-        const decodedToken: DecodedToken = jwtDecode(newTokens.access);
-        setAuthState({
-          userId: decodedToken.user_id,
-          accessToken: newTokens.access,
-        });
-        console.log("Access token refreshed :)");
-        return newTokens;
-      } catch (error) {
-        console.error("Error refreshing access token:", error);
-        logout();
-        return null;
-      }
-    } else {
-      console.log("No refresh token set to refresh");
+  refreshAccessToken = async (): Promise<string | null> => {
+    try {
+      const response = await axios.post(`${baseURL}/api/token/refresh/`, {}, { withCredentials: true });
+      const decodedToken: DecodedToken = jwtDecode(response.data.access);
+      setAuthState({
+        userId: decodedToken.user_id,
+        accessToken: response.data.access,
+      });
+      console.log("Access token refreshed :)");
+      return response.data.access;
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      logout();
       return null;
     }
   };
@@ -68,17 +46,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await axios.post(`${baseURL}/api/token/`, {
         username,
         password,
-      });
-      const tokens: Tokens = {
-        access: response.data.access,
-        refresh: response.data.refresh,
-      };
-      const decodedToken: DecodedToken = jwtDecode(tokens.access);
+      }, { withCredentials: true });
+      const decodedToken: DecodedToken = jwtDecode(response.data.access);
       setAuthState({
-        accessToken: tokens.access,
+        accessToken: response.data.access,
         userId: decodedToken.user_id,
       });
-      setTokens(tokens);
     } catch (error) {
       console.error("Login error:", error);
       throw new Error("Login failed");
@@ -87,11 +60,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   logout = (): void => {
     setAuthState({ userId: null, accessToken: null });
-    localStorage.removeItem("tokens");
-  };
-
-  const setTokens = (tokens: Tokens): void => {
-    localStorage.setItem("tokens", JSON.stringify(tokens));
   };
 
   return (

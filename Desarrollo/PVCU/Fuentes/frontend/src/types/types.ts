@@ -46,10 +46,6 @@ export type Membresia={
 export type DecodedToken ={
   user_id: number;
 }
-export type Tokens ={
-  access: string;
-  refresh: string;
-}
 export type AuthState ={
   accessToken: string | null;
   userId: number | null;
