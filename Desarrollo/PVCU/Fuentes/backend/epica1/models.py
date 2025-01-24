@@ -55,6 +55,7 @@ class Usuario(AbstractBaseUser):
     
     usuario_administrador = models.BooleanField(default=False)
     usuario_activo = models.BooleanField(default=True)
+    usuario_verificado = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 
