@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState, useEffect } from "react";
-import { Marca, Plan, Membresia } from "@/types";
+import { Marca, Plan, Membresia } from "@/api";
 import {
   membresiasService,
   planesService,
@@ -26,19 +26,19 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
   const [plan, setPlan] = useState<Plan | null>(null);
 
   const [gratisModal, setGratisModal] = useState<boolean>(false);
-  const { authState } = useAuth();
+  const { authId } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       
-      if (!authState.userId){
+      if (!authId){
         setMarca(null);
         setMembresia(null);
         setPlan(null);
         return;
       }
       try {
-        const marcaResponse = await marcasService.getMarcaByUsuario(authState.userId, authState.accessToken);
+        const marcaResponse = await marcasService.getMarcaByUsuario(authId);
         const fetchedMarca = marcaResponse?.data?.results?.[0] as Marca;
         if (!fetchedMarca) return;
         setMarca(fetchedMarca);
@@ -58,7 +58,7 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchData();
-  }, [authState.userId]);
+  }, [authId]);
 
   return (
     <TrademarkContext.Provider

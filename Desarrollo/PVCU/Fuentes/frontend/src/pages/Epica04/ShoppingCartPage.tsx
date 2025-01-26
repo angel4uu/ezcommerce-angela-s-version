@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import { AccordionShoppingCart } from "../../components/Epica04/AccordionShoppingCart";
 import { CardOrderSummary } from "../../components/Epica04/CardOrderSummary";
-import { useCartContext } from "../../context/CartContext";
+import { useCart } from "@/hooks";
 
 export const ShoppingCartPage = () => {
-  const { items } = useCartContext();
+  const { items } = useCart();
 
   return (
     <>

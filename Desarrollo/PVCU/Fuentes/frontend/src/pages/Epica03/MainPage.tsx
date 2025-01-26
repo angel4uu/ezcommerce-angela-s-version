@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { CategoriesCard, SellersCard } from '../../components/cards';
-import { categories, distinguishedSellers, images } from '../../mocks/mainPage-mocks';
+import { categories, distinguishedSellers, images } from './mainPage-mocks';
 import { ProductCard } from '../../components/cards/product-card';
 import { LoginModal } from '@/components/Epica5/LoginModal';
 import { useTrademark } from '@/hooks/useTrademark';

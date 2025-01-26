@@ -34,9 +34,9 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { articulosService } from "@/api/apiArticulos";
-import { Articulo } from "@/types";
+import { Articulo } from "@/api";
 import { Link } from "react-router-dom";
-import { LoadImageMajor } from "@/helpers/getImageMajor";
+import { LoadImageMajor } from "@/utils";
 import { useCart,useFavourites,useAuth } from "@/hooks";
 
 type Image = {
@@ -54,7 +54,6 @@ export function ProductDetailsPage() {
 
   const { addItem } = useCart();
   const { favourites, toggleFavourite } = useFavourites();
-  const {authState} = useAuth();
   
 
   const fetchImage = async () => {
@@ -72,10 +71,10 @@ export function ProductDetailsPage() {
     const fetchArticulo = async (id: number) => {
       setIsLoading(true);
       try {
-        const response = await articulosService.getArticulo(id,authState.accessToken);
+        const response = await articulosService.getArticulo(id);
         setArticulo(response.data);
 
-        const responseProductos = await articulosService.getArticulos(authState.accessToken);
+        const responseProductos = await articulosService.getArticulos();
         setProductos(responseProductos.data.results);
 
         console.log(response.data);

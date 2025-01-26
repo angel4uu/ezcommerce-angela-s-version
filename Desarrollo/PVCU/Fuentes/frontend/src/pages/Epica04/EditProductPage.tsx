@@ -2,24 +2,21 @@ import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { ProductForm } from "../../components/Epica04/ProductForm";
 import { useEffect, useState } from "react";
-import { articulosService } from "../../api/apiArticulos";
-import { LoadImageMajor } from "../../helpers/getImageMajor"; // Importar el helper
+import { Articulo, articulosService } from "../../api/apiArticulos";
 import { UploadedImage } from "../../pages/Epica04/hooks/useImageUpload"; // Tipo para imágenes
-import { Articulo as a } from "../../types";
-import { useAuth } from "@/hooks/useAuth";
+import { LoadImageMajor } from "@/utils";
 
 export const EditProductPage = () => {
   const { productId } = useParams<{ productId: string }>();
-  const [productToEdit, setProductToEdit] = useState<a>();
+  const [productToEdit, setProductToEdit] = useState<Articulo>();
   const [productImages, setProductImages] = useState<UploadedImage[]>([]); // Estado para las imágenes
   const [loading, setLoading] = useState(true);
-  const { authState } = useAuth();
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         // Obtener el producto
-        const productResponse = await articulosService.getArticulo(Number(productId),authState.accessToken);
+        const productResponse = await articulosService.getArticulo(Number(productId));
         setProductToEdit(productResponse.data);
 
         // Obtener las imágenes asociadas al producto utilizando el helper

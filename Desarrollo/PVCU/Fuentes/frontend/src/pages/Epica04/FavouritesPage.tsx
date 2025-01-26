@@ -1,26 +1,24 @@
 import { Helmet } from "react-helmet-async";
 import { ProductCard } from "../../components/cards/product-card";
-import { useFavouritesContext } from "../../context/FavouritesContext"; // Nuevo hook del contexto
+import { useFavourites} from "@/hooks"; // Nuevo hook del contexto
 import { useState, useEffect } from "react";
 import { articulosService} from "../../api/apiArticulos";
-import { Articulo } from "../../types";
+import { Articulo } from "@/api";
 import { imagesService} from "../../api/apiImages";
-import { useAuth } from "@/hooks/useAuth";
 
 export const FavouritesPage = () => {
-  const { favourites } = useFavouritesContext(); // Cambiado a usar el contexto
+  const { favourites } = useFavourites(); // Cambiado a usar el contexto
   const [products, setProducts] = useState<Articulo[]>([]);
-  const {authState} = useAuth();
 
   useEffect(() => {
     const fetchFavourites = async () => {
       try {
         // Obtener todos los artículos
-        const articulosResponse = await articulosService.getArticulos(authState.accessToken);
+        const articulosResponse = await articulosService.getArticulos();
         const articulos = articulosResponse.data.results;
 
         // Obtener todas las imágenes
-        const imagesResponse = await imagesService.getAllImages(authState.accessToken);
+        const imagesResponse = await imagesService.getAllImages();
         const images = imagesResponse.data.results;
 
         // Crear un mapa con la primera imagen de cada artículo

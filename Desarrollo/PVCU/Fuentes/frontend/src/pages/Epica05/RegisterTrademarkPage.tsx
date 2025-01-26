@@ -43,14 +43,14 @@ const formSchema = z.object({
 type FormFields = z.infer<typeof formSchema>;
 
 export const RegisterTrademark = () => {
-  const { authState } = useAuth();
+  const { authId } = useAuth();
   const form = useForm<FormFields>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nombre: "",
       logo: undefined,
       descripcion: "",
-      id_usuario: authState.userId!,
+      id_usuario: authId!,
     },
   });
 
@@ -76,7 +76,7 @@ export const RegisterTrademark = () => {
     //Post marca
     try{
       console.log(updatedValues);
-      const response=await marcasService.createMarca(updatedValues,authState.accessToken);
+      const response=await marcasService.createMarca(updatedValues);
       console.log("response",response);
     }
     catch(error){

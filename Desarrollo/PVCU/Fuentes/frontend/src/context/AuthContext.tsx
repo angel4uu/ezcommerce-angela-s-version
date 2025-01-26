@@ -4,14 +4,14 @@ import axios from "axios";
 import { baseURL } from "@/api/api";
 
 export interface AuthContextType {
-  authId: string | null;
+  authId: number | null;
   loginModal: boolean;
   setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 export type DecodedToken = {
-  user_id: string;
+  user_id: number;
 }
 
 export const AuthContext = createContext<AuthContextType >({
@@ -25,7 +25,7 @@ export let refreshAccessToken: () => Promise<string | null>;
 export let logout: () => void;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authId, setAuthId] = useState<string | null>(null);
+  const [authId, setAuthId] = useState<number | null>(null);
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   useEffect(() => {

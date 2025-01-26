@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet-async";
 import qr from "@/assets/qr_yape_devsla.png";
 import { useNavigate } from "react-router";
-import { Plan } from "@/types";
+import { Plan } from "@/api";
 
 export const PayPlanPage = () => {
   const navigate = useNavigate();

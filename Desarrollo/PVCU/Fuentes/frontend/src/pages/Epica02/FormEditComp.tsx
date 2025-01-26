@@ -31,8 +31,7 @@ interface Escuelas {
 }
 
 export function FormEditComp() {
-  const { authState } = useAuth();
-  const userId = authState.userId;
+  const { authId } = useAuth();
   const { toast } = useToast();
 
   //const [isMarca, setIsMarca] = useState(true);
@@ -67,13 +66,14 @@ export function FormEditComp() {
   useEffect(() => {
     const fetchEscuelas = async () => {
       try {
+        const access_token = localStorage.getItem("access_token");
         const response = await fetch(
           "http://localhost:8000/escuelasprofesionales/",
           {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Authorization: `Bearer ${authState.accessToken}`,
+              Authorization: `Bearer ${access_token}`,
             },
           }
         );
@@ -86,13 +86,14 @@ export function FormEditComp() {
 
   const fetchData = async () => {
     try {
+      const access_token = localStorage.getItem("access_token");
       const response = await fetch(
-        `http://localhost:8000/usuarios/${userId}/`,
+        `http://localhost:8000/usuarios/${authId}/`,
         {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${authState.accessToken}`,
+            Authorization: `Bearer ${access_token}`,
           },
         }
       );
@@ -117,14 +118,15 @@ export function FormEditComp() {
     // ✅ This will be type-safe and validated.
     console.log(values);
     try {
+      const access_token = localStorage.getItem("access_token");
       const response = await fetch(
-        `http://localhost:8000/usuarios/${userId}/`,
+        `http://localhost:8000/usuarios/${authId}/`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${authState.accessToken}`,
+            Authorization: `Bearer ${access_token}`,
           },
           body: JSON.stringify(values),
         }

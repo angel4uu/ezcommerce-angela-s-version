@@ -2,8 +2,7 @@ import { Star, Heart } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
-import { useCartContext } from "../../context/CartContext";
-import { useFavouritesContext } from "../../context/FavouritesContext";
+import { useCart, useFavourites } from "@/hooks";
 
 export interface IProductCardProps {
   id: number;
@@ -25,8 +24,8 @@ export const ProductCard = ({
   const navigate = useNavigate();
   const goToProduct = () => navigate(`/product/${id}`);
 
-  const { addItem } = useCartContext(); // Cambiado a `useCartContext`
-  const { favourites, toggleFavourite } = useFavouritesContext();
+  const { addItem } = useCart(); // Cambiado a `useCartContext`
+  const { favourites, toggleFavourite } = useFavourites();
 
   const isFavourite = favourites.includes(id);
 

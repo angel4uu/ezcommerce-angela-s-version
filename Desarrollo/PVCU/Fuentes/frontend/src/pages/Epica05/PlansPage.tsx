@@ -1,12 +1,12 @@
 import { Helmet } from "react-helmet-async";
 import { PlanCard } from "@/components/Epica5/PlanCard";
-import { Plan } from "@/types";
+import { Plan } from "@/api";
 import { GratisModal } from "../../components/Epica5/GratisModal";
 import { useLoaderData } from "react-router";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { planesService } from "@/api/apiMarcas";
 
-const beneficios_basicos = [
+const beneficios_basicos:string[] = [
   "Publica tus productos para llegar a más clientes potenciales.",
   "Compra productos de la comunidad universitaria.",
   "Guarda tus productos favoritos para acceder a ellos más tarde.",

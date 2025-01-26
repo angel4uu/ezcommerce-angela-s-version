@@ -4,19 +4,19 @@ import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardPublishedEdit } from "../../components/Epica04/CardPublishedEdit";
-import { LoadArticulosByUser } from "../../helpers/LoadArticulosByUser";
+import { LoadArticulosByUser } from "@/utils";
 import { useAuth } from "@/hooks/useAuth";
 
 export const MyPublishedProductsPage = () => {
-  const { authState } = useAuth(); // Obtener el estado de autenticación
+  const { authId } = useAuth(); // Obtener el estado de autenticación
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (!authState?.userId) return; // Asegurarse de que el usuario esté autenticado
+      if (!authId) return; // Asegurarse de que el usuario esté autenticado
       try {
-        const data = await LoadArticulosByUser(authState.userId); // Usar el helper para obtener los productos
+        const data = await LoadArticulosByUser(authId); // Usar el helper para obtener los productos
         setProducts(data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);
@@ -26,7 +26,7 @@ export const MyPublishedProductsPage = () => {
     };
 
     fetchProducts();
-  }, [authState?.userId]);
+  }, [authId]);
 
   const handleProductDeleted = (deletedProductId: number) => {
     setProducts((prevProducts) =>
