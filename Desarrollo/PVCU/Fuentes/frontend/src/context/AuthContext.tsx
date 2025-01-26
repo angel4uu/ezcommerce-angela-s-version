@@ -1,15 +1,21 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import {jwtDecode} from "jwt-decode";
 import axios from "axios";
-import { AuthState,  DecodedToken } from "@/types/types";
 import { baseURL } from "@/api/api";
 
+export type AuthState ={
+  accessToken: string | null;
+  userId: number | null;
+}
 export interface AuthContextType {
   authState: AuthState;
   loginModal: boolean;
   setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
+}
+export type DecodedToken ={
+  user_id: number;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

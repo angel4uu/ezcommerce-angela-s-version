@@ -1,5 +1,16 @@
 import { AxiosProtectedService, baseURL } from './api';
-import { Articulo } from '../types/types';
+export interface Articulo {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  stock: number;
+  etiquetas: number[];
+  id_marca?: number;
+  is_marca: boolean;
+  id_catalogo: number;
+  imageUrl?: string;
+}
 
 class ArticulosService extends AxiosProtectedService {
   getArticulos = (access_token: string | null) => {

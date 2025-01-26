@@ -1,5 +1,11 @@
 import { AxiosService, baseURL } from './api';
 
+export interface Facultad{
+  codigo:number,
+  nombre:string,
+  siglas:string,
+}
+
 class FacultadesService extends AxiosService {
   getAllFacultades = (page: number) => {
     return this.instance.get(`/?page=${page}`);

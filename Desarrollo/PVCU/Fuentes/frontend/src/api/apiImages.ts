@@ -1,5 +1,9 @@
 import { AxiosProtectedService, baseURL } from './api';
-import { Image } from '../types/types';
+
+export interface Image {
+  id_articulo: number,
+  url: string,
+}
 
 class ImagesService extends AxiosProtectedService {
   getAllImages = (access_token: string | null) => {

@@ -1,7 +1,14 @@
-import { Marca } from "@/types";
 import { baseURL, AxiosProtectedService, AxiosService } from "./api";
 
 // Marcas
+export type Marca={
+  id?:number,
+  id_usuario:number,
+  nombre:string,
+  descripcion:string,
+  logo:string|FileList
+}
+
 class MarcasService extends AxiosProtectedService {
   getMarcaByUsuario = (idUsuario: number | null, access_token: string | null) => {
     this.access_token = access_token;
@@ -16,6 +23,14 @@ class MarcasService extends AxiosProtectedService {
 export const marcasService = new MarcasService(`${baseURL}/marcas/`);
 
 // Membresias
+export type Membresia={
+  id?:number,
+  id_marca:number,
+  id_plan:number,
+  fecha_inicio:string,
+  fecha_final:string,
+}
+
 class MembresiasService extends AxiosService {
   getMembresiaByMarca = (idMarca: number) => {
     return this.instance.get(`/?id_marca=${idMarca}`);
@@ -24,6 +39,16 @@ class MembresiasService extends AxiosService {
 export const membresiasService = new MembresiasService(`${baseURL}/membresias/`);
 
 // Planes
+export type Plan={
+  id?:number,
+  nombre:string,
+  descripcion:string,
+  espacio_extra:number,
+  duracion:number,
+  precio:number,
+  beneficios?:string[],
+}
+
 class PlanesService extends AxiosService {
   getPlan = async (planId: number) => {
     return await this.instance.get(`${planId}`);
