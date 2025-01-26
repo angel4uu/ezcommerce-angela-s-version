@@ -1,29 +1,31 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { baseURL } from "@/api/api";
 
-export type AuthState ={
-  accessToken: string | null;
-  userId: number | null;
-}
 export interface AuthContextType {
-  authState: AuthState;
+  authId: string | null;
   loginModal: boolean;
   setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
-export type DecodedToken ={
-  user_id: number;
+export type DecodedToken = {
+  user_id: string;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType >({
+  authId: null,
+  loginModal: false,
+  setLoginModal: () => {},
+  login: async () => {},
+  logout: () => {},
+});
 export let refreshAccessToken: () => Promise<string | null>;
 export let logout: () => void;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authState, setAuthState] = useState<AuthState>({ userId: null, accessToken: null });
+  const [authId, setAuthId] = useState<string | null>(null);
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -34,10 +36,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await axios.post(`${baseURL}/api/token/refresh/`, {}, { withCredentials: true });
       const decodedToken: DecodedToken = jwtDecode(response.data.access);
-      setAuthState({
-        userId: decodedToken.user_id,
-        accessToken: response.data.access,
-      });
+      setAuthId(decodedToken.user_id);
+      localStorage.setItem("access_token", response.data.access);
       console.log("Access token refreshed :)");
       return response.data.access;
     } catch (error) {
@@ -54,10 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
       }, { withCredentials: true });
       const decodedToken: DecodedToken = jwtDecode(response.data.access);
-      setAuthState({
-        accessToken: response.data.access,
-        userId: decodedToken.user_id,
-      });
+      setAuthId(decodedToken.user_id);
+      localStorage.setItem("access_token", response.data.access);
     } catch (error) {
       console.error("Login error:", error);
       throw new Error("Login failed");
@@ -65,12 +63,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   logout = (): void => {
-    setAuthState({ userId: null, accessToken: null });
+    setAuthId(null);
+    localStorage.removeItem("access_token");
   };
 
   return (
     <AuthContext.Provider
-      value={{ authState, loginModal, setLoginModal, login, logout }}
+      value={{ authId, loginModal, setLoginModal, login, logout }}
     >
       {children}
     </AuthContext.Provider>

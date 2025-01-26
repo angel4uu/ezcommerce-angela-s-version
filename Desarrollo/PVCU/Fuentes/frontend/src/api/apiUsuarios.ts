@@ -20,8 +20,7 @@ class UsuariosService extends AxiosProtectedService {
     return this.instance.post('/', usuario);
   };
 
-  getUsuarios = (userId: number, access_token: string | null) => {
-    this.access_token = access_token;
+  getUsuarios = (userId: number) => {
     return this.instance.get(`/${userId}`);
   };
 }

@@ -1,7 +1,7 @@
-import { ReactNode, useState, useEffect } from "react"
-import { Context, createContext } from "react"
-import { etiquetasService } from "../api/apiEtiquetas"
-import { Etiqueta } from "@/types"
+import { ReactNode, useState, useEffect } from "react";
+import { Context, createContext } from "react";
+import { etiquetasService } from "../api/apiEtiquetas";
+import { Etiqueta } from "@/api";
 
 export interface ContextType{
     etiquetasList: Etiqueta[],

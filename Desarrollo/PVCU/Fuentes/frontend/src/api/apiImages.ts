@@ -6,28 +6,23 @@ export interface Image {
 }
 
 class ImagesService extends AxiosProtectedService {
-  getAllImages = (access_token: string | null) => {
-    this.access_token = access_token;
+  getAllImages = () => {
     return this.instance.get('/');
   };
 
-  getImage = (id: number, access_token: string | null) => {
-    this.access_token = access_token;
+  getImage = (id: number) => {
     return this.instance.get(`/?id_articulo=${id}`);
   };
 
-  createImage = (image: Image, access_token: string | null) => {
-    this.access_token = access_token;
+  createImage = (image: Image) => {
     return this.instance.post('/', image);
   };
 
-  updateImage = (id: number, image: Image, access_token: string | null) => {
-    this.access_token = access_token;
+  updateImage = (id: number, image: Image) => {
     return this.instance.put(`/${id}/`, image);
   };
 
-  deleteImage = (id: number, access_token: string | null) => {
-    this.access_token = access_token;
+  deleteImage = (id: number) => {
     return this.instance.delete(`/${id}/`);
   };
 }

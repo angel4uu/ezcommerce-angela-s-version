@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
 import { createArticulo, Articulo, updateArticulo } from "../../../api/apiArticulos";
 import { createImage } from "../../../api/apiImages";
-import { getFileURL } from "../../../utils/helpers";
+import { getFileURL } from "../../../utils/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
 import { useEffect, useState } from "react";

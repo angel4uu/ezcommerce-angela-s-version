@@ -13,33 +13,27 @@ export interface Articulo {
 }
 
 class ArticulosService extends AxiosProtectedService {
-  getArticulos = (access_token: string | null) => {
-    this.access_token = access_token;
+  getArticulos = () => {
     return this.instance.get('/');
   };
 
-  createArticulo = (articulo: Articulo, access_token: string | null) => {
-    this.access_token = access_token;
+  createArticulo = (articulo: Articulo) => {
     return this.instance.post('/', articulo);
   };
 
-  updateArticulo = (id: number, articulo: Articulo, access_token: string | null) => {
-    this.access_token = access_token;
+  updateArticulo = (id: number, articulo: Articulo) => {
     return this.instance.put(`/${id}/`, articulo);
   };
 
-  deleteArticulo = (id: number, access_token: string | null) => {
-    this.access_token = access_token;
+  deleteArticulo = (id: number) => {
     return this.instance.delete(`/${id}/`);
   };
 
-  getArticulo = (id: number, access_token: string | null) => {
-    this.access_token = access_token;
+  getArticulo = (id: number) => {
     return this.instance.get(`/${id}`);
   };
 
-  getArticulosByUsuario = (usuarioId: number, access_token: string | null) => {
-    this.access_token = access_token;
+  getArticulosByUsuario = (usuarioId: number) => {
     return this.instance.get(`/?id_catalogo__id_usuario=${usuarioId}`);
   };
 }

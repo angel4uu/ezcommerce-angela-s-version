@@ -14,8 +14,6 @@ export class AxiosService {
 }
 
 export class AxiosProtectedService extends AxiosService {
-  access_token: string | null = null;
-
   constructor(baseURL: string) {
     super(baseURL);
     this.addInterceptors();
@@ -23,8 +21,9 @@ export class AxiosProtectedService extends AxiosService {
 
   addInterceptors() {
     this.instance.interceptors.request.use((config) => {
-      if (this.access_token) {
-        config.headers.Authorization = `Bearer ${this.access_token}`;
+      const access_token = localStorage.getItem("access_token");
+      if (access_token) {
+        config.headers.Authorization = `Bearer ${access_token}`;
         console.log("request with auth header :)");
       }
       return config;
@@ -41,8 +40,7 @@ export class AxiosProtectedService extends AxiosService {
           try {
             const access = await refreshAccessToken();
             if (access) {
-              this.access_token = access;
-              originalRequest.headers.Authorization = `Bearer ${this.access_token}`;
+              originalRequest.headers.Authorization = `Bearer ${access}`;
               return this.instance(originalRequest);
             }
           } catch (refreshError) {

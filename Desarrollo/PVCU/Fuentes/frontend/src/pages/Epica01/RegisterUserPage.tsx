@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getFileURL } from "../../utils/helpers";
+import { getFileURL } from "../../utils/firebase";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { usuariosService, escuelasService } from "@/api/apiUsuarios";

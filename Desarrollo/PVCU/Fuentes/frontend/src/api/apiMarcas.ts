@@ -10,13 +10,11 @@ export type Marca={
 }
 
 class MarcasService extends AxiosProtectedService {
-  getMarcaByUsuario = (idUsuario: number | null, access_token: string | null) => {
-    this.access_token = access_token;
+  getMarcaByUsuario = (idUsuario: number | null) => {
     return this.instance.get(`/?id_usuario=${idUsuario}`);
   };
 
-  createMarca = (marca: Marca, access_token: string | null) => {
-    this.access_token = access_token;
+  createMarca = (marca: Marca) => {
     return this.instance.post("/", marca);
   };
 }
