@@ -25,7 +25,7 @@ import { getFileURL } from "../../utils/firebase";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { usuariosService, escuelasService } from "@/api/apiUsuarios";
-import { EscuelaProfesional, APIResponse } from "@/types";
+import { EscuelaProfesional } from "@/api";
 
 const formSchema = z.object({
   nombres: z
@@ -81,16 +81,13 @@ const formSchema = z.object({
 
 type FormFields = z.infer<typeof formSchema>;
 
-
-import { AxiosResponse } from "axios";
-
 interface LoaderData {
   escuelasData: EscuelaProfesional[];
 }
 
 export async function loader(): Promise<LoaderData> {
   try {
-    const response: AxiosResponse<APIResponse> = await escuelasService.getEscuelas();
+    const response= await escuelasService.getEscuelas();
     const escuelasData = response.data.results;
     return { escuelasData };
   } catch (error) {
