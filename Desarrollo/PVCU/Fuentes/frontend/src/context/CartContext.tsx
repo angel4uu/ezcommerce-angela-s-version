@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { ProductCart, getProductCart } from "../helpers/getProducCart";
 import { toast } from "sonner";
 
-interface CartContextType {
+export interface CartContextType {
   items: ProductCart[];
   addItem: (id: number, quantity?: number) => Promise<void>;
   removeItem: (productTitle: string) => void;
@@ -10,15 +10,7 @@ interface CartContextType {
   clearCart: () => void;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
-
-export const useCartContext = (): CartContextType => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCartContext debe usarse dentro de CartProvider");
-  }
-  return context;
-};
+export const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<ProductCart[]>([]);

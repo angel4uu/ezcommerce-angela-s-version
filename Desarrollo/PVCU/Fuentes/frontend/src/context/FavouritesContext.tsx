@@ -1,20 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 import { toast } from "sonner"; // Importar el sistema de notificaciones
 
-interface FavouritesContextProps {
+export interface FavouritesContextProps {
   favourites: number[];
   toggleFavourite: (productId: number) => void;
 }
 
-const FavouritesContext = createContext<FavouritesContextProps | undefined>(undefined);
-
-export const useFavouritesContext = () => {
-  const context = useContext(FavouritesContext);
-  if (!context) {
-    throw new Error("useFavouritesContext debe usarse dentro de FavouritesProvider");
-  }
-  return context;
-};
+export const FavouritesContext = createContext<FavouritesContextProps | undefined>(undefined);
 
 export const FavouritesProvider = ({ children }: { children: ReactNode }) => {
   const [favourites, setFavourites] = useState<number[]>(() => {

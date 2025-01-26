@@ -4,7 +4,7 @@ import axios from "axios";
 import { AuthState,  DecodedToken } from "@/types/types";
 import { baseURL } from "@/api/api";
 
-interface AuthContextType {
+export interface AuthContextType {
   authState: AuthState;
   loginModal: boolean;
   setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +12,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export let refreshAccessToken: () => Promise<string | null>;
 export let logout: () => void;
 

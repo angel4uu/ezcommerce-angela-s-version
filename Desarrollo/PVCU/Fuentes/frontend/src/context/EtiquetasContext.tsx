@@ -1,8 +1,9 @@
 import { ReactNode, useState, useEffect } from "react"
 import { Context, createContext } from "react"
-import { Etiqueta, getEtiquetas } from "../api/apiEtiquetas"
+import { etiquetasService } from "../api/apiEtiquetas"
+import { Etiqueta } from "@/types"
 
-interface ContextType{
+export interface ContextType{
     etiquetasList: Etiqueta[],
     setEtiquetasList: React.Dispatch<React.SetStateAction<Etiqueta[]>>,
     loadingEtiquetas:boolean
@@ -27,7 +28,7 @@ interface ContextType{
       
       const fetchEtiquetas = async () =>{
         try {
-            const etiquetasData = await getEtiquetas();
+            const etiquetasData = await etiquetasService.getEtiquetas();
             setEtiquetasList(etiquetasData.data.results)
         } catch (error) {
           console.error('Failed to fetch etiquetas', error)

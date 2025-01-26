@@ -37,9 +37,7 @@ import { articulosService } from "@/api/apiArticulos";
 import { Articulo } from "@/types";
 import { Link } from "react-router-dom";
 import { LoadImageMajor } from "@/helpers/getImageMajor";
-import { useCartContext } from "../../context/CartContext";
-import { useFavouritesContext } from "@/context/FavouritesContext";
-import { useAuth } from "@/hooks/useAuth";
+import { useCart,useFavourites,useAuth } from "@/hooks";
 
 type Image = {
   id: number;
@@ -54,8 +52,8 @@ export function ProductDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<string[]>([]);
 
-  const { addItem } = useCartContext();
-  const { favourites, toggleFavourite } = useFavouritesContext();
+  const { addItem } = useCart();
+  const { favourites, toggleFavourite } = useFavourites();
   const {authState} = useAuth();
   
 
