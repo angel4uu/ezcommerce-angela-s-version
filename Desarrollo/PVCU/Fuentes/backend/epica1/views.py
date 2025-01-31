@@ -30,7 +30,7 @@ load_dotenv()
 def send_activation_email(user):
     token = account_activation_token.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    domain = os.getenv("DOMAIN", "localhost:8000")
+    domain = os.getenv("CORS_ALLOWED_ORIGINS", "localhost:5173")
     activation_link = f"{domain}/activate/{uid}/{token}/"
 
     subject = "Activate Your Account"
