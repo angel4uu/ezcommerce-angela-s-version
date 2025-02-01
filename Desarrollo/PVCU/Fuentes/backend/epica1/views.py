@@ -42,7 +42,7 @@ def send_activation_email(user):
         from_email="no-reply@ezcommerce.com",
         recipient_list=[user.email],
     )
-    
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ActivateAccountView(View):
     def post(self, request, *args, **kwargs):
@@ -68,7 +68,7 @@ class ActivateAccountView(View):
             user.save()
             return JsonResponse({'detail': 'Account activated successfully'}, status=status.HTTP_200_OK)
         else:
-            return JsonResponse({'detail': 'Activation link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'Activation link is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ResendActivationEmailView(View):

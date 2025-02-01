@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { userActivationService } from "@/api/apiUsuarios";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export const EmailConfirmationPage = () => {
   const { uid, token } = useParams<{ uid: string; token: string }>();
@@ -11,13 +12,21 @@ export const EmailConfirmationPage = () => {
     const activateUser = async () => {
       if (uid && token) {
         try {
-          const response= await userActivationService.activateUser({uid, token});
-          console.log(response);
-          toast.success("Cuenta activada con éxito");
+          const response = await userActivationService.activateUser({ uid, token });
+          toast.success(response.data.detail);
           navigate("/login");
         } catch (error) {
           console.log(error);
-          toast.error("Error al activar la cuenta");
+          if (error instanceof AxiosError) {
+            if (error.response?.status === 400) {
+              toast.error("Link de activación inválido");
+            } else {
+              toast.error("Ha ocurrido un error inesperado");
+            }
+          } else {
+            toast.error("Ha ocurrido un error inesperado");
+          }
+          navigate("/");
         }
       } else {
         navigate("/");
@@ -25,7 +34,7 @@ export const EmailConfirmationPage = () => {
     };
 
     activateUser();
-  }, [uid, token]);
+  }, [uid, token, navigate]);
 
   return <div>Activando cuenta...</div>;
 };
