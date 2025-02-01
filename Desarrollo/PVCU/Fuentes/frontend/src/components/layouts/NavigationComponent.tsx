@@ -18,11 +18,11 @@ const navigationItems = [
 ];
 
 export const NavigationComponent = () => {
-  const { authState, setLoginModal } = useAuth();
+  const { authId, setLoginModal } = useAuth();
   const navigate=useNavigate();
 
   const handleNavigationClick = (link:string) => {
-    if (!authState.userId) {
+    if (!authId) {
       setLoginModal(true);
     } else {
       navigate(link);

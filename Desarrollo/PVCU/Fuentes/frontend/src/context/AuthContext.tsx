@@ -30,9 +30,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
-    if(authId){
-      refreshAccessToken();
-    }
+    refreshAccessToken();
+
   }, []);
 
   refreshAccessToken = async (): Promise<string | null> => {

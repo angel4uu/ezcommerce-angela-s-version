@@ -53,7 +53,7 @@ const options = [
 ];
 
 export const MenuAccount = () => {
-  const { authState } = useAuth();
+  const { authId} = useAuth();
   function onLogoutClick() {
     logout();
     toast.success("Sesión terminada");
@@ -63,13 +63,12 @@ export const MenuAccount = () => {
   const [user, setUser] = useState<{ nombres: string; apellido_p: string; apellido_m: string } | null>(null);
 
   useEffect(() => {
-    if (authState.userId) {
-      const access_token = authState.accessToken;
-      usuariosService.getUsuarios(authState.userId, access_token).then((response) => {
+    if (authId) {
+      usuariosService.getUsuarios(authId).then((response) => {
         setUser(response.data);
       });
     }
-  }, [authState.userId]);
+  }, [authId]);
 
   return (
     <DropdownMenu>
@@ -90,7 +89,7 @@ export const MenuAccount = () => {
         <DropdownMenuSeparator />
         {options.map((option) => (
           <DropdownMenuItem key={option.text} className="py-2">
-            {authState.userId ? (
+            {authId ? (
               <Link
                 to={option.link}
                 className="flex items-center w-full justify-between"
