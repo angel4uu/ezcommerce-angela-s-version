@@ -39,19 +39,16 @@ export const TrademarkProvider = ({ children }: { children: ReactNode }) => {
       }
       try {
         const marcaResponse = await marcasService.getMarcaByUsuario(authId);
-        const fetchedMarca = marcaResponse?.data?.results?.[0] as Marca;
-        if (!fetchedMarca) return;
-        setMarca(fetchedMarca);
+        if (!marcaResponse) return;
+        setMarca(marcaResponse);
 
-        const membresiaResponse = await membresiasService.getMembresiaByMarca(fetchedMarca.id!);
-        const fetchedMembresia = membresiaResponse?.data?.results?.[0] as Membresia;
-        if (!fetchedMembresia) return;
-        setMembresia(fetchedMembresia);
+        const membresiaResponse = await membresiasService.getMembresiaByMarca(marcaResponse.id!);
+        if (!membresiaResponse) return;
+        setMembresia(membresiaResponse);
 
-        const planResponse = await planesService.getPlan(fetchedMembresia.id_plan);
-        const fetchedPlan = planResponse?.data as Plan;
-        if (!fetchedPlan) return;
-        setPlan(fetchedPlan);
+        const planResponse = await planesService.getPlan(membresiaResponse.id_plan);
+        if (!planResponse) return;
+        setPlan(planResponse);
       } catch (error) {
         console.log("Fetching error", error);
       }

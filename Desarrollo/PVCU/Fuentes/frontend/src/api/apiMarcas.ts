@@ -10,11 +10,12 @@ export type Marca={
 }
 
 class MarcasService extends AxiosProtectedService {
-  getMarcaByUsuario = (idUsuario: number | null) => {
-    return this.instance.get(`/?id_usuario=${idUsuario}`);
+  getMarcaByUsuario = async (idUsuario: Marca["id_usuario"]) => {
+    const {data}= await this.instance.get(`/?id_usuario=${idUsuario}`);
+    return data.results[0] as Marca;
   };
 
-  createMarca = (marca: Marca) => {
+  createMarca = (marca: Partial<Marca>) => {
     return this.instance.post("/", marca);
   };
 }
@@ -30,8 +31,9 @@ export type Membresia={
 }
 
 class MembresiasService extends AxiosService {
-  getMembresiaByMarca = (idMarca: number) => {
-    return this.instance.get(`/?id_marca=${idMarca}`);
+  getMembresiaByMarca = async (idMarca:Membresia["id_marca"]) => {
+    const {data}=await this.instance.get(`/?id_marca=${idMarca}`);
+    return data.results[0] as Membresia;
   };
 }
 export const membresiasService = new MembresiasService(`${baseURL}/membresias/`);
@@ -48,12 +50,14 @@ export type Plan={
 }
 
 class PlanesService extends AxiosService {
-  getPlan = async (planId: number) => {
-    return await this.instance.get(`${planId}`);
+  getPlan = async (planId: Plan["id"]) => {
+    const {data}= await this.instance.get(`${planId}`);
+    return data as Plan;
   };
 
-  getPlanes = () => {
-    return this.instance.get("/");
+  getPlanes = async() => {
+    const{data}=await this.instance.get("/");
+    return data.results as Plan[];
   };
 }
 export const planesService = new PlanesService(`${baseURL}/planes/`);

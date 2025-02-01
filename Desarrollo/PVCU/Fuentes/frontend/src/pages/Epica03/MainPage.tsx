@@ -41,11 +41,9 @@ export const MainPage = () => {
     const fetchData = async () => {
       try {
 
-        const articulosResponse = await articulosService.getArticulos();
-        const articulos = articulosResponse.data.results;
+        const articulos = await articulosService.getArticulos();
   
-        const imagesResponse = await imagesService.getAllImages();
-        const images = imagesResponse.data.results;
+        const images = await imagesService.getAllImages();
   
         interface Image {
           id_articulo: number;
@@ -66,8 +64,8 @@ export const MainPage = () => {
   
         setProducts(productsWithImages);
 
-        const escuelasResponse = await escuelasService.getEscuelas();
-        setEscuelas(escuelasResponse.data.results);
+        const escuelas = await escuelasService.getEscuelas();
+        setEscuelas(escuelas);
   
         const vendedoresResponse = await usuariosService.instance.get('?es_vendedor=true');
         setSellers(vendedoresResponse.data.results);

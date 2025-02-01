@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
-import { Articulo, articulosService, imagesService } from "@/api";
+import { Articulo, articulosService, Catalogo, imagesService } from "@/api";
 import { getFileURL } from "../../../utils/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { LoadCatalogos, LoadUsuarios } from "@/utils";
@@ -35,13 +35,7 @@ export const useProductForm = ({
 }: UseProductFormProps & { product?: Articulo }) => {
   const navigate = useNavigate();
   const { authId } = useAuth();
-  const [catalogos, setCatalogos] = useState<Array<{
-    id: number;
-    id_usuario: number;
-    id_marca: number | null;
-    capacidad_maxima: number;
-    espacio_ocupado: number;
-  }>>([]);
+  const [catalogos, setCatalogos] = useState<Array<Catalogo>>([]);
   const [isMarca, setIsMarca] = useState(false);
 
   useEffect(() => {
@@ -121,7 +115,7 @@ export const useProductForm = ({
 
       if (!selectedCatalogo) throw new Error("No se encontró un catálogo adecuado.");
 
-      const productData: Articulo = {
+      const productData: Partial<Articulo> = {
         ...values,
         id_catalogo: selectedCatalogo.id,
         id_marca: selectedCatalogo.id_marca ?? undefined,

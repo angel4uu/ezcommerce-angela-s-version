@@ -7,7 +7,7 @@ export interface Facultad{
 }
 
 class FacultadesService extends AxiosService {
-  getAllFacultades = (page: number) => {
+  getFacultadesByPage = (page: number) => {
     return this.instance.get(`/?page=${page}`);
   };
 }

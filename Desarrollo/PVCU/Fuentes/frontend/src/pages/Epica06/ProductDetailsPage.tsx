@@ -37,7 +37,7 @@ import { articulosService } from "@/api/apiArticulos";
 import { Articulo } from "@/api";
 import { Link } from "react-router-dom";
 import { LoadImageMajor } from "@/utils";
-import { useCart,useFavourites,useAuth } from "@/hooks";
+import { useCart,useFavourites, } from "@/hooks";
 
 type Image = {
   id: number;
@@ -72,13 +72,13 @@ export function ProductDetailsPage() {
       setIsLoading(true);
       try {
         const response = await articulosService.getArticulo(id);
-        setArticulo(response.data);
+        setArticulo(response);
 
         const responseProductos = await articulosService.getArticulos();
-        setProductos(responseProductos.data.results);
+        setProductos(responseProductos);
 
-        console.log(response.data);
-        console.log(responseProductos.data);
+        console.log(response);
+        console.log(responseProductos);
       } catch (error) {
         console.error(error);
       } finally {

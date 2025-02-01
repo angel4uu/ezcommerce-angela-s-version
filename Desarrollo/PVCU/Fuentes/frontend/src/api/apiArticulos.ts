@@ -1,4 +1,5 @@
 import { AxiosProtectedService} from './api';
+import { Usuario } from './apiUsuarios';
 const baseURL = import.meta.env.VITE_API_URL;
 export interface Articulo {
   id: number;
@@ -14,28 +15,31 @@ export interface Articulo {
 }
 
 class ArticulosService extends AxiosProtectedService {
-  getArticulos = () => {
-    return this.instance.get('/');
+  getArticulos = async() => {
+    const {data}= await this.instance.get('/');
+    return data.results as Articulo[];
   };
 
-  createArticulo = (articulo: Articulo) => {
+  createArticulo = (articulo: Partial<Articulo>) => {
     return this.instance.post('/', articulo);
   };
 
-  updateArticulo = (id: number, articulo: Articulo) => {
+  updateArticulo = (id: Articulo["id"], articulo: Partial<Articulo>) => {
     return this.instance.put(`/${id}/`, articulo);
   };
 
-  deleteArticulo = (id: number) => {
+  deleteArticulo = (id: Articulo["id"]) => {
     return this.instance.delete(`/${id}/`);
   };
 
-  getArticulo = (id: number) => {
-    return this.instance.get(`/${id}`);
+  getArticulo = async (id: Articulo["id"]) => {
+    const {data}= await this.instance.get(`/${id}`);
+    return data as Articulo;
   };
 
-  getArticulosByUsuario = (usuarioId: number) => {
-    return this.instance.get(`/?id_catalogo__id_usuario=${usuarioId}`);
+  getArticulosByUsuario = async(usuarioId: Usuario["id"]) => {
+    const {data}=await this.instance.get(`/?id_catalogo__id_usuario=${usuarioId}`);
+    return data.results as Articulo[];
   };
 }
 

@@ -36,8 +36,8 @@ export const SearchSellers = () => {
   useEffect(() => {
     const fetchFacus = async () => {
       try {
-        const data1 = await facultadesService.getAllFacultades(1);
-        const data2 = await facultadesService.getAllFacultades(2)
+        const data1 = await facultadesService.getFacultadesByPage(1);
+        const data2 = await facultadesService.getFacultadesByPage(2)
         const facultadesT = [...data1.data.results, ...data2.data.results]
 
         setFacultades(facultadesT)

@@ -32,7 +32,7 @@ export const SheetComponent = () => {
       setError(null);
       try {
         const response = await etiquetasService.getEtiquetas();
-        setEtiquetas(response.data.results); // Ajustar si la respuesta tiene otro formato
+        setEtiquetas(response); // Ajustar si la respuesta tiene otro formato
       } catch (err) {
         console.error("Error al obtener las etiquetas:", err);
         setError("No se pudieron cargar las categorías.");

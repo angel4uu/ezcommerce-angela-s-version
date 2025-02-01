@@ -39,8 +39,7 @@ interface LoaderData {
 
 export async function loader(): Promise<LoaderData> {
   try {
-    const planesResponse = await planesService.getPlanes();
-    const planes = planesResponse.data.results as Plan[];
+    const planes = await planesService.getPlanes();
 
     planes.forEach((plan: Plan) => {
       plan.beneficios = beneficios_marcas(plan.espacio_extra);

@@ -1,12 +1,21 @@
 import { AxiosService } from './api';
 const baseURL = import.meta.env.VITE_API_URL;
+export type Catalogo = {
+    id: number;
+    id_usuario: number;
+    id_marca: number | null;
+    capacidad_maxima: number;
+    espacio_ocupado: number;
+  }
 class CatalogosService extends AxiosService {
-  getCatalogoUser = (id_usuario: number) => {
-    return this.instance.get(`/?id_usuario=${id_usuario}`);
+  getCatalogoByUser = async (id_usuario: Catalogo["id_usuario"]) => {
+    const {data}= await this.instance.get(`/?id_usuario=${id_usuario}`);
+    return data.results as Catalogo[];
   };
 
-  getCatalogoById = (id: number) => {
-    return this.instance.get(`/${id}`);
+  getCatalogo = async (id: Catalogo["id"]) => {
+    const {data}=await this.instance.get(`/${id}`);
+    return data as Catalogo;
   };
 }
 

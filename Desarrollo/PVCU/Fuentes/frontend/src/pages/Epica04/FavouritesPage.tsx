@@ -14,12 +14,10 @@ export const FavouritesPage = () => {
     const fetchFavourites = async () => {
       try {
         // Obtener todos los artículos
-        const articulosResponse = await articulosService.getArticulos();
-        const articulos = articulosResponse.data.results;
+        const articulos = await articulosService.getArticulos();
 
         // Obtener todas las imágenes
-        const imagesResponse = await imagesService.getAllImages();
-        const images = imagesResponse.data.results;
+        const images = await imagesService.getAllImages();
 
         // Crear un mapa con la primera imagen de cada artículo
         interface Image {

@@ -87,8 +87,7 @@ interface LoaderData {
 
 export async function loader(): Promise<LoaderData> {
   try {
-    const response= await escuelasService.getEscuelas();
-    const escuelasData = response.data.results;
+    const escuelasData= await escuelasService.getEscuelas();
     return { escuelasData };
   } catch (error) {
     console.error("Se produjo un error:", error);

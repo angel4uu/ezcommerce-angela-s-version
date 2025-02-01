@@ -29,7 +29,7 @@ export interface ContextType{
       const fetchEtiquetas = async () =>{
         try {
             const etiquetasData = await etiquetasService.getEtiquetas();
-            setEtiquetasList(etiquetasData.data.results)
+            setEtiquetasList(etiquetasData);
         } catch (error) {
           console.error('Failed to fetch etiquetas', error)
         }finally{

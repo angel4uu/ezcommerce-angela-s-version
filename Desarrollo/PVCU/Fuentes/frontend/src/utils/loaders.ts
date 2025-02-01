@@ -12,8 +12,7 @@ export interface ProductCart {
 
 export const getProductCart = async (id: number): Promise<ProductCart> => {
   try {
-    const productResponse = await articulosService.getArticulo(id);
-    const product = productResponse.data;
+    const product= await articulosService.getArticulo(id);
 
     if (!product) {
       throw new Error(`No se encontró el producto con ID ${id}`);
@@ -29,12 +28,11 @@ export const getProductCart = async (id: number): Promise<ProductCart> => {
 
     let ownerProduct = "Usuario desconocido";
     try {
-      const catalogoResponse = await catalogosService.getCatalogoById(product.id_catalogo);
-      const catalogo = catalogoResponse.data;
-
+      const catalogo = await catalogosService.getCatalogo(product.id_catalogo);
+    
       if (catalogo?.id_usuario) {
-        const userResponse = await usuariosService.getUsuarios(catalogo.id_usuario);
-        ownerProduct = userResponse.data?.nombres || ownerProduct;
+        const userResponse = await usuariosService.getUsuario(catalogo.id_usuario);
+        ownerProduct = userResponse?.nombres || ownerProduct;
       }
     } catch (error) {
       console.error(`Error al obtener el usuario del catálogo:`, error);
@@ -58,28 +56,28 @@ export const getProductCart = async (id: number): Promise<ProductCart> => {
 
 
 export const LoadImageMajor = async (id_articulo: number) => {
-    const response = await imagesService.getImage(id_articulo);
-    return response.data.results; // Devuelve todas las imagen del articulo
+    const response = await imagesService.getImagesByArticulo(id_articulo);
+    return response; // Devuelve todas las imagen del articulo
 };
 
 export const LoadUsuarios = async (userId: number) => {
-  const response = await usuariosService.getUsuarios(userId);
-  return response.data;
+  const response = await usuariosService.getUsuario(userId);
+  return response;
 };
 
 export const LoadArticulosByUser = async (id_usuario: number) => {
   const response = await articulosService.getArticulosByUsuario(id_usuario);
-  return response.data.results; // Devuelver todos los artículos del usuario
+  return response; // Devuelver todos los artículos del usuario
 };
 
 export const LoadCatalogos = async (id_usuario: number) => {
-  const response = await catalogosService.getCatalogoUser(id_usuario);
-  return response.data.results; // Devuelve el primer catálogo porque se asume que el usuario solo tiene un catálogo
+  const response = await catalogosService.getCatalogoByUser(id_usuario);
+  return response; // Devuelve el primer catálogo porque se asume que el usuario solo tiene un catálogo
 };
 
 export const LoadEtiquetas = async () => {
   const response = await etiquetasService.getEtiquetas();
-  return response.data.results.map((etiqueta: { id: number; nombre: string }) => ({
+  return response.map((etiqueta: { id: number; nombre: string }) => ({
     id: etiqueta.id,
     nombre: etiqueta.nombre,
   }));

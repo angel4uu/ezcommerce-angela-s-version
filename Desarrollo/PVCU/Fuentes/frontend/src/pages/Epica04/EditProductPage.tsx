@@ -16,8 +16,8 @@ export const EditProductPage = () => {
     const fetchProductData = async () => {
       try {
         // Obtener el producto
-        const productResponse = await articulosService.getArticulo(Number(productId));
-        setProductToEdit(productResponse.data);
+        const product = await articulosService.getArticulo(Number(productId));
+        setProductToEdit(product);
 
         // Obtener las imágenes asociadas al producto utilizando el helper
         const images = await LoadImageMajor(Number(productId));

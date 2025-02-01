@@ -7,8 +7,9 @@ export interface Etiqueta{
 }
 
 class EtiquetasService extends AxiosService {
-  getEtiquetas = () => {
-    return this.instance.get('/');
+  getEtiquetas = async () => {
+    const {data}=await this.instance.get('/');
+    return data.results as Etiqueta[];
   };
 }
 

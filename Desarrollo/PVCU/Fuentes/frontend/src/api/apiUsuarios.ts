@@ -4,7 +4,7 @@ console.log(baseURL);
 
 // Usuarios
 export type Usuario = {
-  id?: number,
+  id: number,
   id_escuela: number,
   username: string,
   email: string,
@@ -13,17 +13,19 @@ export type Usuario = {
   apellido_m: string,
   celular: string,
   codigo: string,
-  fecha_nacimiento?: string,
-  codigo_qr?: string | FileList | null,
+  fecha_nacimiento: string,
+  codigo_qr: string | FileList | null,
+  tiene_marca: boolean,
 }
 
 class UsuariosService extends AxiosProtectedService {
-  createUsuario = (usuario: Usuario) => {
+  createUsuario = (usuario: Partial<Usuario>) => {
     return this.instance.post('/', usuario);
   };
 
-  getUsuarios = (userId: number) => {
-    return this.instance.get(`/${userId}`);
+  getUsuario = async (userId: Usuario["id"]) => {
+    const { data } = await this.instance.get(`/${userId}`);
+    return data as Usuario;
   };
 }
 export const usuariosService = new UsuariosService(`${baseURL}/usuarios/`);
@@ -37,8 +39,9 @@ export type EscuelaProfesional = {
 }
 
 class EscuelasService extends AxiosService {
-  getEscuelas = () => {
-    return this.instance.get('/');
+  getEscuelas = async () => {
+    const { data } = await this.instance.get('/');
+    return data.results as EscuelaProfesional[];
   };
 }
 export const escuelasService = new EscuelasService(`${baseURL}/escuelasprofesionales/`);

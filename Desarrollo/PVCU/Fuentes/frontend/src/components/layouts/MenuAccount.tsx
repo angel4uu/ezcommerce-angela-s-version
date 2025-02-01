@@ -64,8 +64,8 @@ export const MenuAccount = () => {
 
   useEffect(() => {
     if (authId) {
-      usuariosService.getUsuarios(authId).then((response) => {
-        setUser(response.data);
+      usuariosService.getUsuario(authId).then((response) => {
+        setUser(response);
       });
     }
   }, [authId]);
