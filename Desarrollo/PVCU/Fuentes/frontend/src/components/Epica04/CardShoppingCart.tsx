@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { X, Star, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProductCart } from "../../helpers/getProducCart";
-import { useCartContext } from "../../context/CartContext";
+import { ProductCart } from "@/utils";
+import { useCart } from "@/hooks";
 
 interface CardShoppingCartProps {
   product: ProductCart;
 }
 
 export const CardShoppingCart: React.FC<CardShoppingCartProps> = ({ product }) => {
-  const { removeItem, updateItemQuantity } = useCartContext();
+  const { removeItem, updateItemQuantity } = useCart();
 
   const handleIncrement = () => {
     updateItemQuantity(product.productTitle, product.quantity + 1);

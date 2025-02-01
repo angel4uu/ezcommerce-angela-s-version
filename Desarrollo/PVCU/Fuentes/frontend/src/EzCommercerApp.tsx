@@ -1,4 +1,4 @@
-import routes from "./router/AppRouter"
+import routes from "@/AppRouter";
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import {AuthProvider} from "./context/AuthContext";

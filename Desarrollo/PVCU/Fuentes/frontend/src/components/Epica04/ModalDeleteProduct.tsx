@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteArticulo } from "../../api/apiArticulos";
+import { articulosService } from "@/api/";
 
 interface ModalDeleteProductProps {
   productId: number;
@@ -31,7 +31,7 @@ export const ModalDeleteProduct: React.FC<ModalDeleteProductProps> = ({
     setError(null);
 
     try {
-      await deleteArticulo(productId); // Realizar la eliminación en el backend
+      await articulosService.deleteArticulo(productId); // Realizar la eliminación en el backend
       console.log(`Producto con ID ${productId} eliminado exitosamente.`);
       setLoading(false);
       onDeleteSuccess(); // Notificar al padre que el producto fue eliminado

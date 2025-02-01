@@ -1,5 +1,5 @@
-import { AxiosService, baseURL } from './api';
-
+import { AxiosService } from './api';
+const baseURL = import.meta.env.VITE_API_URL;
 export interface Facultad{
   codigo:number,
   nombre:string,

@@ -1,4 +1,5 @@
-import { AxiosProtectedService, baseURL } from './api';
+import { AxiosProtectedService} from './api';
+const baseURL = import.meta.env.VITE_API_URL;
 export interface Articulo {
   id: number;
   nombre: string;

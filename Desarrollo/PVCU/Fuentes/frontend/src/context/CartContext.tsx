@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { ProductCart, getProductCart } from "../helpers/getProducCart";
+import React, { createContext, useEffect, useState } from "react";
+import { ProductCart, getProductCart } from "@/utils";
 import { toast } from "sonner";
 
 export interface CartContextType {

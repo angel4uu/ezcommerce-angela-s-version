@@ -9,7 +9,7 @@ import {
 import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getEtiquetas, Etiqueta } from "../../api/apiEtiquetas";
+import { etiquetasService, Etiqueta } from "@/api";
 import { useNavigate } from "react-router";
 
 export const SheetComponent = () => {
@@ -31,7 +31,7 @@ export const SheetComponent = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await getEtiquetas();
+        const response = await etiquetasService.getEtiquetas();
         setEtiquetas(response.data.results); // Ajustar si la respuesta tiene otro formato
       } catch (err) {
         console.error("Error al obtener las etiquetas:", err);
@@ -65,7 +65,7 @@ export const SheetComponent = () => {
           <p className="text-red-500">{error}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-            {etiquetas.length > 0 ? (
+            {etiquetas?.length > 0 ? (
               etiquetas.map((etiqueta) => (
                 <Button
                   key={etiqueta.id}

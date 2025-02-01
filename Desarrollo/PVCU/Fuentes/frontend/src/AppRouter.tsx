@@ -5,16 +5,10 @@ import {
   LoginPage,
   RegisterPage,
   loader as registerLoader,
-} from "../pages/Epica01";
-import { ProfileBuyerPage } from "../pages/Epica02";
-import { MainPage, SearchPage, SearchSellers } from "../pages/Epica03";
-import {
-  PlansPage,
-  PayPlanPage,
-  PaymentConfirmation,
-  RegisterTrademark,
-  loader as plansLoader,
-} from "../pages/Epica05";
+  EmailConfirmationPage,
+} from "@/pages/Epica01";
+import { ProfileBuyerPage } from "@/pages/Epica02";
+import { MainPage, SearchPage, SearchSellers } from "@/pages/Epica03";
 import {
   ProductsManagementPage,
   MyPublishedProductsPage,
@@ -22,18 +16,26 @@ import {
   EditProductPage,
   ShoppingCartPage,
   FavouritesPage,
-} from "../pages/Epica04";
-import { Layout } from "../components/layouts/Layout";
-import { PrivateRoute } from "../components/Epica1/PrivateRoute";
+} from "@/pages/Epica04";
+import {
+  PlansPage,
+  PayPlanPage,
+  PaymentConfirmation,
+  RegisterTrademark,
+  loader as plansLoader,
+} from "@/pages/Epica05";
 import {
   PendingPurchasesPage,
   PurchaseHistoryPage,
   PurchaseManagementPage,
+  PendingPurchasePay,
+  ProductDetailsPage,
+  Chat,
 } from "@/pages/Epica06";
-import { Chat } from "@/pages/Epica06/Chat";
-import { ContactPage } from "../pages/Epica08/ContactPage";
-import { PendingPurchasePay } from "@/pages/Epica06/PendingPurchasePay";
-import { ProductDetailsPage } from "@/pages/Epica06/ProductDetailsPage";
+import { ContactPage } from "@/pages/Epica08/ContactPage";
+import { Layout } from "@/components/layouts/Layout";
+import { PrivateRoute } from "@/components/Epica1/PrivateRoute";
+
 
 const routes = createBrowserRouter([
   {
@@ -203,6 +205,10 @@ const routes = createBrowserRouter([
             <PendingPurchasePay></PendingPurchasePay>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/activate/:uid/:token",
+        element: <EmailConfirmationPage />,
       },
     ],
   },

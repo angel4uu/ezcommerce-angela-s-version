@@ -11,6 +11,7 @@ export interface IProductCardProps {
   img: string;
   brand?: string;
   qualification?: number;
+  isFavourite?: boolean;
 }
 
 export const ProductCard = ({

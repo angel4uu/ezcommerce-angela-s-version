@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ModalDeleteProduct } from "../../components/Epica04/ModalDeleteProduct";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LoadImageMajor } from "../../helpers/getImageMajor";
+import { LoadImageMajor } from "@/utils";
 
 interface CardProduct {
   id: number;

@@ -14,25 +14,22 @@ import { ProductCard } from '../../components/cards/product-card';
 import { LoginModal } from '@/components/Epica5/LoginModal';
 import { useTrademark } from '@/hooks/useTrademark';
 import { useEffect, useState } from 'react';
-import { Articulo, getArticulos } from '../../api/apiArticulos';
-import { EscuelaProfesional, Usuario } from '../../types';
-import { escuelasService, usuariosApi } from '../../api/apiUsuarios';
-import { getAllImages } from '@/api/apiImages';
+import { imagesService,articulosService,escuelasService,usuariosService,Articulo,Usuario,EscuelaProfesional } from '@/api';
 
 
 export const MainPage = () => {
   const navigate = useNavigate();
-  const { authState, setLoginModal } = useAuth();
+  const { authId, setLoginModal } = useAuth();
   const { marca, membresia, plan } = useTrademark();
   const [products, setProducts] = useState<Articulo[]>([])
   const [escuelas, setEscuelas] = useState<EscuelaProfesional[]>([])
   const [sellers, setSellers] = useState<Usuario[]>([])
 
-  console.log("User id:", authState.userId);
+  console.log("User id:", authId);
   console.log({ marca: marca, membresia: membresia, plan: plan });
 
   function handleTrademarkClick() {
-    if (authState.userId) {
+    if (authId) {
       navigate('/plans')
     }
     else {
@@ -44,10 +41,10 @@ export const MainPage = () => {
     const fetchData = async () => {
       try {
 
-        const articulosResponse = await getArticulos();
+        const articulosResponse = await articulosService.getArticulos();
         const articulos = articulosResponse.data.results;
   
-        const imagesResponse = await getAllImages();
+        const imagesResponse = await imagesService.getAllImages();
         const images = imagesResponse.data.results;
   
         interface Image {
@@ -55,7 +52,7 @@ export const MainPage = () => {
           url: string;
         }
 
-        const imageMap = images.reduce((acc: Record<number, string>, img: Image) => {
+        const imageMap = images?.reduce((acc: Record<number, string>, img: Image) => {
           if (!acc[img.id_articulo]) {
             acc[img.id_articulo] = img.url; 
           }
@@ -72,7 +69,7 @@ export const MainPage = () => {
         const escuelasResponse = await escuelasService.getEscuelas();
         setEscuelas(escuelasResponse.data.results);
   
-        const vendedoresResponse = await usuariosApi.get('?es_vendedor=true');
+        const vendedoresResponse = await usuariosService.instance.get('?es_vendedor=true');
         setSellers(vendedoresResponse.data.results);
       } catch (error) {
         console.error("Error al cargar los datos:", error);

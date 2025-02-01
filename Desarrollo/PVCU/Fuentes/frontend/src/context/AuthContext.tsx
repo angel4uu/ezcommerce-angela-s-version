@@ -1,7 +1,8 @@
 import { createContext, useEffect, useState, ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import { baseURL } from "@/api/api";
+const baseURL = import.meta.env.VITE_API_URL;
+console.log(baseURL);
 
 export interface AuthContextType {
   authId: number | null;
@@ -29,7 +30,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   useEffect(() => {
-    refreshAccessToken();
+    if(authId){
+      refreshAccessToken();
+    }
   }, []);
 
   refreshAccessToken = async (): Promise<string | null> => {

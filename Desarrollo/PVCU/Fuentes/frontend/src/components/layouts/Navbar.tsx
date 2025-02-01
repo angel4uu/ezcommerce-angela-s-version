@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MenuAccount } from "./MenuAccount";
 import { NavigationComponent } from "./NavigationComponent";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth,useCart } from "@/hooks";
 import { useState } from "react";
-import { useCartContext } from "../../context/CartContext";
 const icons = [
   { component: <Bell size={28} className="text-secondaryLight" />, link: "/chat" },
   {
@@ -16,11 +15,11 @@ const icons = [
 ];
 
 export const Navbar = () => {
-  const { authState } = useAuth();
+  const { authId} = useAuth();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { items } = useCartContext(); // Obtener productos del carrito
+  const { items } = useCart(); // Obtener productos del carrito
 
 
 
@@ -68,7 +67,7 @@ export const Navbar = () => {
 
         {/* Íconos de navegación */}
         <div className="flex items-center space-x-4 ml-3">
-          {authState.userId ? (
+          {authId ? (
             <>
               {icons.map((icon, index) => (
                 <Button key={index} variant="ghost" size="icon">

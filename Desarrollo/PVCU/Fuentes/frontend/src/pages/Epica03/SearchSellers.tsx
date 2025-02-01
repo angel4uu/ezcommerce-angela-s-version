@@ -6,9 +6,8 @@ import { PaginationComp } from '../../components/Epica03/paginationComponent';
 import { Search } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import axios from 'axios'
-import { Facultad, getAllFacultades } from '../../api/apiFacultades';
+import { Facultad, facultadesService,Usuario } from '@/api';
 import { SellersCard } from '../../components/cards';
-import { Usuario } from '../../types';
 
 
 
@@ -37,8 +36,8 @@ export const SearchSellers = () => {
   useEffect(() => {
     const fetchFacus = async () => {
       try {
-        const data1 = await getAllFacultades(1)
-        const data2 = await getAllFacultades(2)
+        const data1 = await facultadesService.getAllFacultades(1);
+        const data2 = await facultadesService.getAllFacultades(2)
         const facultadesT = [...data1.data.results, ...data2.data.results]
 
         setFacultades(facultadesT)

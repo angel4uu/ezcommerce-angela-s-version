@@ -1,11 +1,11 @@
 import { ISellersCardProps } from "../../components/cards/sellers-card";
 import TestProduct from '/image-card.jpg'
-import BannerPrueba from '../assets/banner_prueba.webp'
+import BannerPrueba from '@/assets/banner_prueba.webp'
 import { IProductCardProps } from "../../components/cards/product-card";
-import estudio from '../assets/estudio.jpg'
-import accesorios from '../assets/accesorios.avif'
-import materiales from '../assets/materiales.jpg'
-import electronica from '../assets/electronica.jpg'
+import estudio from '@/assets/estudio.jpg'
+import accesorios from '@/assets/accesorios.avif'
+import materiales from '@/assets/materiales.jpg'
+import electronica from '@/assets/electronica.jpg'
 
 export const distinguishedSellers: ISellersCardProps[] = [
     {

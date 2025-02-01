@@ -1,5 +1,5 @@
-import { baseURL, AxiosProtectedService, AxiosService } from "./api";
-
+import { AxiosProtectedService, AxiosService } from "./api";
+const baseURL = import.meta.env.VITE_API_URL;
 // Marcas
 export type Marca={
   id?:number,

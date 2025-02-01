@@ -3,14 +3,11 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
-import { createArticulo, Articulo, updateArticulo } from "../../../api/apiArticulos";
-import { createImage } from "../../../api/apiImages";
+import { Articulo, articulosService, imagesService } from "@/api";
 import { getFileURL } from "../../../utils/firebase";
 import { useAuth } from "@/hooks/useAuth";
-import { LoadCatalogos } from "../../../helpers/LoadCatalogos";
+import { LoadCatalogos, LoadUsuarios } from "@/utils";
 import { useEffect, useState } from "react";
-import { LoadUsuarios } from "../../../helpers/getUser";
-import { updateImage } from "../../../api/apiImages";
 
 // Esquema de validación de Zod
 const formSchema = z.object({
@@ -37,7 +34,7 @@ export const useProductForm = ({
   product,
 }: UseProductFormProps & { product?: Articulo }) => {
   const navigate = useNavigate();
-  const { authState } = useAuth();
+  const { authId } = useAuth();
   const [catalogos, setCatalogos] = useState<Array<{
     id: number;
     id_usuario: number;
@@ -48,8 +45,8 @@ export const useProductForm = ({
   const [isMarca, setIsMarca] = useState(false);
 
   useEffect(() => {
-    if (authState.userId !== null) {
-      LoadUsuarios(authState.userId).then((data) => {
+    if (authId !== null) {
+      LoadUsuarios(authId).then((data) => {
         if (data) {
           setIsMarca(data.tiene_marca);
         } else {
@@ -57,11 +54,11 @@ export const useProductForm = ({
         }
       });
     }
-  }, [authState.userId]);
+  }, [authId]);
 
   useEffect(() => {
-    if (authState.userId !== null) {
-      LoadCatalogos(authState.userId).then((data) => {
+    if (authId !== null) {
+      LoadCatalogos(authId).then((data) => {
         if (data) {
           setCatalogos(data);
         } else {
@@ -69,7 +66,7 @@ export const useProductForm = ({
         }
       });
     }
-  }, [authState.userId]);
+  }, [authId]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,7 +89,7 @@ export const useProductForm = ({
           const storageDir = `product_image/${productId}`;
           const url = await getFileURL(image.file, storageDir);
           if (url) {
-            await createImage({ id_articulo: productId, url });
+            await imagesService.createImage({ id_articulo: productId, url });
             console.log(`Nueva imagen registrada: ${url}`);
           } else {
             throw new Error("No se pudo obtener la URL de la imagen.");
@@ -104,7 +101,7 @@ export const useProductForm = ({
       } else {
         // Imagen existente: actualizar en el backend
         try {
-          await updateImage(Number(image.id), { id_articulo: productId, url: image.preview });
+          await imagesService.updateImage(Number(image.id), { id_articulo: productId, url: image.preview });
           console.log(`Imagen existente actualizada: ${image.preview}`);
         } catch (error) {
           console.error("Error al actualizar imagen existente:", error);
@@ -133,10 +130,10 @@ export const useProductForm = ({
       let productId: number;
 
       if (product) {
-        const response = await updateArticulo(product.id!, productData);
+        const response = await articulosService.updateArticulo(product.id!, productData);
         productId = response.data.id;
       } else {
-        const response = await createArticulo(productData);
+        const response = await articulosService.createArticulo(productData);
         productId = response.data.id;
       }
 

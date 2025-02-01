@@ -1,10 +1,10 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCartContext } from "../../context/CartContext";
+import { useCart } from "@/hooks";
 
 export const CardOrderSummary = () => {
-  const { items } = useCartContext();
+  const { items } = useCart();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);

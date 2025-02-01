@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CardShoppingCart } from "./CardShoppingCart";
-import { ProductCart } from "../../helpers/getProducCart";
-import { useCartContext } from "../../context/CartContext";
+import { ProductCart } from "@/utils";
+import { useCart } from "@/hooks";
 
 export const AccordionShoppingCart = () => {
-  const { items } = useCartContext();
+  const { items } = useCart();
   const [groupedProducts, setGroupedProducts] = useState<Record<string, ProductCart[]>>({});
 
   const groupBySeller = (products: ProductCart[]): Record<string, ProductCart[]> => {
