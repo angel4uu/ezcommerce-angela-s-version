@@ -90,7 +90,7 @@ export async function loader(): Promise<LoaderData> {
     const escuelasData= await escuelasService.getEscuelas();
     return { escuelasData };
   } catch (error) {
-    console.error("Se produjo un error:", error);
+    console.log(error);
     return { escuelasData: [] };
   }
 }

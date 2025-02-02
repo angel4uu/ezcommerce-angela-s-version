@@ -60,21 +60,6 @@ export const LoadImageMajor = async (id_articulo: number) => {
     return response; // Devuelve todas las imagen del articulo
 };
 
-export const LoadUsuarios = async (userId: number) => {
-  const response = await usuariosService.getUsuario(userId);
-  return response;
-};
-
-export const LoadArticulosByUser = async (id_usuario: number) => {
-  const response = await articulosService.getArticulosByUsuario(id_usuario);
-  return response; // Devuelver todos los artículos del usuario
-};
-
-export const LoadCatalogos = async (id_usuario: number) => {
-  const response = await catalogosService.getCatalogoByUser(id_usuario);
-  return response; // Devuelve el primer catálogo porque se asume que el usuario solo tiene un catálogo
-};
-
 export const LoadEtiquetas = async () => {
   const response = await etiquetasService.getEtiquetas();
   return response.map((etiqueta: { id: number; nombre: string }) => ({

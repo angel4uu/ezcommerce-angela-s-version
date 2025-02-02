@@ -48,10 +48,12 @@ export const LoginPage = () => {
     try{
       const { username, password } = values;
       await login(username, password);
+      toast.success("Sesión iniciada con éxito");
       setRedirect(true);
     }
     catch(error){
-      toast.error("Credenciales equivocadas");
+      console.log(error);
+      toast.error("Ha ocurrido un error al iniciar sesión");
     }
     
   }

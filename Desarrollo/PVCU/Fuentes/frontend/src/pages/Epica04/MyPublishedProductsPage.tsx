@@ -4,8 +4,8 @@ import { ChevronLeft, CirclePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardPublishedEdit } from "../../components/Epica04/CardPublishedEdit";
-import { LoadArticulosByUser } from "@/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { articulosService } from "@/api";
 
 export const MyPublishedProductsPage = () => {
   const { authId } = useAuth(); // Obtener el estado de autenticación
@@ -16,7 +16,7 @@ export const MyPublishedProductsPage = () => {
     const fetchProducts = async () => {
       if (!authId) return; // Asegurarse de que el usuario esté autenticado
       try {
-        const data = await LoadArticulosByUser(authId); // Usar el helper para obtener los productos
+        const data = await articulosService.getArticulosByUsuario(authId); // Usar el helper para obtener los productos
         setProducts(data);
       } catch (error) {
         console.error("Error al obtener los productos:", error);

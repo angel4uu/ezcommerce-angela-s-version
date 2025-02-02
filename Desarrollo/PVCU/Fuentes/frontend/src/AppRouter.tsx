@@ -210,6 +210,10 @@ const routes = createBrowserRouter([
         path: "/activate/:uid/:token",
         element: <EmailConfirmationPage />,
       },
+      {
+        path: "*",
+        element: <MainPage />,
+      },
     ],
   },
 ]);

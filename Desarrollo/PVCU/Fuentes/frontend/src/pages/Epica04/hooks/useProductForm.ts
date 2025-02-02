@@ -3,10 +3,9 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
-import { Articulo, articulosService, Catalogo, imagesService } from "@/api";
+import { Articulo, articulosService, Catalogo, catalogosService, imagesService, usuariosService } from "@/api";
 import { getFileURL } from "../../../utils/firebase";
 import { useAuth } from "@/hooks/useAuth";
-import { LoadCatalogos, LoadUsuarios } from "@/utils";
 import { useEffect, useState } from "react";
 
 // Esquema de validación de Zod
@@ -40,7 +39,7 @@ export const useProductForm = ({
 
   useEffect(() => {
     if (authId !== null) {
-      LoadUsuarios(authId).then((data) => {
+      usuariosService.getUsuario(authId).then((data) => {
         if (data) {
           setIsMarca(data.tiene_marca);
         } else {
@@ -52,7 +51,7 @@ export const useProductForm = ({
 
   useEffect(() => {
     if (authId !== null) {
-      LoadCatalogos(authId).then((data) => {
+      catalogosService.getCatalogoByUser(authId).then((data) => {
         if (data) {
           setCatalogos(data);
         } else {
