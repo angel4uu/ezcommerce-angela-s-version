@@ -24,8 +24,8 @@ import {
 import { getFileURL } from "../../utils/firebase";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { usuariosService, escuelasService } from "@/api/apiUsuarios";
-import { EscuelaProfesional } from "@/api";
+import { usuariosService, escuelasService } from "@/api";
+import { EscuelaProfesional } from "@/types";
 
 const formSchema = z.object({
   nombres: z

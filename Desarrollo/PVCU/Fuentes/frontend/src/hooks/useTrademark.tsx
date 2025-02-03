@@ -1,4 +1,4 @@
-import {TrademarkContext} from "@/context/TrademarkContext";
+import {TrademarkContext} from "@/providers/TrademarkContext";
 import { useContext } from "react";
 
 export const useTrademark = ()=> {

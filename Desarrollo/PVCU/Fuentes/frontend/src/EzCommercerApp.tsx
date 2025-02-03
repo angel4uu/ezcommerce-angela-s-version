@@ -1,11 +1,11 @@
 import routes from "@/AppRouter";
 import { RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import {AuthProvider} from "./context/AuthContext";
-import { TrademarkProvider } from "./context/TrademarkContext";
-import { EtiquetasProvider } from "./context/EtiquetasContext";
-import { FavouritesProvider } from "./context/FavouritesContext";
-import { CartProvider } from "./context/CartContext";
+import {AuthProvider} from "./providers/AuthContext";
+import { TrademarkProvider } from "./providers/TrademarkContext";
+import { EtiquetasProvider } from "./providers/EtiquetasContext";
+import { FavouritesProvider } from "./providers/FavouritesContext";
+import { CartProvider } from "./providers/CartContext";
 
 
 

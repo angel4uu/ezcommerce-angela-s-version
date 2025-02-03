@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { userActivationService } from "@/api/apiUsuarios";
+import { userActivationService } from "@/api";
 import { toast } from "sonner";
 
 export const EmailConfirmationPage = () => {

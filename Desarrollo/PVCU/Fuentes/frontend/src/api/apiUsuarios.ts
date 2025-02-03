@@ -1,22 +1,7 @@
-import { AxiosProtectedService, AxiosService } from './api';
+import { Usuario } from '@/types';
+import { AxiosProtectedService} from './api';
 const baseURL = import.meta.env.VITE_API_URL;
 console.log(baseURL);
-
-// Usuarios
-export type Usuario = {
-  id: number,
-  id_escuela: number,
-  username: string,
-  email: string,
-  nombres: string,
-  apellido_p: string,
-  apellido_m: string,
-  celular: string,
-  codigo: string,
-  fecha_nacimiento: string,
-  codigo_qr: string | FileList | null,
-  tiene_marca: boolean,
-}
 
 class UsuariosService extends AxiosProtectedService {
   createUsuario = (usuario: Partial<Usuario>) => {
@@ -30,27 +15,5 @@ class UsuariosService extends AxiosProtectedService {
 }
 export const usuariosService = new UsuariosService(`${baseURL}/usuarios/`);
 
-// Escuelas
-export type EscuelaProfesional = {
-  id?: string,
-  id_facultad: string,
-  codigo: string,
-  nombre: string,
-}
 
-class EscuelasService extends AxiosService {
-  getEscuelas = async () => {
-    const { data } = await this.instance.get('/');
-    return data.results as EscuelaProfesional[];
-  };
-}
-export const escuelasService = new EscuelasService(`${baseURL}/escuelasprofesionales/`);
-
-// User activation api
-class UserActivationService extends AxiosService {
-  activateUser = (data:{uid: string, token: string}) => {
-    return this.instance.post("/", data);
-  };
-}
-export const userActivationService = new UserActivationService(`${baseURL}/activate-account/`);
 

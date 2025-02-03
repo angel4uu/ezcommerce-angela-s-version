@@ -1,10 +1,6 @@
 import { AxiosProtectedService} from './api';
+import { Image } from '@/types';
 const baseURL = import.meta.env.VITE_API_URL;
-export interface Image {
-  id:number,
-  id_articulo: number,
-  url: string,
-}
 
 class ImagesService extends AxiosProtectedService {
   getAllImages = async() => {

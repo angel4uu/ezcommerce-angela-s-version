@@ -1,4 +1,4 @@
-import { FavouritesContext } from "@/context";
+import { FavouritesContext } from "@/providers";
 import { useContext } from "react";
 
 export const useFavourites= () => {

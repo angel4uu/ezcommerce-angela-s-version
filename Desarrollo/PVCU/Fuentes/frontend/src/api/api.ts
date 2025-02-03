@@ -1,4 +1,4 @@
-import { logout, refreshAccessToken } from "@/context/AuthContext";
+import { logout, refreshAccessToken } from "@/providers/AuthContext";
 import axios, { AxiosInstance } from "axios";
 
 export class AxiosService {

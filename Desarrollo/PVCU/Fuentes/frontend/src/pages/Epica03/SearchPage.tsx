@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { useContext, useEffect, useState } from 'react';
 import { PaginationComp } from '../../components/Epica03/paginationComponent';
 import axios from 'axios'
-import { EtiquetasContext } from '../../context/EtiquetasContext';
+import { EtiquetasContext } from '../../providers/EtiquetasContext';
 import { ProductCard } from '../../components/cards/product-card';
 import { Articulo, Facultad } from '@/api';
 import { facultadesService} from '../../api/apiFacultades';

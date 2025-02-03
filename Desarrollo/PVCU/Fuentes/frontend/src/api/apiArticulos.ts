@@ -1,18 +1,7 @@
-import { AxiosProtectedService} from './api';
-import { Usuario } from './apiUsuarios';
+import { AxiosProtectedService, AxiosService } from './api';
+import { Articulo, Catalogo, Usuario } from '@/types';
+
 const baseURL = import.meta.env.VITE_API_URL;
-export interface Articulo {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  stock: number;
-  etiquetas: number[];
-  id_marca?: number;
-  is_marca: boolean;
-  id_catalogo: number;
-  imageUrl?: string;
-}
 
 class ArticulosService extends AxiosProtectedService {
   getArticulos = async() => {
@@ -44,4 +33,18 @@ class ArticulosService extends AxiosProtectedService {
 }
 
 export const articulosService = new ArticulosService(`${baseURL}/articulos`);
+
+class CatalogosService extends AxiosService {
+  getCatalogoByUser = async (id_usuario: Catalogo["id_usuario"]) => {
+    const {data}= await this.instance.get(`/?id_usuario=${id_usuario}`);
+    return data.results as Catalogo[];
+  };
+
+  getCatalogo = async (id: Catalogo["id"]) => {
+    const {data}=await this.instance.get(`/${id}`);
+    return data as Catalogo;
+  };
+}
+
+export const catalogosService = new CatalogosService(`${baseURL}/catalogos`);
 
