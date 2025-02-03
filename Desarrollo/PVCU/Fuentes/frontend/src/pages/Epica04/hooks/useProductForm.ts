@@ -4,7 +4,7 @@ import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { UploadedImage } from "./useImageUpload";
 import { Articulo, articulosService, Catalogo, catalogosService, imagesService, usuariosService } from "@/api";
-import { getFileURL } from "../../../utils/firebase";
+import { getFileURL } from "../../../utils/firebaseUtils";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 

@@ -1,5 +1,6 @@
 import { logout, refreshAccessToken } from "@/providers/AuthContext";
 import axios, { AxiosInstance } from "axios";
+import { toast } from "sonner";
 
 export class AxiosService {
   instance: AxiosInstance;
@@ -48,8 +49,23 @@ export class AxiosProtectedService extends AxiosService {
           }
         }
 
+        if (error.response) {
+          const { status, data } = error.response;
+
+          if (status >= 500) {
+            toast.error("Error del servidor. Por favor, inténtalo de nuevo más tarde.");
+          }
+          else if (status >= 400) {
+            const errorMessages =
+              typeof data === "object" ? Object.values(data) : [String(data)];
+            errorMessages.forEach((msg) => toast.error(String(msg)));
+          }
+        }
+        
         return Promise.reject(error);
       }
+
+      
     );
   }
 }

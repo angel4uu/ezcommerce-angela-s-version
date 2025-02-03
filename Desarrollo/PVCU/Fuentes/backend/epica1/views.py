@@ -33,8 +33,8 @@ def send_activation_email(user):
     domain = os.getenv("CORS_ALLOWED_ORIGINS", "localhost:5173")
     activation_link = f"{domain}/activate/{uid}/{token}/"
 
-    subject = "Activate Your Account"
-    message = f"Click the link to activate your Ezcommerce account: {activation_link}"
+    subject = "Activa tu cuenta"
+    message = f"Haz clic en el enlace para activar tu cuenta de Ezcommerce: {activation_link}"
 
     send_mail(
         subject=subject,
@@ -63,12 +63,14 @@ class ActivateAccountView(View):
         except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
             user = None
 
-        if user is not None and account_activation_token.check_token(user, token):
-            user.usuario_verificado = True
-            user.save()
-            return JsonResponse({'detail': 'Account activated successfully'}, status=status.HTTP_200_OK)
-        else:
-            return JsonResponse({'detail': 'Activation link is invalid'}, status=status.HTTP_400_BAD_REQUEST)
+        if user is not None:
+            if user.usuario_verificado:
+                return JsonResponse({'detail': 'La cuenta ya está activada'}, status=status.HTTP_400_BAD_REQUEST)
+            if account_activation_token.check_token(user, token):
+                user.usuario_verificado = True
+                user.save()
+                return JsonResponse({'detail': 'Cuenta activada con éxito'}, status=status.HTTP_200_OK)
+        return JsonResponse({'detail': 'El enlace de activación no es válido'}, status=status.HTTP_400_BAD_REQUEST)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ResendActivationEmailView(View):
@@ -83,17 +85,17 @@ class ResendActivationEmailView(View):
             email = request.POST.get('email')
 
         if not email:
-            return JsonResponse({'detail': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'detail': 'El correo electrónico es obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = Usuario.objects.get(email=email)
             if not user.usuario_verificado:
                 send_activation_email(user)
-                return JsonResponse({'detail': 'Activation email resent successfully'}, status=status.HTTP_200_OK)
+                return JsonResponse({'detail': 'Correo de activación reenviado con éxito'}, status=status.HTTP_200_OK)
             else:
-                return JsonResponse({'detail': 'Account is already activated'}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'detail': 'La cuenta ya está activada'}, status=status.HTTP_400_BAD_REQUEST)
         except Usuario.DoesNotExist:
-            return JsonResponse({'detail': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({'detail': 'No existe un usuario con este correo electrónico'}, status=status.HTTP_404_NOT_FOUND)
         
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
@@ -168,7 +170,7 @@ class CustomTokenRefreshView(TokenRefreshView):
         # Retrieve the refresh token from the cookie
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
-            return Response({"detail": "Refresh token missing"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Falta el token de actualización"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Make a mutable copy of request.data
         mutable_data = request.data.copy()
@@ -180,4 +182,4 @@ class CustomTokenRefreshView(TokenRefreshView):
         try:
             return super().post(request, *args, **kwargs)
         except InvalidToken:
-            return Response({"detail": "Invalid refresh token"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "Token de actualización no válido"}, status=status.HTTP_401_UNAUTHORIZED)

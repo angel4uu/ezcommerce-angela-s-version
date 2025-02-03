@@ -1,3 +1,3 @@
-export * from "./firebase";
-export * from "./loaders";
-export * from "./strings";
+export * from "./firebaseUtils";
+export * from "./loadersUtils";
+export * from "./stringsUtils";
